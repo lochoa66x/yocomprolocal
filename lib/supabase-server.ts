@@ -1,5 +1,12 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+const noStoreFetch: typeof fetch = (input, init) => {
+  return fetch(input, {
+    ...init,
+    cache: "no-store",
+  });
+};
+
 export function createSupabaseAdminClient(): SupabaseClient | null {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -11,6 +18,9 @@ export function createSupabaseAdminClient(): SupabaseClient | null {
   return createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       persistSession: false,
+    },
+    global: {
+      fetch: noStoreFetch,
     },
   });
 }
