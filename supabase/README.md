@@ -14,6 +14,10 @@ run:
 
 For this MVP, products use `seller_slug` to connect to public seller pages like `/vendedor/la-cocina-de-maria`.
 
+If Vercel logs show `Supabase products error` with code `42501`, run:
+
+`supabase/migrations/20260620_grant_products_access.sql`
+
 Later, when the seller dashboard and authentication are ready, we can add a permanent `seller_id` relationship.
 
 Demo seller seed:
