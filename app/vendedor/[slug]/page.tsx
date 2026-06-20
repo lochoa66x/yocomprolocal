@@ -355,17 +355,26 @@ export default async function SellerProfilePage({ params }: Props) {
           </aside>
 
           <div className="space-y-6">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-                Productos
-              </p>
-              <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
-                Productos de este vendedor
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                Este espacio será la vitrina pública donde cada producto tenga
-                foto, precio, descripción con IA y botón para contactar directo.
-              </p>
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
+                  Productos
+                </p>
+                <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
+                  Productos de este vendedor
+                </h2>
+                <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
+                  Este espacio será la vitrina pública donde cada producto tenga
+                  foto, precio, descripción con IA y botón para contactar
+                  directo.
+                </p>
+              </div>
+              <a
+                href={`/producto/nuevo?seller=${slug}`}
+                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+              >
+                Agregar producto
+              </a>
             </div>
 
             {products.length > 0 ? (
