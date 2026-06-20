@@ -16,6 +16,10 @@ For this MVP, products use `seller_slug` to connect to public seller pages like 
 
 Later, when the seller dashboard and authentication are ready, we can add a permanent `seller_id` relationship.
 
+Demo seller seed:
+
+`supabase/seeds/20260620_la_cocina_de_maria_seller.sql`
+
 Example test product:
 
 ```sql
