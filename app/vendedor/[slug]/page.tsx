@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { formatProductPrice, type ProductRecord } from "@/lib/products";
 import { createSellerSlug } from "@/lib/slugs";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
@@ -10,6 +12,11 @@ type Seller = {
   whatsapp: string | null;
   zona: string | null;
   description: string | null;
+};
+
+type SellerProfile = {
+  seller: Seller;
+  products: ProductRecord[];
 };
 
 type Props = {
@@ -32,7 +39,11 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-function getWhatsAppHref(whatsapp: string, sellerName: string) {
+function getWhatsAppHref(
+  whatsapp: string,
+  sellerName: string,
+  productTitle?: string
+) {
   const digits = whatsapp.replace(/\D/g, "");
 
   if (!digits) {
@@ -40,12 +51,49 @@ function getWhatsAppHref(whatsapp: string, sellerName: string) {
   }
 
   const phone = digits.startsWith("52") ? digits : `52${digits}`;
-  const message = `Hola, vi el perfil de ${sellerName} en YoComproLocal y me interesa lo que vende.`;
+  const message = productTitle
+    ? `Hola, vi "${productTitle}" de ${sellerName} en YoComproLocal y me interesa.`
+    : `Hola, vi el perfil de ${sellerName} en YoComproLocal y me interesa lo que vende.`;
 
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
-async function getSellerBySlug(slug: string) {
+function getProductImageStyle(imageUrl: string | null) {
+  const trimmedUrl = imageUrl?.trim();
+
+  if (!trimmedUrl || !/^https?:\/\//.test(trimmedUrl)) {
+    return undefined;
+  }
+
+  return {
+    backgroundImage: `url(${trimmedUrl})`,
+  };
+}
+
+async function getPublishedProducts(
+  supabase: SupabaseClient,
+  sellerSlug: string
+) {
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      "id, seller_slug, title, slug, price, category, description, image_url"
+    )
+    .eq("seller_slug", sellerSlug)
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Supabase products error:", error);
+    return [];
+  }
+
+  return (data ?? []) as ProductRecord[];
+}
+
+async function getSellerProfileBySlug(
+  slug: string
+): Promise<SellerProfile | null> {
   await connection();
 
   const supabase = createSupabaseAdminClient();
@@ -67,20 +115,120 @@ async function getSellerBySlug(slug: string) {
 
   const sellers = (data ?? []) as Seller[];
 
-  return sellers.find((seller) => {
-    const name = String(seller.name ?? "").trim();
+  const seller = sellers.find((candidate) => {
+    const name = String(candidate.name ?? "").trim();
     return name && createSellerSlug(name) === slug;
   });
+
+  if (!seller) {
+    return null;
+  }
+
+  const products = await getPublishedProducts(supabase, slug);
+
+  return {
+    seller,
+    products,
+  };
+}
+
+function ProductCard({
+  product,
+  sellerName,
+  sellerWhatsapp,
+}: {
+  product: ProductRecord;
+  sellerName: string;
+  sellerWhatsapp: string | null;
+}) {
+  const title = product.title?.trim() || "Producto local";
+  const category = product.category?.trim() || "Producto local";
+  const description =
+    product.description?.trim() || "Producto publicado en YoComproLocal.";
+  const imageStyle = getProductImageStyle(product.image_url);
+  const productWhatsAppHref = sellerWhatsapp
+    ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
+    : null;
+
+  return (
+    <article className="overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+      <div
+        className="flex aspect-[4/3] items-end bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4"
+        style={imageStyle}
+      >
+        <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-[#214e34]">
+          {category}
+        </span>
+      </div>
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="text-xl font-black leading-tight text-[#1f3429]">
+            {title}
+          </h3>
+          <p className="shrink-0 text-lg font-black text-[#c05635]">
+            {formatProductPrice(product.price)}
+          </p>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-[#53645a]">{description}</p>
+
+        {productWhatsAppHref ? (
+          <a
+            href={productWhatsAppHref}
+            className="mt-5 inline-flex w-full min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+          >
+            Preguntar por WhatsApp
+          </a>
+        ) : (
+          <p className="mt-5 rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
+            Contacto pendiente.
+          </p>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function EmptyProductsState() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <article className="rounded-lg border border-[#dbe5d6] bg-white p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
+          Próximo paso
+        </p>
+        <h3 className="mt-4 text-2xl font-black text-[#1f3429]">
+          Carga de productos
+        </h3>
+        <p className="mt-3 text-base leading-7 text-[#53645a]">
+          El vendedor podrá subir una foto, precio y datos básicos para crear
+          una página lista para compartir.
+        </p>
+      </article>
+
+      <article className="rounded-lg border border-[#dbe5d6] bg-white p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
+          IA
+        </p>
+        <h3 className="mt-4 text-2xl font-black text-[#1f3429]">
+          Texto listo para vender
+        </h3>
+        <p className="mt-3 text-base leading-7 text-[#53645a]">
+          Generaremos descripción, etiquetas y mensaje de WhatsApp para que el
+          producto se vea más profesional.
+        </p>
+      </article>
+    </div>
+  );
 }
 
 export default async function SellerProfilePage({ params }: Props) {
   const { slug } = await params;
-  const seller = await getSellerBySlug(slug);
+  const profile = await getSellerProfileBySlug(slug);
 
-  if (!seller?.name) {
+  if (!profile?.seller.name) {
     notFound();
   }
 
+  const { seller, products } = profile;
   const name = seller.name.trim();
   const zona = seller.zona?.trim() || "Cuautitlán Izcalli";
   const description =
@@ -158,10 +306,10 @@ export default async function SellerProfilePage({ params }: Props) {
           </div>
           <div className="py-6 md:px-8">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
-              Plataforma
+              Productos
             </p>
             <p className="mt-2 text-2xl font-black text-[#214e34]">
-              YoComproLocal
+              {products.length}
             </p>
           </div>
         </div>
@@ -200,7 +348,7 @@ export default async function SellerProfilePage({ params }: Props) {
             )}
           </aside>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
                 Productos
@@ -214,33 +362,20 @@ export default async function SellerProfilePage({ params }: Props) {
               </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <article className="rounded-lg border border-[#dbe5d6] bg-white p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
-                  Próximo paso
-                </p>
-                <h3 className="mt-4 text-2xl font-black text-[#1f3429]">
-                  Carga de productos
-                </h3>
-                <p className="mt-3 text-base leading-7 text-[#53645a]">
-                  El vendedor podrá subir una foto, precio y datos básicos para
-                  crear una página lista para compartir.
-                </p>
-              </article>
-
-              <article className="rounded-lg border border-[#dbe5d6] bg-white p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
-                  IA
-                </p>
-                <h3 className="mt-4 text-2xl font-black text-[#1f3429]">
-                  Texto listo para vender
-                </h3>
-                <p className="mt-3 text-base leading-7 text-[#53645a]">
-                  Generaremos descripción, etiquetas y mensaje de WhatsApp para
-                  que el producto se vea más profesional.
-                </p>
-              </article>
-            </div>
+            {products.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    sellerName={name}
+                    sellerWhatsapp={seller.whatsapp}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyProductsState />
+            )}
           </div>
         </div>
       </section>
