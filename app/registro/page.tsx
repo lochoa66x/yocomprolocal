@@ -1,51 +1,49 @@
-import { createClient } from '@supabase/supabase-js'
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { createSellerSlug } from "@/lib/slugs";
+import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
 function getFormValue(formData: FormData, key: string) {
-  return String(formData.get(key) ?? '').trim()
+  return String(formData.get(key) ?? "").trim();
 }
 
 async function submitRegistration(formData: FormData) {
-  'use server'
+  "use server";
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabase = createSupabaseAdminClient();
 
-  if (!supabaseUrl || !serviceRoleKey) {
-    console.error('Missing Supabase environment variables')
-    redirect('/registro?error=1')
+  if (!supabase) {
+    console.error("Missing Supabase environment variables");
+    redirect("/registro?error=1");
   }
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: {
-      persistSession: false,
-    },
-  })
+  const name = getFormValue(formData, "name");
 
-  const { error } = await supabase.from('sellers').insert([
+  const { error } = await supabase.from("sellers").insert([
     {
-      name: getFormValue(formData, 'name'),
-      email: getFormValue(formData, 'email'),
-      whatsapp: getFormValue(formData, 'whatsapp'),
-      zona: getFormValue(formData, 'zona'),
-      description: getFormValue(formData, 'description'),
+      name,
+      email: getFormValue(formData, "email"),
+      whatsapp: getFormValue(formData, "whatsapp"),
+      zona: getFormValue(formData, "zona"),
+      description: getFormValue(formData, "description"),
     },
-  ])
+  ]);
 
   if (error) {
-    console.error('Supabase error:', error)
-    redirect('/registro?error=1')
+    console.error("Supabase error:", error);
+    redirect("/registro?error=1");
   }
 
-  redirect('/registro?success=1')
+  const slug = createSellerSlug(name);
+
+  redirect(`/registro?success=1&slug=${encodeURIComponent(slug)}`);
 }
 
 interface Props {
-  searchParams: Promise<{ success?: string; error?: string }>
+  searchParams: Promise<{ success?: string; error?: string; slug?: string }>;
 }
 
 export default async function RegistroPage({ searchParams }: Props) {
-  const params = await Promise.resolve(searchParams)
+  const params = await Promise.resolve(searchParams);
 
   if (params.success) {
     return (
@@ -54,12 +52,20 @@ export default async function RegistroPage({ searchParams }: Props) {
           <div className="text-4xl mb-4">🎉</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">¡Listo!</h1>
           <p className="text-gray-600">
-            Recibimos tu registro. Te avisamos por WhatsApp cuando tu perfil
-            esté activo.
+            Recibimos tu registro y preparamos tu perfil público. Puedes
+            revisar cómo se ve y compartirlo cuando quieras.
           </p>
+          {params.slug && (
+            <a
+              href={`/vendedor/${params.slug}`}
+              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-green-600 px-5 text-sm font-semibold text-white transition hover:bg-green-700"
+            >
+              Ver perfil público
+            </a>
+          )}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -147,5 +153,5 @@ export default async function RegistroPage({ searchParams }: Props) {
         </form>
       </div>
     </div>
-  )
+  );
 }
