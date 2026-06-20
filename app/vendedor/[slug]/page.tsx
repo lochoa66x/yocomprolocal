@@ -224,12 +224,18 @@ export default async function SellerProfilePage({ params }: Props) {
   const { slug } = await params;
   const profile = await getSellerProfileBySlug(slug);
 
-  if (!profile?.seller.name) {
+  if (!profile) {
     notFound();
   }
 
   const { seller, products } = profile;
-  const name = seller.name.trim();
+  const sellerName = seller.name;
+
+  if (!sellerName) {
+    notFound();
+  }
+
+  const name = sellerName.trim();
   const zona = seller.zona?.trim() || "Cuautitlán Izcalli";
   const description =
     seller.description?.trim() ||
