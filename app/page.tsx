@@ -112,8 +112,7 @@ const content = {
     registerTitle:
       "Vamos a preparar la primera versión para negocios de Izcalli.",
     registerCta: "Unirme a la lista",
-    mailto:
-      "mailto:hola@yocomprolocal.com.mx?subject=Quiero%20vender%20en%20YoComproLocal",
+    registerHref: "/registro",
   },
   en: {
     pageTitle: "YoComproLocal | Buy local. Sell better.",
@@ -222,8 +221,7 @@ const content = {
     registerTitle:
       "We are preparing the first version for businesses in Izcalli.",
     registerCta: "Join the list",
-    mailto:
-      "mailto:hola@yocomprolocal.com.mx?subject=I%20want%20to%20sell%20on%20YoComproLocal",
+    registerHref: "/registro",
   },
 } satisfies Record<Locale, Record<string, unknown>>;
 
@@ -297,7 +295,7 @@ export default function Home() {
                 {copy.languageButton as string}
               </button>
               <a
-                href="#registro"
+                href="/registro"
                 className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:px-5"
               >
                 {copy.cta as string}
@@ -321,7 +319,7 @@ export default function Home() {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
-                  href="#registro"
+                  href="/registro"
                   className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
                 >
                   {copy.primaryCta as string}
@@ -576,7 +574,7 @@ export default function Home() {
             </h2>
           </div>
           <a
-            href={copy.mailto as string}
+            href={copy.registerHref as string}
             className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-[#173a2a] px-6 text-base font-black text-white transition hover:bg-[#214e34]"
           >
             {copy.registerCta as string}
