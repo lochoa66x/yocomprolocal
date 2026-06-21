@@ -141,6 +141,23 @@ enabled and watch for provider rate limits.
 The callback URL is probably missing from Supabase Auth redirect URLs, or the
 magic link expired. Add the redirect URL and request a new link.
 
+### Magic Link Opens Localhost
+
+Set `NEXT_PUBLIC_SITE_URL` in Vercel to:
+
+```text
+https://yocomprolocal.com.mx
+```
+
+Then redeploy. In Supabase Auth URL Configuration, confirm the site URL is also:
+
+```text
+https://yocomprolocal.com.mx
+```
+
+If a Supabase email still lands on `/?code=...`, the homepage forwards that code
+to `/auth/callback?next=/panel` as a safety net.
+
 ### Panel Says Seller Profile Was Not Found
 
 The logged-in email must match the seller email in `public.sellers`. Confirm:

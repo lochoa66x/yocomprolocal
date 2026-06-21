@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseAuthClient } from "@/lib/supabase-server";
 
+const DEFAULT_SITE_URL = "https://yocomprolocal.com.mx";
+
 type Props = {
   searchParams: Promise<{
     email?: string;
@@ -64,18 +66,52 @@ function getLoginHref({
   return `/entrar${queryString ? `?${queryString}` : ""}`;
 }
 
-async function getRequestOrigin() {
-  const headersList = await headers();
-  const origin = headersList.get("origin");
+function normalizeOrigin(value: string | null | undefined) {
+  const trimmedValue = value?.trim().replace(/\/$/, "");
 
-  if (origin) {
-    return origin.replace(/\/$/, "");
+  if (!trimmedValue) {
+    return null;
   }
 
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    "https://yocomprolocal.com.mx"
+  try {
+    return new URL(trimmedValue).origin;
+  } catch {
+    return trimmedValue;
+  }
+}
+
+function isLocalOrigin(origin: string) {
+  try {
+    const { hostname } = new URL(origin);
+
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  } catch {
+    return origin.includes("localhost") || origin.includes("127.0.0.1");
+  }
+}
+
+async function getAuthRedirectOrigin() {
+  const configuredSiteUrl = normalizeOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+
+  if (configuredSiteUrl) {
+    return configuredSiteUrl;
+  }
+
+  const headersList = await headers();
+  const origin = normalizeOrigin(headersList.get("origin"));
+  const forwardedHost =
+    headersList.get("x-forwarded-host") || headersList.get("host");
+  const forwardedProto = headersList.get("x-forwarded-proto") || "https";
+  const forwardedOrigin = normalizeOrigin(
+    forwardedHost ? `${forwardedProto}://${forwardedHost}` : null
   );
+  const requestOrigin = origin || forwardedOrigin;
+
+  if (requestOrigin && !isLocalOrigin(requestOrigin)) {
+    return requestOrigin;
+  }
+
+  return DEFAULT_SITE_URL;
 }
 
 async function sendMagicLink(formData: FormData) {
@@ -95,7 +131,7 @@ async function sendMagicLink(formData: FormData) {
     redirect(getLoginHref({ email, error: "server", nextPath }));
   }
 
-  const origin = await getRequestOrigin();
+  const origin = await getAuthRedirectOrigin();
   const callbackUrl = new URL("/auth/callback", origin);
   callbackUrl.searchParams.set("next", nextPath);
 

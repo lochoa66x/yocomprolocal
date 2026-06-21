@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import HomePageClient, { type FeaturedProduct } from "@/app/HomePageClient";
 import {
@@ -9,6 +10,42 @@ import {
 } from "@/lib/products";
 import { getSellersBySlug, getWhatsAppHref } from "@/lib/storefront";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
+
+type Props = {
+  searchParams: Promise<{
+    code?: string;
+    next?: string;
+  }>;
+};
+
+function getSafeNextPath(nextPath: string | undefined) {
+  if (!nextPath || !nextPath.startsWith("/") || nextPath.startsWith("//")) {
+    return "/panel";
+  }
+
+  return nextPath;
+}
+
+function getAuthCallbackFallbackHref({
+  code,
+  nextPath,
+}: {
+  code?: string;
+  nextPath?: string;
+}) {
+  const authCode = code?.trim();
+
+  if (!authCode) {
+    return null;
+  }
+
+  const params = new URLSearchParams({
+    code: authCode,
+    next: getSafeNextPath(nextPath),
+  });
+
+  return `/auth/callback?${params.toString()}`;
+}
 
 async function getLatestPublishedProducts(supabase: SupabaseClient) {
   const { data, error } = await supabase
@@ -81,7 +118,17 @@ async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
     .slice(0, 3);
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }: Props) {
+  const params = await searchParams;
+  const authCallbackFallbackHref = getAuthCallbackFallbackHref({
+    code: params.code,
+    nextPath: params.next,
+  });
+
+  if (authCallbackFallbackHref) {
+    redirect(authCallbackFallbackHref);
+  }
+
   const featuredProducts = await getFeaturedProducts();
 
   return <HomePageClient featuredProducts={featuredProducts} />;
