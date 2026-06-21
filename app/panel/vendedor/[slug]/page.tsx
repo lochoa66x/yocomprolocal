@@ -128,6 +128,7 @@ function DashboardProductCard({
     product.description?.trim() || "Producto publicado en YoComproLocal.";
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
+  const editProductHref = `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
   const imageStyle = getProductImageStyle(product.image_url);
   const status = product.status?.trim() || "draft";
   const productWhatsAppHref = sellerWhatsapp
@@ -171,7 +172,7 @@ function DashboardProductCard({
             </p>
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {status === "published" ? (
               <a
                 href={productHref}
@@ -184,6 +185,13 @@ function DashboardProductCard({
                 Sin página pública
               </p>
             )}
+
+            <a
+              href={editProductHref}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            >
+              Editar
+            </a>
 
             {productWhatsAppHref ? (
               <a
@@ -264,7 +272,11 @@ export default async function SellerDashboardPage({
     ? "WhatsApp listo"
     : "Falta WhatsApp";
   const showProductCreated = query.producto === "creado";
+  const showProductUpdated = query.producto === "actualizado";
   const showRegistrationCreated = query.registro === "creado";
+  const productMessage = showProductUpdated
+    ? "Producto actualizado. Tu vitrina ya muestra los cambios."
+    : "Producto publicado. Ya puedes compartirlo con tus clientes.";
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -343,17 +355,17 @@ export default async function SellerDashboardPage({
         </div>
       </section>
 
-      {(showProductCreated || showRegistrationCreated) && (
+      {(showProductCreated || showProductUpdated || showRegistrationCreated) && (
         <section className="border-b border-[#dce4d6] bg-[#eef5ec]">
           <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
             <div className="rounded-lg border border-[#b9d8b8] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.05)]">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-[#2f7c5b]">
-                {showProductCreated ? "Producto publicado" : "Registro listo"}
+                {showRegistrationCreated ? "Registro listo" : "Producto listo"}
               </p>
               <p className="mt-2 text-lg font-bold leading-7 text-[#214e34]">
-                {showProductCreated
-                  ? "Producto publicado. Ya puedes compartirlo con tus clientes."
-                  : "Tu registro está listo. Agrega tu primer producto para empezar a compartir tu tienda."}
+                {showRegistrationCreated
+                  ? "Tu registro está listo. Agrega tu primer producto para empezar a compartir tu tienda."
+                  : productMessage}
               </p>
             </div>
           </div>
