@@ -137,7 +137,7 @@ function ProductCard({
             href={productHref}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
           >
-            Ver producto
+            Ver página del producto
           </a>
 
           {productWhatsAppHref ? (
@@ -276,9 +276,18 @@ export default async function SellerProfilePage({ params }: Props) {
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
               Contacto
             </p>
-            <p className="mt-2 text-2xl font-black text-[#214e34]">
-              Directo por WhatsApp
-            </p>
+            {whatsappHref ? (
+              <a
+                href={whatsappHref}
+                className="mt-2 inline-flex text-2xl font-black text-[#214e34] underline decoration-[#25d366] decoration-2 underline-offset-4"
+              >
+                Directo por WhatsApp
+              </a>
+            ) : (
+              <p className="mt-2 text-2xl font-black text-[#214e34]">
+                Contacto pendiente
+              </p>
+            )}
           </div>
           <div className="py-6 md:px-8">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
@@ -334,16 +343,15 @@ export default async function SellerProfilePage({ params }: Props) {
                   Productos de este vendedor
                 </h2>
                 <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                  Este espacio será la vitrina pública donde cada producto tenga
-                  foto, precio, descripción con IA y botón para contactar
-                  directo.
+                  Cada producto tiene su propia página para ver foto, precio,
+                  descripción y preguntar directo por WhatsApp.
                 </p>
               </div>
               <a
-                href={`/producto/nuevo?seller=${slug}`}
-                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+                href="/panel"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
               >
-                Agregar producto
+                Soy este vendedor
               </a>
             </div>
 

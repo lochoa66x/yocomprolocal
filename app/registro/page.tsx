@@ -84,11 +84,13 @@ export default async function RegistroPage({ searchParams }: Props) {
           <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#c05635]">
             Registro recibido
           </p>
-          <h1 className="mt-3 text-3xl font-black text-[#1f3429]">¡Listo!</h1>
+          <h1 className="mt-3 text-3xl font-black text-[#1f3429]">
+            Tu negocio quedó registrado.
+          </h1>
           <p className="mt-4 text-base leading-7 text-[#53645a]">
-            Recibimos tu registro y ya puedes entrar a tu panel. Desde ahí
-            puedes revisar tu perfil público, agregar productos y compartir tu
-            página por WhatsApp.
+            Primero entra a tu panel privado. Desde ahí puedes agregar
+            productos, revisar tu página pública y copiar links para compartir
+            por WhatsApp.
           </p>
 
           {sellerSlug ? (

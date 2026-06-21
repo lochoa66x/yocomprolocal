@@ -196,11 +196,11 @@ export default async function LoginPage({ searchParams }: Props) {
           Acceso vendedor
         </p>
         <h1 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
-          Entra a tu panel con un link mágico.
+          Entra a tu panel con un enlace por correo.
         </h1>
         <p className="mt-4 text-base leading-7 text-[#53645a]">
           Usa el mismo correo con el que registraste tu negocio. Te enviaremos
-          un link seguro para entrar sin contraseña.
+          un botón seguro para abrir tu panel privado sin contraseña.
         </p>
 
         {linkSent && (
@@ -209,7 +209,8 @@ export default async function LoginPage({ searchParams }: Props) {
               Link enviado.
             </p>
             <p className="mt-1 text-sm leading-6 text-[#53645a]">
-              Revisa tu correo y abre el link para continuar al panel.
+              Revisa tu correo y abre el enlace para continuar a tu panel
+              privado.
             </p>
           </div>
         )}
@@ -245,7 +246,7 @@ export default async function LoginPage({ searchParams }: Props) {
             type="submit"
             className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
           >
-            Enviarme link de acceso
+            Enviarme enlace de acceso
           </button>
         </form>
 

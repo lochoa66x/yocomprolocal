@@ -38,19 +38,19 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
         href={dashboardPath}
         className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
       >
-        Ir a mi panel
-      </a>
-      <a
-        href={sellerPath}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
-      >
-        Ver mi perfil
+        Entrar a mi panel privado
       </a>
       <a
         href={productPath}
         className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
       >
         Agregar mi primer producto
+      </a>
+      <a
+        href={sellerPath}
+        className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+      >
+        Ver mi página pública
       </a>
       <button
         type="button"
@@ -59,7 +59,7 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
       >
         {copyState === "copied"
           ? "Enlace copiado"
-          : "Copiar enlace de mi tienda"}
+          : "Copiar link de mi página pública"}
       </button>
       {copyState === "error" && (
         <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">

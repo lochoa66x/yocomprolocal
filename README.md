@@ -70,6 +70,10 @@ For production seller login setup, follow:
 
 `docs/production-auth-qa.md`
 
+For product concerns, future login ideas, and seller UX notes, follow:
+
+`docs/product-notes.md`
+
 Start the local development server:
 
 ```bash

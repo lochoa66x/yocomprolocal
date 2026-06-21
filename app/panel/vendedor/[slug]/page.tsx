@@ -590,11 +590,13 @@ function DashboardProductCard({
   sellerName,
   sellerWhatsapp,
   sellerSlug,
+  siteUrl,
 }: {
   product: DashboardProductRecord;
   sellerName: string;
   sellerWhatsapp: string | null;
   sellerSlug: string;
+  siteUrl: string;
 }) {
   const title = product.title?.trim() || "Producto local";
   const category = product.category?.trim() || "Producto local";
@@ -602,12 +604,13 @@ function DashboardProductCard({
     product.description?.trim() || "Producto publicado en YoComproLocal.";
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
+  const productUrl = `${siteUrl}${productHref}`;
   const editProductHref = `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
   const imageStyle = getProductImageStyle(product.image_url);
   const status = product.status?.trim() || "draft";
   const nextStatus = status === "published" ? "draft" : "published";
   const statusActionLabel =
-    status === "published" ? "Mover a borrador" : "Publicar";
+    status === "published" ? "Ocultar de público" : "Publicar página";
   const productWhatsAppHref = sellerWhatsapp
     ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
     : null;
@@ -649,26 +652,67 @@ function DashboardProductCard({
             </p>
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            {status === "published" ? (
-              <a
-                href={productHref}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
-              >
-                Ver producto
-              </a>
-            ) : (
-              <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                Sin página pública
+          {status === "published" ? (
+            <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Página pública del producto
               </p>
-            )}
+              <p className="mt-2 break-all text-sm font-semibold leading-6 text-[#214e34]">
+                {productUrl}
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <a
+                  href={productHref}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                >
+                  Abrir página del producto
+                </a>
+                <CopyLinkButton
+                  copiedLabel="Link copiado"
+                  label="Copiar link del producto"
+                  value={productUrl}
+                  variant="secondary"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#eef5ec] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Sin página pública todavía
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
+                Este producto está en borrador. Publícalo cuando quieras que
+                los clientes puedan verlo.
+              </p>
+            </div>
+          )}
 
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <a
               href={editProductHref}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
             >
-              Editar
+              Editar datos
             </a>
+
+            {status === "published" ? (
+              productWhatsAppHref ? (
+                <a
+                  href={productWhatsAppHref}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                >
+                  Probar WhatsApp
+                </a>
+              ) : (
+                <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
+                  WhatsApp pendiente
+                </p>
+              )
+            ) : (
+              <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
+                Cliente no lo ve
+              </p>
+            )}
 
             <form action={updateProductStatus}>
               <input type="hidden" name="sellerSlug" value={sellerSlug} />
@@ -686,19 +730,6 @@ function DashboardProductCard({
                 {statusActionLabel}
               </button>
             </form>
-
-            {productWhatsAppHref ? (
-              <a
-                href={productWhatsAppHref}
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
-              >
-                WhatsApp
-              </a>
-            ) : (
-              <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                WhatsApp pendiente
-              </p>
-            )}
 
             <a
               href={`/producto/nuevo?seller=${sellerSlug}`}
@@ -865,8 +896,8 @@ export default async function SellerDashboardPage({
                 {sellerName}
               </h1>
               <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-white/82">
-                Revisa tus productos, comparte tu página y agrega nuevos
-                productos cuando quieras.
+                Este es tu panel privado. Aquí agregas productos, copias links
+                y revisas lo que tus clientes ven en tu página pública.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0">
@@ -970,15 +1001,33 @@ export default async function SellerDashboardPage({
               {description}
             </p>
 
+            <div className="mt-6 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Panel privado
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
+                Solo tú ves esta pantalla. Tus clientes ven tu página pública y
+                las páginas de tus productos.
+              </p>
+            </div>
+
             <div className="mt-6 rounded-lg bg-[#eef5ec] p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Comparte tu página
+                Página pública de tu negocio
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
+                Este es el link que puedes mandar a clientes para mostrar tu
+                tienda.
               </p>
               <p className="mt-3 break-all rounded-lg bg-white px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
                 {publicSellerUrl}
               </p>
               <div className="mt-4 grid gap-3">
-                <CopyLinkButton value={publicSellerUrl} />
+                <CopyLinkButton
+                  copiedLabel="Link público copiado"
+                  label="Copiar link de mi página pública"
+                  value={publicSellerUrl}
+                />
                 <a
                   href={editProfileHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
@@ -1042,6 +1091,7 @@ export default async function SellerDashboardPage({
                     sellerName={sellerName}
                     sellerWhatsapp={seller.whatsapp}
                     sellerSlug={slug}
+                    siteUrl={siteUrl}
                   />
                 ))}
               </div>
