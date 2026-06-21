@@ -9,6 +9,7 @@ import {
   getWhatsAppHref,
   type SellerRecord,
 } from "@/lib/storefront";
+import { getCanonicalSiteOrigin } from "@/lib/site-url";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
 type ProductPageData = {
@@ -18,12 +19,6 @@ type ProductPageData = {
 
 type Props = {
   params: Promise<{ slug: string; productSlug: string }>;
-};
-
-export const metadata: Metadata = {
-  title: "Producto local | YoComproLocal",
-  description:
-    "Página pública de producto local en YoComproLocal para contactar directo por WhatsApp.",
 };
 
 async function getPublishedProduct(
@@ -72,6 +67,95 @@ async function getPublishedProduct(
   };
 }
 
+function getValidImageUrl(imageUrl: string | null) {
+  const trimmedUrl = imageUrl?.trim();
+
+  if (!trimmedUrl || !/^https?:\/\//.test(trimmedUrl)) {
+    return null;
+  }
+
+  return trimmedUrl;
+}
+
+function getMetadataDescription({
+  description,
+  price,
+  sellerName,
+  zona,
+}: {
+  description: string;
+  price: ProductRecord["price"];
+  sellerName: string;
+  zona: string;
+}) {
+  const productDescription = description.replace(/\s+/g, " ").trim();
+  const shortDescription =
+    productDescription.length > 115
+      ? `${productDescription.slice(0, 115).replace(/\s+\S*$/, "")}...`
+      : productDescription;
+
+  return `${shortDescription} ${formatProductPrice(
+    price
+  )}. Vende ${sellerName} en ${zona}.`;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug: sellerSlug, productSlug } = await params;
+  const pageData = await getPublishedProduct(sellerSlug, productSlug);
+
+  if (!pageData) {
+    return {
+      title: "Producto local | YoComproLocal",
+      description:
+        "Página pública de producto local en YoComproLocal para contactar directo por WhatsApp.",
+    };
+  }
+
+  const { seller, product } = pageData;
+  const sellerName = seller.name?.trim() || "Vendedor local";
+  const title = product.title?.trim() || "Producto local";
+  const description =
+    product.description?.trim() || "Producto publicado en YoComproLocal.";
+  const zona = seller.zona?.trim() || "Cuautitlán Izcalli";
+  const productUrl = new URL(
+    `/vendedor/${sellerSlug}/producto/${productSlug}`,
+    getCanonicalSiteOrigin()
+  ).toString();
+  const imageUrl = getValidImageUrl(product.image_url);
+  const metadataDescription = getMetadataDescription({
+    description,
+    price: product.price,
+    sellerName,
+    zona,
+  });
+
+  return {
+    title: `${title} | ${sellerName} en YoComproLocal`,
+    description: metadataDescription,
+    openGraph: {
+      title,
+      description: metadataDescription,
+      url: productUrl,
+      siteName: "YoComproLocal",
+      type: "website",
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              alt: title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: imageUrl ? "summary_large_image" : "summary",
+      title,
+      description: metadataDescription,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+  };
+}
+
 export default async function ProductDetailPage({ params }: Props) {
   const { slug: sellerSlug, productSlug } = await params;
   const pageData = await getPublishedProduct(sellerSlug, productSlug);
@@ -93,6 +177,12 @@ export default async function ProductDetailPage({ params }: Props) {
     product.description?.trim() || "Producto publicado en YoComproLocal.";
   const zona = seller.zona?.trim() || "Cuautitlán Izcalli";
   const imageStyle = getProductImageStyle(product.image_url);
+  const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
+  const productUrl = new URL(productHref, getCanonicalSiteOrigin()).toString();
+  const sellerHref = `/vendedor/${sellerSlug}`;
+  const shareProductHref = `https://wa.me/?text=${encodeURIComponent(
+    `Mira este producto local en YoComproLocal: ${title} - ${productUrl}`
+  )}`;
   const productWhatsAppHref = seller.whatsapp
     ? getWhatsAppHref(seller.whatsapp, sellerName, title)
     : null;
@@ -114,10 +204,10 @@ export default async function ProductDetailPage({ params }: Props) {
             </span>
           </a>
           <a
-            href={`/vendedor/${sellerSlug}`}
+            href={sellerHref}
             className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
           >
-            Volver al vendedor
+            Ver tienda
           </a>
         </div>
       </section>
@@ -131,7 +221,8 @@ export default async function ProductDetailPage({ params }: Props) {
             {title}
           </h1>
           <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/82">
-            De {sellerName}, disponible en {zona}.
+            De {sellerName}, disponible en {zona}. Pregunta directo por
+            WhatsApp y acuerda entrega con el vendedor.
           </p>
         </div>
       </section>
@@ -142,7 +233,19 @@ export default async function ProductDetailPage({ params }: Props) {
             className="relative flex min-h-[390px] overflow-hidden rounded-lg border border-[#dbe5d6] bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center shadow-[0_18px_45px_rgba(31,52,41,0.12)] sm:min-h-[560px]"
             style={imageStyle}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-[#173a2a]/62 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#173a2a]/68 via-[#173a2a]/10 to-transparent" />
+            {!imageStyle && (
+              <div className="absolute inset-0 flex items-center justify-center p-8 text-center">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.18em] text-white/80">
+                    Foto pendiente
+                  </p>
+                  <p className="mt-3 text-3xl font-black text-white">
+                    {title}
+                  </p>
+                </div>
+              </div>
+            )}
             <span className="relative mb-5 ml-5 mt-auto rounded-full bg-white/92 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#214e34]">
               {category}
             </span>
@@ -150,7 +253,13 @@ export default async function ProductDetailPage({ params }: Props) {
 
           <div className="flex flex-col justify-center">
             <section className="rounded-lg border border-[#dbe5d6] bg-white p-6 shadow-[0_14px_36px_rgba(31,52,41,0.08)] sm:p-8">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#c05635]">
+                {category}
+              </p>
+              <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+                {title}
+              </h2>
+              <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
                 Precio
               </p>
               <p className="mt-3 text-4xl font-black text-[#c05635]">
@@ -163,7 +272,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 {description}
               </p>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <div className="mt-8 grid gap-3">
                 {productWhatsAppHref ? (
                   <a
                     href={productWhatsAppHref}
@@ -177,32 +286,60 @@ export default async function ProductDetailPage({ params }: Props) {
                   </p>
                 )}
                 <a
-                  href={`/vendedor/${sellerSlug}`}
+                  href={sellerHref}
                   className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-6 text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
-                  Ver tienda
+                  Ver tienda del vendedor
                 </a>
               </div>
             </section>
 
-            <section className="mt-5 rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
-                Vendedor
-              </p>
-              <div className="mt-4 flex items-center gap-4">
-                <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-[#e6f1e8] text-lg font-black text-[#214e34]">
-                  {getInitials(sellerName)}
+            <div className="mt-5 grid gap-5">
+              <section className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
+                  Vendedor
+                </p>
+                <div className="mt-4 flex items-center gap-4">
+                  <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-[#e6f1e8] text-lg font-black text-[#214e34]">
+                    {getInitials(sellerName)}
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-xl font-black text-[#1f3429]">
+                      {sellerName}
+                    </h2>
+                    <p className="mt-1 text-sm font-semibold text-[#6a7a70]">
+                      {zona}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h2 className="text-xl font-black text-[#1f3429]">
-                    {sellerName}
-                  </h2>
-                  <p className="mt-1 text-sm font-semibold text-[#6a7a70]">
-                    {zona}
-                  </p>
-                </div>
-              </div>
-            </section>
+              </section>
+
+              <section className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
+                  Cómo comprar
+                </p>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[#53645a]">
+                  YoComproLocal no procesa pagos ni envíos. Escribe por
+                  WhatsApp, confirma disponibilidad y acuerda entrega directo
+                  con {sellerName}.
+                </p>
+              </section>
+
+              <section className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
+                  Compartir producto
+                </p>
+                <p className="mt-3 break-all rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#214e34]">
+                  {productUrl}
+                </p>
+                <a
+                  href={shareProductHref}
+                  className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                >
+                  Compartir por WhatsApp
+                </a>
+              </section>
+            </div>
           </div>
         </div>
       </section>
