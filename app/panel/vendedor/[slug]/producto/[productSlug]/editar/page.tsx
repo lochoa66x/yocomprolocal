@@ -65,6 +65,14 @@ function getErrorMessage(error?: string) {
     return "Completa los campos obligatorios para guardar el producto.";
   }
 
+  if (error === "delete-confirm") {
+    return "Marca la casilla de confirmación antes de eliminar el producto.";
+  }
+
+  if (error === "delete") {
+    return "No pudimos eliminar el producto. Intenta de nuevo.";
+  }
+
   if (error) {
     return "No pudimos actualizar el producto. Intenta de nuevo.";
   }
@@ -98,6 +106,10 @@ function getEditProductHref({
 
 function getDashboardUpdatedHref(sellerSlug: string) {
   return `/panel/vendedor/${encodeURIComponent(sellerSlug)}?producto=actualizado`;
+}
+
+function getDashboardDeletedHref(sellerSlug: string) {
+  return `/panel/vendedor/${encodeURIComponent(sellerSlug)}?producto=eliminado`;
 }
 
 async function getProductForEdit(
@@ -234,6 +246,67 @@ async function updateProduct(formData: FormData) {
   }
 
   redirect(getDashboardUpdatedHref(sellerSlug));
+}
+
+async function deleteProduct(formData: FormData) {
+  "use server";
+
+  const sellerSlug = getFormValue(formData, "sellerSlug");
+  const currentSlug = getFormValue(formData, "currentSlug");
+  const confirmDelete = getFormValue(formData, "confirmDelete");
+
+  if (!sellerSlug || !currentSlug) {
+    redirect(
+      getEditProductHref({
+        sellerSlug,
+        productSlug: currentSlug,
+        error: "delete",
+      })
+    );
+  }
+
+  if (confirmDelete !== "yes") {
+    redirect(
+      getEditProductHref({
+        sellerSlug,
+        productSlug: currentSlug,
+        error: "delete-confirm",
+      })
+    );
+  }
+
+  const { seller, supabase } = await requireSellerAccess({
+    slug: sellerSlug,
+    nextPath: getEditProductHref({
+      sellerSlug,
+      productSlug: currentSlug,
+    }),
+  });
+
+  let deleteQuery = supabase
+    .from("products")
+    .delete()
+    .eq("seller_slug", sellerSlug)
+    .eq("slug", currentSlug);
+
+  if (seller.id) {
+    deleteQuery = deleteQuery.eq("seller_id", seller.id);
+  }
+
+  const { error } = await deleteQuery;
+
+  if (error) {
+    console.error("Supabase product delete error:", error);
+    redirect(
+      getEditProductHref({
+        sellerSlug,
+        productSlug: currentSlug,
+        error: "delete",
+      })
+    );
+  }
+
+  redirect(getDashboardDeletedHref(sellerSlug));
 }
 
 export default async function EditProductPage({ params, searchParams }: Props) {
@@ -469,6 +542,38 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                 </a>
               </div>
             </form>
+
+            <div className="mt-8 rounded-lg border border-[#f2c4b2] bg-[#fff8f5] p-5">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-[#a74429]">
+                Zona de cuidado
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-[#1f3429]">
+                Eliminar producto
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[#6a4f45]">
+                Esta acción quita el producto de tu panel y de tu página pública.
+                Úsala solo si ya no quieres conservarlo.
+              </p>
+              <form action={deleteProduct} className="mt-4 space-y-4">
+                <input type="hidden" name="sellerSlug" value={sellerSlug} />
+                <input type="hidden" name="currentSlug" value={productSlug} />
+                <label className="flex items-start gap-3 text-sm font-semibold leading-6 text-[#6a4f45]">
+                  <input
+                    type="checkbox"
+                    name="confirmDelete"
+                    value="yes"
+                    className="mt-1 size-4 rounded border-[#d49b87] text-[#a74429]"
+                  />
+                  Entiendo que quiero eliminar este producto.
+                </label>
+                <button
+                  type="submit"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
+                >
+                  Eliminar producto
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </section>

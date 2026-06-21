@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import CopyLinkButton from "./CopyLinkButton";
 import {
@@ -86,6 +86,10 @@ function hasText(value: string | null | undefined) {
   return Boolean(value?.trim());
 }
 
+function getFormValue(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
 function getProductEditHref(sellerSlug: string, product: DashboardProductRecord) {
   const title = product.title?.trim() || "producto-local";
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
@@ -101,6 +105,26 @@ function getPublicProductHref(
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
 
   return `/vendedor/${sellerSlug}/producto/${productSlug}`;
+}
+
+function getDashboardProductActionHref({
+  productStatus,
+  sellerSlug,
+}: {
+  productStatus?: string;
+  sellerSlug: string;
+}) {
+  const params = new URLSearchParams();
+
+  if (productStatus) {
+    params.set("producto", productStatus);
+  }
+
+  const queryString = params.toString();
+
+  return `/panel/vendedor/${encodeURIComponent(sellerSlug)}${
+    queryString ? `?${queryString}` : ""
+  }`;
 }
 
 function getSellerShareMessage({
@@ -139,6 +163,66 @@ function getProductCaption({
   sellerName: string;
 }) {
   return `${productTitle} disponible en ${sellerName}. ${priceLabel}. Pide directo por WhatsApp desde YoComproLocal: ${productUrl}`;
+}
+
+async function updateProductStatus(formData: FormData) {
+  "use server";
+
+  const sellerSlug = getFormValue(formData, "sellerSlug");
+  const productId = getFormValue(formData, "productId");
+  const productSlug = getFormValue(formData, "productSlug");
+  const nextStatusValue = getFormValue(formData, "nextStatus");
+  const nextStatus = nextStatusValue === "draft" ? "draft" : "published";
+
+  if (!sellerSlug || !productSlug) {
+    redirect(
+      getDashboardProductActionHref({
+        sellerSlug: sellerSlug || "panel",
+        productStatus: "error",
+      })
+    );
+  }
+
+  const { seller, supabase } = await requireSellerAccess({
+    slug: sellerSlug,
+    nextPath: getDashboardProductActionHref({ sellerSlug }),
+  });
+
+  let updateQuery = supabase
+    .from("products")
+    .update({
+      status: nextStatus,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("seller_slug", sellerSlug)
+    .eq("slug", productSlug);
+
+  if (productId) {
+    updateQuery = updateQuery.eq("id", productId);
+  }
+
+  if (seller.id) {
+    updateQuery = updateQuery.eq("seller_id", seller.id);
+  }
+
+  const { error } = await updateQuery;
+
+  if (error) {
+    console.error("Supabase product status update error:", error);
+    redirect(
+      getDashboardProductActionHref({
+        sellerSlug,
+        productStatus: "error",
+      })
+    );
+  }
+
+  redirect(
+    getDashboardProductActionHref({
+      sellerSlug,
+      productStatus: nextStatus === "published" ? "publicado" : "borrador",
+    })
+  );
 }
 
 function getDashboardTasks({
@@ -521,6 +605,9 @@ function DashboardProductCard({
   const editProductHref = `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
   const imageStyle = getProductImageStyle(product.image_url);
   const status = product.status?.trim() || "draft";
+  const nextStatus = status === "published" ? "draft" : "published";
+  const statusActionLabel =
+    status === "published" ? "Mover a borrador" : "Publicar";
   const productWhatsAppHref = sellerWhatsapp
     ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
     : null;
@@ -562,7 +649,7 @@ function DashboardProductCard({
             </p>
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             {status === "published" ? (
               <a
                 href={productHref}
@@ -582,6 +669,23 @@ function DashboardProductCard({
             >
               Editar
             </a>
+
+            <form action={updateProductStatus}>
+              <input type="hidden" name="sellerSlug" value={sellerSlug} />
+              <input type="hidden" name="productId" value={product.id} />
+              <input type="hidden" name="productSlug" value={productSlug} />
+              <input type="hidden" name="nextStatus" value={nextStatus} />
+              <button
+                type="submit"
+                className={`inline-flex min-h-11 w-full items-center justify-center rounded-full px-5 text-sm font-black transition ${
+                  nextStatus === "published"
+                    ? "bg-[#25d366] text-[#102318] hover:bg-[#39df78]"
+                    : "border border-[#214e34]/20 bg-white text-[#214e34] hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                }`}
+              >
+                {statusActionLabel}
+              </button>
+            </form>
 
             {productWhatsAppHref ? (
               <a
@@ -687,11 +791,35 @@ export default async function SellerDashboardPage({
     });
   const showProductCreated = query.producto === "creado";
   const showProductUpdated = query.producto === "actualizado";
+  const showProductPublished = query.producto === "publicado";
+  const showProductDrafted = query.producto === "borrador";
+  const showProductDeleted = query.producto === "eliminado";
+  const showProductError = query.producto === "error";
   const showRegistrationCreated = query.registro === "creado";
   const showProfileUpdated = query.perfil === "actualizado";
-  const productMessage = showProductUpdated
-    ? "Producto actualizado. Tu vitrina ya muestra los cambios."
-    : "Producto publicado. Ya puedes compartirlo con tus clientes.";
+  const productMessage = (() => {
+    if (showProductUpdated) {
+      return "Producto actualizado. Tu vitrina ya muestra los cambios.";
+    }
+
+    if (showProductPublished) {
+      return "Producto publicado. Ya aparece en tu página pública.";
+    }
+
+    if (showProductDrafted) {
+      return "Producto movido a borrador. Ya no aparece en la página pública.";
+    }
+
+    if (showProductDeleted) {
+      return "Producto eliminado. Tu panel ya está actualizado.";
+    }
+
+    if (showProductError) {
+      return "No pudimos actualizar el producto. Intenta de nuevo.";
+    }
+
+    return "Producto publicado. Ya puedes compartirlo con tus clientes.";
+  })();
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -791,6 +919,10 @@ export default async function SellerDashboardPage({
 
       {(showProductCreated ||
         showProductUpdated ||
+        showProductPublished ||
+        showProductDrafted ||
+        showProductDeleted ||
+        showProductError ||
         showRegistrationCreated ||
         showProfileUpdated) && (
         <section className="border-b border-[#dce4d6] bg-[#eef5ec]">
@@ -801,6 +933,8 @@ export default async function SellerDashboardPage({
                   ? "Registro listo"
                   : showProfileUpdated
                   ? "Perfil actualizado"
+                  : showProductError
+                  ? "Producto pendiente"
                   : "Producto listo"}
               </p>
               <p className="mt-2 text-lg font-bold leading-7 text-[#214e34]">
