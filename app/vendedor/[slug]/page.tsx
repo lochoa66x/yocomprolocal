@@ -3,19 +3,22 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { formatProductPrice, type ProductRecord } from "@/lib/products";
-import { createSellerSlug } from "@/lib/slugs";
+import {
+  createProductRecordSlug,
+  formatProductPrice,
+  type ProductRecord,
+} from "@/lib/products";
+import {
+  getInitials,
+  getProductImageStyle,
+  getSellerBySlug,
+  getWhatsAppHref,
+  type SellerRecord,
+} from "@/lib/storefront";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
-type Seller = {
-  name: string | null;
-  whatsapp: string | null;
-  zona: string | null;
-  description: string | null;
-};
-
 type SellerProfile = {
-  seller: Seller;
+  seller: SellerRecord;
   products: ProductRecord[];
 };
 
@@ -28,47 +31,6 @@ export const metadata: Metadata = {
   description:
     "Perfil público de vendedor local en YoComproLocal para contactar directo por WhatsApp.",
 };
-
-function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
-}
-
-function getWhatsAppHref(
-  whatsapp: string,
-  sellerName: string,
-  productTitle?: string
-) {
-  const digits = whatsapp.replace(/\D/g, "");
-
-  if (!digits) {
-    return null;
-  }
-
-  const phone = digits.startsWith("52") ? digits : `52${digits}`;
-  const message = productTitle
-    ? `Hola, vi "${productTitle}" de ${sellerName} en YoComproLocal y me interesa.`
-    : `Hola, vi el perfil de ${sellerName} en YoComproLocal y me interesa lo que vende.`;
-
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-}
-
-function getProductImageStyle(imageUrl: string | null) {
-  const trimmedUrl = imageUrl?.trim();
-
-  if (!trimmedUrl || !/^https?:\/\//.test(trimmedUrl)) {
-    return undefined;
-  }
-
-  return {
-    backgroundImage: `url(${trimmedUrl})`,
-  };
-}
 
 async function getPublishedProducts(
   supabase: SupabaseClient,
@@ -103,22 +65,7 @@ async function getSellerProfileBySlug(
     return null;
   }
 
-  const { data, error } = await supabase
-    .from("sellers")
-    .select("name, whatsapp, zona, description")
-    .limit(100);
-
-  if (error) {
-    console.error("Supabase error:", error);
-    return null;
-  }
-
-  const sellers = (data ?? []) as Seller[];
-
-  const seller = sellers.find((candidate) => {
-    const name = String(candidate.name ?? "").trim();
-    return name && createSellerSlug(name) === slug;
-  });
+  const seller = await getSellerBySlug(supabase, slug);
 
   if (!seller) {
     return null;
@@ -136,22 +83,31 @@ function ProductCard({
   product,
   sellerName,
   sellerWhatsapp,
+  sellerSlug,
 }: {
   product: ProductRecord;
   sellerName: string;
   sellerWhatsapp: string | null;
+  sellerSlug: string;
 }) {
   const title = product.title?.trim() || "Producto local";
   const category = product.category?.trim() || "Producto local";
   const description =
     product.description?.trim() || "Producto publicado en YoComproLocal.";
+  const productSlug = product.slug?.trim() || createProductRecordSlug(title);
+  const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
   const imageStyle = getProductImageStyle(product.image_url);
   const productWhatsAppHref = sellerWhatsapp
     ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
     : null;
 
   return (
-    <article className="overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+    <article className="relative overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(31,52,41,0.12)]">
+      <a
+        href={productHref}
+        className="absolute inset-0 z-10"
+        aria-label={`Ver producto ${title}`}
+      />
       <div
         className="relative flex aspect-[4/3] items-end bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4"
         style={imageStyle}
@@ -175,7 +131,7 @@ function ProductCard({
         {productWhatsAppHref ? (
           <a
             href={productWhatsAppHref}
-            className="mt-5 inline-flex w-full min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+            className="relative z-20 mt-5 inline-flex w-full min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
           >
             Preguntar por WhatsApp
           </a>
@@ -386,6 +342,7 @@ export default async function SellerProfilePage({ params }: Props) {
                     product={product}
                     sellerName={name}
                     sellerWhatsapp={seller.whatsapp}
+                    sellerSlug={slug}
                   />
                 ))}
               </div>
