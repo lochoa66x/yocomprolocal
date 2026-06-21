@@ -49,10 +49,7 @@ export function getWhatsAppHref(
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
-export async function getSellerBySlug(
-  supabase: SupabaseClient,
-  slug: string
-) {
+export async function getSellersBySlug(supabase: SupabaseClient) {
   const { data, error } = await supabase
     .from("sellers")
     .select("name, whatsapp, zona, description")
@@ -60,15 +57,27 @@ export async function getSellerBySlug(
 
   if (error) {
     console.error("Supabase seller lookup error:", error);
-    return null;
+    return {};
   }
 
   const sellers = (data ?? []) as SellerRecord[];
 
-  return (
-    sellers.find((candidate) => {
-      const name = String(candidate.name ?? "").trim();
-      return name && createSellerSlug(name) === slug;
-    }) ?? null
-  );
+  return sellers.reduce<Record<string, SellerRecord>>((lookup, seller) => {
+    const name = String(seller.name ?? "").trim();
+
+    if (name) {
+      lookup[createSellerSlug(name)] = seller;
+    }
+
+    return lookup;
+  }, {});
+}
+
+export async function getSellerBySlug(
+  supabase: SupabaseClient,
+  slug: string
+) {
+  const sellersBySlug = await getSellersBySlug(supabase);
+
+  return sellersBySlug[slug] ?? null;
 }

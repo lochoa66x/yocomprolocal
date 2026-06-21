@@ -6,6 +6,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createProductRecordSlug,
   formatProductPrice,
+  getProductCardDescription,
   type ProductRecord,
 } from "@/lib/products";
 import {
@@ -79,18 +80,6 @@ async function getSellerProfileBySlug(
   };
 }
 
-function getCardDescription(description: string) {
-  const maxLength = 150;
-  const trimmed = description.trim();
-
-  if (trimmed.length <= maxLength) {
-    return trimmed;
-  }
-
-  const shortened = trimmed.slice(0, maxLength).replace(/\s+\S*$/, "");
-  return `${shortened || trimmed.slice(0, maxLength).trimEnd()}...`;
-}
-
 function ProductCard({
   product,
   sellerName,
@@ -106,7 +95,7 @@ function ProductCard({
   const category = product.category?.trim() || "Producto local";
   const description =
     product.description?.trim() || "Producto publicado en YoComproLocal.";
-  const cardDescription = getCardDescription(description);
+  const cardDescription = getProductCardDescription(description);
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
   const imageStyle = getProductImageStyle(product.image_url);

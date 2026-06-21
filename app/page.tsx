@@ -13,6 +13,7 @@ const content = {
     logoLabel: "YoComproLocal inicio",
     navLabel: "Navegación principal",
     nav: {
+      products: "Productos",
       sellers: "Vendedores",
       how: "Cómo funciona",
       mvp: "MVP",
@@ -26,7 +27,7 @@ const content = {
     heroText:
       "Sube una foto de tu producto y crea una página lista para compartir por WhatsApp, con ayuda de IA.",
     primaryCta: "Empezar como vendedor",
-    secondaryCta: "Ver el flujo",
+    secondaryCta: "Ver productos",
     stats: [
       ["Ciudad piloto", "Cuautitlán Izcalli"],
       ["Primer enfoque", "Descubrimiento local"],
@@ -121,6 +122,7 @@ const content = {
     logoLabel: "YoComproLocal home",
     navLabel: "Primary navigation",
     nav: {
+      products: "Products",
       sellers: "Sellers",
       how: "How it works",
       mvp: "MVP",
@@ -135,7 +137,7 @@ const content = {
     heroText:
       "Upload a product photo and create a page ready to share on WhatsApp, with help from AI.",
     primaryCta: "Start as a seller",
-    secondaryCta: "See the flow",
+    secondaryCta: "Browse products",
     stats: [
       ["Pilot city", "Cuautitlán Izcalli"],
       ["First focus", "Local discovery"],
@@ -271,6 +273,9 @@ export default function Home() {
               className="hidden items-center gap-7 text-sm font-medium text-white/82 md:flex"
               aria-label={copy.navLabel as string}
             >
+              <a href="/productos" className="transition hover:text-white">
+                {copy.nav.products}
+              </a>
               <a href="#vendedores" className="transition hover:text-white">
                 {copy.nav.sellers}
               </a>
@@ -328,7 +333,7 @@ export default function Home() {
                   </span>
                 </a>
                 <a
-                  href="#como-funciona"
+                  href="/productos"
                   className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/45 bg-white/10 px-6 text-base font-bold text-white backdrop-blur transition hover:bg-white/18"
                 >
                   {copy.secondaryCta as string}

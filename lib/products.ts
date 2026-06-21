@@ -24,6 +24,18 @@ export function createProductRecordSlug(title: string) {
   return createProductSlug(title);
 }
 
+export function getProductCardDescription(description: string) {
+  const maxLength = 150;
+  const trimmed = description.trim();
+
+  if (trimmed.length <= maxLength) {
+    return trimmed;
+  }
+
+  const shortened = trimmed.slice(0, maxLength).replace(/\s+\S*$/, "");
+  return `${shortened || trimmed.slice(0, maxLength).trimEnd()}...`;
+}
+
 export function formatProductPrice(price: ProductRecord["price"]) {
   const amount = Number(price);
 
