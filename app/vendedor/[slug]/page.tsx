@@ -226,7 +226,7 @@ export default async function SellerProfilePage({ params }: Props) {
           className="object-cover object-center opacity-30"
         />
         <div className="absolute inset-0 bg-[#173a2a]/76" />
-        <div className="relative z-10 mx-auto flex min-h-[52svh] w-full max-w-7xl flex-col px-5 py-5 sm:px-8 lg:px-10">
+        <div className="relative z-10 mx-auto flex min-h-[360px] w-full max-w-7xl flex-col px-5 py-5 sm:min-h-[410px] sm:px-8 lg:px-10">
           <header className="flex items-center justify-between gap-3">
             <a
               href="/"
@@ -248,7 +248,7 @@ export default async function SellerProfilePage({ params }: Props) {
             </a>
           </header>
 
-          <div className="flex flex-1 items-end pb-8 pt-20 sm:pb-12">
+          <div className="flex flex-1 items-end pb-8 pt-12 sm:pb-10 sm:pt-16">
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#f6c55f]">
                 Vendedor local
@@ -291,7 +291,7 @@ export default async function SellerProfilePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="py-14 sm:py-20">
+      <section className="py-10 sm:py-14">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-10">
           <aside className="rounded-lg border border-[#dbe5d6] bg-white p-6 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
             <div className="flex items-center gap-4">
