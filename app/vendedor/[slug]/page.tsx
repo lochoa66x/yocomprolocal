@@ -241,7 +241,7 @@ export default async function SellerProfilePage({ params }: Props) {
               </span>
             </a>
             <a
-              href="/registro"
+              href="/vender"
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:px-5"
             >
               Quiero vender

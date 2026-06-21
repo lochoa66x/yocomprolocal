@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { createSupabaseAuthClient } from "@/lib/supabase-server";
+import {
+  createSupabaseAdminClient,
+  createSupabaseAuthClient,
+} from "@/lib/supabase-server";
 
 const DEFAULT_SITE_URL = "https://yocomprolocal.com.mx";
 
@@ -17,7 +20,7 @@ type Props = {
 export const metadata: Metadata = {
   title: "Entrar | YoComproLocal",
   description:
-    "Acceso para vendedores de YoComproLocal con link mágico por correo.",
+    "Acceso para vendedores de YoComproLocal con enlace seguro por correo.",
 };
 
 function getFormValue(formData: FormData, key: string) {
@@ -114,6 +117,27 @@ async function getAuthRedirectOrigin() {
   return DEFAULT_SITE_URL;
 }
 
+async function sellerExistsForEmail(email: string) {
+  const supabase = createSupabaseAdminClient();
+
+  if (!supabase) {
+    return true;
+  }
+
+  const { data, error } = await supabase
+    .from("sellers")
+    .select("id")
+    .ilike("email", email)
+    .limit(1);
+
+  if (error) {
+    console.error("Supabase seller login lookup error:", error);
+    return true;
+  }
+
+  return Boolean(data?.[0]);
+}
+
 async function sendMagicLink(formData: FormData) {
   "use server";
 
@@ -122,6 +146,12 @@ async function sendMagicLink(formData: FormData) {
 
   if (!email) {
     redirect(getLoginHref({ error: "missing", nextPath }));
+  }
+
+  const sellerExists = await sellerExistsForEmail(email);
+
+  if (!sellerExists) {
+    redirect(getLoginHref({ email, error: "no_seller", nextPath }));
   }
 
   const supabase = await createSupabaseAuthClient();
@@ -157,7 +187,11 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "callback") {
-    return "No pudimos iniciar sesión con ese link. Solicita uno nuevo.";
+    return "Ese enlace ya venció o ya se usó. Escribe tu correo y pide uno nuevo.";
+  }
+
+  if (error === "no_seller") {
+    return "No encontramos un negocio con ese correo. Revisa si usaste otro correo o registra tu negocio primero.";
   }
 
   if (error === "server") {
@@ -202,6 +236,16 @@ export default async function LoginPage({ searchParams }: Props) {
           Usa el mismo correo con el que registraste tu negocio. Te enviaremos
           un botón seguro para abrir tu panel privado sin contraseña.
         </p>
+
+        <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#567164]">
+            Para evitar errores
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#53645a]">
+            El acceso depende del correo, no del WhatsApp. Si registraste tu
+            negocio con otro correo, sal y solicita el enlace con ese correo.
+          </p>
+        </div>
 
         {linkSent && (
           <div className="mt-6 rounded-lg border border-[#b9d8b8] bg-[#eef5ec] p-4">
@@ -252,8 +296,8 @@ export default async function LoginPage({ searchParams }: Props) {
 
         <p className="mt-6 text-center text-sm leading-6 text-[#6a7a70]">
           ¿Todavía no tienes perfil?{" "}
-          <a href="/registro" className="font-black text-[#214e34] underline">
-            Registra tu negocio
+          <a href="/vender" className="font-black text-[#214e34] underline">
+            Ver cómo empezar
           </a>
         </p>
       </section>

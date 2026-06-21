@@ -5,6 +5,20 @@ context as the MVP grows.
 
 ## Current Concerns
 
+### Seller Onboarding Needs A Clear First Step
+
+The `Quiero vender` path should not send non-technical sellers directly into a
+form without context. Sellers need to understand the flow before they register:
+
+- register the business;
+- use the same email every time;
+- enter the private panel from `/panel`;
+- upload products from the panel;
+- share public seller and product pages with buyers.
+
+The MVP should keep `/vender` as the friendly onboarding entry point, then send
+sellers to `/registro` when they are ready.
+
 ### Branded Login Email
 
 Supabase Auth emails should not feel generic. Sellers should receive email that
@@ -74,7 +88,7 @@ Improve soon:
 The first seller moment should not mix buyer-style contact information with
 seller setup instructions.
 
-Improve soon:
+Keep improving:
 
 - After registration, the primary action should be `Entrar a mi panel` or
   `Agregar mi primer producto`.
@@ -83,6 +97,8 @@ Improve soon:
   - the seller's private panel;
   - the public seller page;
   - each public product page.
+- If a seller logs in with the wrong email, the recovery path should explain
+  that the business is connected to the original registration email.
 
 ## Product Principles
 
@@ -96,20 +112,18 @@ Improve soon:
 
 ## Recommended Next Prompt
 
-Title: `Seller Access And Product Page Clarity Polish`
+Title: `Seller Onboarding QA And Auth Email Branding`
 
 Goal:
 
-Make it obvious where sellers go to manage their business, where buyers see
-their public page, and where each product page can be opened or copied.
+Verify the full seller onboarding path in production and prepare the Supabase
+Auth email template so sellers receive a YoComproLocal-branded access message.
 
 Scope:
 
-- Improve dashboard labels for public product pages.
-- Add direct copy-link actions beside each product card.
-- Improve registration success/dashboard copy so "private panel" and "public
-  page" are clearly separated.
-- Keep the current magic-link auth flow, but make the wording more seller
-  friendly.
-- Do not add SMS, WhatsApp OTP, payments, shipping, or admin approval in this
-  step.
+- Test `/vender -> /registro -> /entrar -> /panel`.
+- Confirm wrong-email recovery is understandable.
+- Confirm expired-link recovery is understandable.
+- Draft Supabase Auth email subject/body with YoComproLocal language.
+- Confirm production `NEXT_PUBLIC_SITE_URL` and Supabase redirect URLs.
+- Do not add SMS, WhatsApp OTP, payments, shipping, or admin approval yet.

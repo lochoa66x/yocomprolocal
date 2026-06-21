@@ -93,22 +93,40 @@ export default async function SellerPanelEntryPage() {
           Todavía no hay un negocio conectado a este correo.
         </h1>
         <p className="mt-4 text-base leading-7 text-[#53645a]">
-          Registra tu negocio con este mismo correo para que YoComproLocal cree
-          tu panel, tu página pública y el espacio para subir productos.
+          Esto suele pasar cuando el negocio se registró con otro correo. Para
+          entrar al panel, usa exactamente el correo que escribiste en el
+          registro de tu negocio.
         </p>
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          <a
-            href="/registro"
-            className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
-          >
-            Registrar negocio
-          </a>
+        <div className="mt-6 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#567164]">
+            Qué puedes hacer ahora
+          </p>
+          <ul className="mt-3 grid gap-2 text-sm font-semibold leading-6 text-[#53645a]">
+            <li>Usar otro correo si recuerdas con cuál registraste.</li>
+            <li>Registrar tu negocio con este correo si aún no lo hiciste.</li>
+            <li>Revisar el paso a paso si quieres empezar desde cero.</li>
+          </ul>
+        </div>
+
+        <div className="mt-8 grid gap-3">
           <a
             href="/auth/salir"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
+          >
+            Entrar con otro correo
+          </a>
+          <a
+            href="/registro"
             className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
           >
-            Cambiar correo
+            Registrar negocio con este correo
+          </a>
+          <a
+            href="/vender"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+          >
+            Ver cómo empezar
           </a>
         </div>
       </section>

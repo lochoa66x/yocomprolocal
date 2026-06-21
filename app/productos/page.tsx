@@ -308,7 +308,7 @@ function EmptyProductsState({
           : "Cuando los vendedores locales publiquen productos, aparecerán en este catálogo para que los compradores puedan contactar directo por WhatsApp."}
       </p>
       <a
-        href={hasSearch ? getProductsHref({ category: selectedCategory }) : "/registro"}
+        href={hasSearch ? getProductsHref({ category: selectedCategory }) : "/vender"}
         className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
       >
         {hasSearch ? "Limpiar búsqueda" : "Quiero vender"}
@@ -349,7 +349,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             </a>
             <div className="flex shrink-0 items-center gap-2">
               <a
-                href="/registro"
+                href="/vender"
                 className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:px-5"
               >
                 Quiero vender

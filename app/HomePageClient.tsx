@@ -136,8 +136,8 @@ const content = {
     registerEyebrow: "Primeros vendedores",
     registerTitle:
       "Vamos a preparar la primera versión para negocios de Izcalli.",
-    registerCta: "Unirme a la lista",
-    registerHref: "/registro",
+    registerCta: "Ver cómo empezar",
+    registerHref: "/vender",
   },
   en: {
     pageTitle: "YoComproLocal | Buy local. Sell better.",
@@ -256,8 +256,8 @@ const content = {
     registerEyebrow: "First sellers",
     registerTitle:
       "We are preparing the first version for businesses in Izcalli.",
-    registerCta: "Join the list",
-    registerHref: "/registro",
+    registerCta: "See how to start",
+    registerHref: "/vender",
   },
 } satisfies Record<Locale, Record<string, unknown>>;
 
@@ -467,7 +467,7 @@ export default function HomePageClient({
                 {copy.panelCta as string}
               </a>
               <a
-                href="/registro"
+                href={copy.registerHref as string}
                 className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:px-5"
               >
                 {copy.cta as string}
@@ -491,7 +491,7 @@ export default function HomePageClient({
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
-                  href="/registro"
+                  href={copy.registerHref as string}
                   className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
                 >
                   {copy.primaryCta as string}
