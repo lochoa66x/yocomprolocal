@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import {
   createClient,
+  type AuthFlowType,
   type SupabaseClient,
   type SupportedStorage,
 } from "@supabase/supabase-js";
@@ -40,7 +41,13 @@ function getSupabaseCookieOptions() {
   };
 }
 
-export async function createSupabaseAuthClient(): Promise<SupabaseClient | null> {
+type SupabaseAuthClientOptions = {
+  flowType?: AuthFlowType;
+};
+
+export async function createSupabaseAuthClient(
+  options?: SupabaseAuthClientOptions
+): Promise<SupabaseClient | null> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -77,7 +84,7 @@ export async function createSupabaseAuthClient(): Promise<SupabaseClient | null>
     auth: {
       autoRefreshToken: false,
       detectSessionInUrl: false,
-      flowType: "pkce",
+      flowType: options?.flowType ?? "pkce",
       persistSession: true,
       storage,
     },

@@ -104,7 +104,7 @@ async function sendMagicLink(formData: FormData) {
     redirect(getLoginHref({ email, error: "no_seller", nextPath }));
   }
 
-  const supabase = await createSupabaseAuthClient();
+  const supabase = await createSupabaseAuthClient({ flowType: "implicit" });
 
   if (!supabase) {
     console.error("Missing Supabase auth environment variables");
