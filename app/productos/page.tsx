@@ -23,7 +23,7 @@ type ProductWithSeller = {
 };
 
 type Props = {
-  searchParams: Promise<{ categoria?: string }>;
+  searchParams: Promise<{ categoria?: string; q?: string }>;
 };
 
 export const metadata: Metadata = {
@@ -34,6 +34,64 @@ export const metadata: Metadata = {
 
 function isProductCategory(value: string | undefined) {
   return PRODUCT_CATEGORIES.some((category) => category === value);
+}
+
+function normalizeSearchValue(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function getSearchQuery(value: string | undefined) {
+  const trimmed = String(value ?? "").trim();
+  return trimmed.slice(0, 80);
+}
+
+function productMatchesSearch(
+  productWithSeller: ProductWithSeller,
+  searchQuery: string
+) {
+  const normalizedQuery = normalizeSearchValue(searchQuery);
+
+  if (!normalizedQuery) {
+    return true;
+  }
+
+  const { product, seller } = productWithSeller;
+  const searchableText = [
+    product.title,
+    product.description,
+    product.category,
+    seller.name,
+    seller.zona,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return normalizeSearchValue(searchableText).includes(normalizedQuery);
+}
+
+function getProductsHref({
+  category,
+  searchQuery,
+}: {
+  category?: string | null;
+  searchQuery?: string;
+}) {
+  const params = new URLSearchParams();
+
+  if (category) {
+    params.set("categoria", category);
+  }
+
+  if (searchQuery) {
+    params.set("q", searchQuery);
+  }
+
+  const queryString = params.toString();
+  return queryString ? `/productos?${queryString}` : "/productos";
 }
 
 async function getPublishedProducts(
@@ -185,15 +243,17 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
 
 function CategoryFilters({
   selectedCategory,
+  searchQuery,
 }: {
   selectedCategory: string | null;
+  searchQuery: string;
 }) {
   const allActive = !selectedCategory;
 
   return (
     <nav className="flex flex-wrap gap-2" aria-label="Filtrar por categoría">
       <a
-        href="/productos"
+        href={getProductsHref({ searchQuery })}
         className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 text-sm font-black transition ${
           allActive
             ? "bg-[#214e34] text-white"
@@ -208,7 +268,7 @@ function CategoryFilters({
         return (
           <a
             key={category}
-            href={`/productos?categoria=${encodeURIComponent(category)}`}
+            href={getProductsHref({ category, searchQuery })}
             className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 text-sm font-black transition ${
               active
                 ? "bg-[#214e34] text-white"
@@ -225,27 +285,33 @@ function CategoryFilters({
 
 function EmptyProductsState({
   selectedCategory,
+  searchQuery,
 }: {
   selectedCategory: string | null;
+  searchQuery: string;
 }) {
+  const hasSearch = Boolean(searchQuery);
+
   return (
     <section className="rounded-lg border border-[#dbe5d6] bg-white p-8 text-center shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
       <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-        {selectedCategory ? selectedCategory : "Productos"}
+        {selectedCategory ?? "Productos"}
       </p>
       <h2 className="mt-3 text-2xl font-black text-[#1f3429]">
-        Aún no hay productos publicados aquí.
+        {hasSearch
+          ? "No encontramos productos con esa búsqueda."
+          : "Aún no hay productos publicados aquí."}
       </h2>
       <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-[#53645a]">
-        Cuando los vendedores locales publiquen productos, aparecerán en este
-        catálogo para que los compradores puedan contactar directo por
-        WhatsApp.
+        {hasSearch
+          ? `Intenta buscar otra palabra o revisa todas las categorías. Buscaste: "${searchQuery}".`
+          : "Cuando los vendedores locales publiquen productos, aparecerán en este catálogo para que los compradores puedan contactar directo por WhatsApp."}
       </p>
       <a
-        href="/registro"
+        href={hasSearch ? getProductsHref({ category: selectedCategory }) : "/registro"}
         className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
       >
-        Quiero vender
+        {hasSearch ? "Limpiar búsqueda" : "Quiero vender"}
       </a>
     </section>
   );
@@ -256,7 +322,13 @@ export default async function ProductsPage({ searchParams }: Props) {
   const selectedCategory = isProductCategory(params.categoria)
     ? params.categoria ?? null
     : null;
-  const products = await getProductDiscovery(selectedCategory);
+  const searchQuery = getSearchQuery(params.q);
+  const products = (await getProductDiscovery(selectedCategory)).filter(
+    (productWithSeller) => productMatchesSearch(productWithSeller, searchQuery)
+  );
+  const resultLabel = searchQuery
+    ? `Resultados para "${searchQuery}"`
+    : "Productos publicados";
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -304,7 +376,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className="mx-auto grid max-w-7xl gap-0 divide-y divide-[#dce4d6] px-5 sm:px-8 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-10">
           <div className="py-6">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
-              Productos
+              Resultados
             </p>
             <p className="mt-2 text-2xl font-black text-[#214e34]">
               {products.length}
@@ -312,10 +384,10 @@ export default async function ProductsPage({ searchParams }: Props) {
           </div>
           <div className="py-6 md:px-8">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
-              Contacto
+              Búsqueda
             </p>
             <p className="mt-2 text-2xl font-black text-[#214e34]">
-              Directo por WhatsApp
+              {searchQuery || "Todos"}
             </p>
           </div>
           <div className="py-6 md:px-8">
@@ -337,15 +409,56 @@ export default async function ProductsPage({ searchParams }: Props) {
                 Catálogo
               </p>
               <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
-                Encuentra algo local
+                {resultLabel}
               </h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                Filtra por categoría, abre la página del producto o contacta al
-                vendedor sin carrito ni checkout.
+                Busca por producto, vendedor, zona o categoría. Abre la página
+                del producto o contacta al vendedor sin carrito ni checkout.
               </p>
             </div>
-            <CategoryFilters selectedCategory={selectedCategory} />
+            <CategoryFilters
+              selectedCategory={selectedCategory}
+              searchQuery={searchQuery}
+            />
           </div>
+
+          <form
+            action="/productos"
+            className="mt-8 grid gap-3 rounded-lg border border-[#dbe5d6] bg-white p-4 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:grid-cols-[1fr_auto_auto]"
+          >
+            {selectedCategory && (
+              <input
+                type="hidden"
+                name="categoria"
+                value={selectedCategory}
+              />
+            )}
+            <label className="sr-only" htmlFor="product-search">
+              Buscar productos
+            </label>
+            <input
+              id="product-search"
+              name="q"
+              type="search"
+              defaultValue={searchQuery}
+              placeholder="Buscar tacos, salsa, María, Centro Urbano..."
+              className="min-h-12 rounded-full border border-[#dbe5d6] bg-[#fbfbf7] px-5 text-base font-semibold text-[#1f3429] outline-none transition placeholder:text-[#8a988f] focus:border-[#2f7c5b] focus:bg-white"
+            />
+            <button
+              type="submit"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#214e34] px-6 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
+            >
+              Buscar
+            </button>
+            {(searchQuery || selectedCategory) && (
+              <a
+                href="/productos"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-6 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+              >
+                Limpiar
+              </a>
+            )}
+          </form>
 
           <div className="mt-10">
             {products.length > 0 ? (
@@ -358,7 +471,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                 ))}
               </div>
             ) : (
-              <EmptyProductsState selectedCategory={selectedCategory} />
+              <EmptyProductsState
+                selectedCategory={selectedCategory}
+                searchQuery={searchQuery}
+              />
             )}
           </div>
         </div>
