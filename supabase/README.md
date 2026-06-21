@@ -18,6 +18,12 @@ If Vercel logs show `Supabase products error` with code `42501`, run:
 
 `supabase/migrations/20260620_grant_products_access.sql`
 
+For real product image uploads, run:
+
+`supabase/migrations/20260620_create_product_images_bucket.sql`
+
+This creates a public Supabase Storage bucket named `product-images`.
+
 Later, when the seller dashboard and authentication are ready, we can add a permanent `seller_id` relationship.
 
 Demo seller seed:

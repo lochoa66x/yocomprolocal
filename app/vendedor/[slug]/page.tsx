@@ -153,10 +153,11 @@ function ProductCard({
   return (
     <article className="overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
       <div
-        className="flex aspect-[4/3] items-end bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4"
+        className="relative flex aspect-[4/3] items-end bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4"
         style={imageStyle}
       >
-        <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-[#214e34]">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#173a2a]/60 via-transparent to-transparent" />
+        <span className="relative rounded-full bg-white/90 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-[#214e34]">
           {category}
         </span>
       </div>

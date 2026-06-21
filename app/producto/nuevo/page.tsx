@@ -4,6 +4,7 @@ import {
   PRODUCT_CATEGORIES,
   createProductRecordSlug,
 } from "@/lib/products";
+import { uploadProductImage } from "@/lib/product-images";
 import { createSellerSlug } from "@/lib/slugs";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
@@ -26,6 +27,18 @@ function getErrorMessage(error?: string) {
     return "No encontramos ese vendedor. Revisa el slug o registra primero el negocio.";
   }
 
+  if (error === "image-size") {
+    return "La imagen es muy pesada. Sube una foto de máximo 5 MB.";
+  }
+
+  if (error === "image-type") {
+    return "La imagen debe ser JPG, PNG, WebP o GIF.";
+  }
+
+  if (error === "image-upload") {
+    return "No pudimos subir la imagen. Revisa que el bucket product-images exista en Supabase.";
+  }
+
   if (error === "price") {
     return "Revisa el precio. Debe ser un número igual o mayor a cero.";
   }
@@ -39,6 +52,16 @@ function getErrorMessage(error?: string) {
   }
 
   return null;
+}
+
+function getProductImageFile(formData: FormData) {
+  const file = formData.get("imageFile");
+
+  if (!(file instanceof File) || file.size === 0) {
+    return null;
+  }
+
+  return file;
 }
 
 async function sellerExists(sellerSlug: string) {
@@ -72,7 +95,8 @@ async function submitProduct(formData: FormData) {
   const priceValue = Number(getFormValue(formData, "price"));
   const category = getFormValue(formData, "category");
   const description = getFormValue(formData, "description");
-  const imageUrl = getFormValue(formData, "imageUrl");
+  const fallbackImageUrl = getFormValue(formData, "imageUrl");
+  const imageFile = getProductImageFile(formData);
 
   if (!sellerSlug || !title || !category || !description) {
     redirect("/producto/nuevo?error=missing");
@@ -102,6 +126,26 @@ async function submitProduct(formData: FormData) {
   }
 
   const slug = createProductRecordSlug(title);
+  let imageUrl = fallbackImageUrl || null;
+
+  if (imageFile) {
+    const upload = await uploadProductImage({
+      supabase,
+      file: imageFile,
+      productTitle: title,
+      sellerSlug,
+    });
+
+    if (upload.error) {
+      redirect(
+        `/producto/nuevo?seller=${encodeURIComponent(sellerSlug)}&error=${
+          upload.error
+        }`
+      );
+    }
+
+    imageUrl = upload.publicUrl;
+  }
 
   const { error } = await supabase.from("products").upsert(
     [
@@ -112,7 +156,7 @@ async function submitProduct(formData: FormData) {
         price: priceValue,
         category,
         description,
-        image_url: imageUrl || null,
+        image_url: imageUrl,
         status: "published",
       },
     ],
@@ -184,7 +228,11 @@ export default async function NewProductPage({ searchParams }: Props) {
               </p>
             )}
 
-            <form action={submitProduct} className="space-y-5">
+            <form
+              action={submitProduct}
+              className="space-y-5"
+              encType="multipart/form-data"
+            >
               <div>
                 <label
                   htmlFor="sellerSlug"
@@ -281,10 +329,29 @@ export default async function NewProductPage({ searchParams }: Props) {
 
               <div>
                 <label
+                  htmlFor="imageFile"
+                  className="block text-sm font-bold text-[#1f3429]"
+                >
+                  Foto del producto
+                </label>
+                <input
+                  id="imageFile"
+                  name="imageFile"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="mt-2 w-full rounded-lg border border-dashed border-[#cddcc9] bg-[#fbfbf7] px-4 py-4 text-sm text-[#53645a] outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-[#214e34] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
+                />
+                <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
+                  JPG, PNG, WebP o GIF. Máximo 5 MB.
+                </p>
+              </div>
+
+              <div>
+                <label
                   htmlFor="imageUrl"
                   className="block text-sm font-bold text-[#1f3429]"
                 >
-                  URL de imagen
+                  URL de imagen opcional
                 </label>
                 <input
                   id="imageUrl"
@@ -293,6 +360,9 @@ export default async function NewProductPage({ searchParams }: Props) {
                   placeholder="https://..."
                   className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 />
+                <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
+                  Usa este campo solo si todavía no tienes una foto para subir.
+                </p>
               </div>
 
               <button
