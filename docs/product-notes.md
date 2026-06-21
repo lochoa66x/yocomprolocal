@@ -88,15 +88,24 @@ Improve soon:
 The first seller moment should not mix buyer-style contact information with
 seller setup instructions.
 
-Keep improving:
+Implemented for now:
 
-- After registration, the primary action should be `Entrar a mi panel` or
+- After registration, the primary action points to `Entrar a mi panel` or
   `Agregar mi primer producto`.
-- Contact information should be secondary.
-- The dashboard should clearly explain the difference between:
+- The dashboard explains the difference between:
   - the seller's private panel;
   - the public seller page;
   - each public product page.
+- The seller dashboard has a first-run checklist with:
+  - profile completion;
+  - first product;
+  - public seller page;
+  - WhatsApp/share link;
+  - published product page.
+
+Keep improving:
+
+- Contact information should stay secondary to setup actions.
 - If a seller logs in with the wrong email, the recovery path should explain
   that the business is connected to the original registration email.
 

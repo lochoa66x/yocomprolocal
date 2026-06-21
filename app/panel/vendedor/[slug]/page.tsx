@@ -30,6 +30,7 @@ type DashboardTask = {
   actionLabel: string;
   complete: boolean;
   href: string;
+  step: string;
   text: string;
   title: string;
 };
@@ -250,58 +251,60 @@ function getDashboardTasks({
   const publishedProducts = products.filter(
     (product) => product.status === "published"
   );
-  const productsWithPhotos = products.filter((product) =>
-    hasText(product.image_url)
-  );
-  const firstProductWithoutPhoto = products.find(
-    (product) => !hasText(product.image_url)
-  );
+  const firstPublishedProduct = publishedProducts[0];
+  const firstProduct = products[0];
+  const firstPublishedProductHref = firstPublishedProduct
+    ? getPublicProductHref(slug, firstPublishedProduct)
+    : firstProduct
+      ? getProductEditHref(slug, firstProduct)
+      : addProductHref;
 
   return [
     {
-      title: "Completa tu perfil",
-      text: "Nombre, zona, descripción, correo y WhatsApp listos.",
+      step: "Paso 1",
+      title: "Perfil del negocio completo",
+      text: "Nombre, zona, descripción, correo y WhatsApp quedan listos para tus clientes.",
       complete: profileReady,
       href: editProfileHref,
       actionLabel: "Editar perfil",
     },
     {
-      title: "Publica tu primer producto",
-      text: "Agrega un producto con precio, categoría y descripción.",
+      step: "Paso 2",
+      title: "Agregar primer producto",
+      text: "Sube foto, precio, categoría y descripción para crear tu primera página de venta.",
       complete: products.length > 0,
       href: addProductHref,
       actionLabel: "Agregar producto",
     },
     {
-      title: "Muestra una foto real",
-      text: "Una buena foto ayuda a que el producto se vea confiable.",
-      complete: productsWithPhotos.length > 0,
-      href: firstProductWithoutPhoto
-        ? getProductEditHref(slug, firstProductWithoutPhoto)
-        : addProductHref,
-      actionLabel: "Subir foto",
-    },
-    {
-      title: "Ten una página pública activa",
-      text: "Al menos un producto publicado debe verse en tu vitrina.",
-      complete: publishedProducts.length > 0,
-      href:
-        publishedProducts[0] && publishedProducts[0].slug
-          ? `/vendedor/${slug}/producto/${publishedProducts[0].slug}`
-          : publicSellerHref,
+      step: "Paso 3",
+      title: "Ver página pública",
+      text: "Revisa la vitrina que ven tus clientes antes de mandarla por WhatsApp.",
+      complete: profileReady,
+      href: publicSellerHref,
       actionLabel: "Ver página",
     },
     {
-      title: "Lista para compartir",
-      text: "Perfil, WhatsApp y producto publicado preparados para clientes.",
-      complete: profileReady && publishedProducts.length > 0,
-      href: publicSellerHref,
-      actionLabel: "Compartir",
+      step: "Paso 4",
+      title: "Copiar link para WhatsApp",
+      text: "Usa el kit para copiar tu tienda o un producto con mensaje listo.",
+      complete: profileReady,
+      href: "#kit-compartir",
+      actionLabel: "Copiar link",
+    },
+    {
+      step: "Paso 5",
+      title: "Ver producto publicado",
+      text: "Abre la página real del producto y confirma que foto, precio y botón se ven bien.",
+      complete: publishedProducts.length > 0,
+      href: firstPublishedProductHref,
+      actionLabel:
+        publishedProducts.length > 0 ? "Ver producto" : "Publicar producto",
     },
   ];
 }
 
-function ReadinessPanel({
+function FirstRunChecklist({
   tasks,
 }: {
   tasks: DashboardTask[];
@@ -311,19 +314,22 @@ function ReadinessPanel({
   const nextTask = tasks.find((task) => !task.complete);
 
   return (
-    <section className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:p-6">
+    <section
+      id="primeros-pasos"
+      className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:p-6"
+    >
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-            Lista de avance
+            Primer recorrido
           </p>
           <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
-            Tu tienda va {completedTasks} de {tasks.length}.
+            Tu tienda va {completedTasks} de {tasks.length} pasos.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
             {nextTask
-              ? `Siguiente paso: ${nextTask.title.toLowerCase()}.`
-              : "Tu tienda ya tiene lo básico para recibir clientes."}
+              ? `Siguiente acción: ${nextTask.title.toLowerCase()}.`
+              : "Ya tienes lo básico para recibir clientes y compartir tus productos."}
           </p>
         </div>
         {nextTask ? (
@@ -354,7 +360,11 @@ function ReadinessPanel({
         {tasks.map((task) => (
           <article
             key={task.title}
-            className="rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4"
+            className={`rounded-lg border p-4 ${
+              task.complete
+                ? "border-[#b9d8b8] bg-[#eef5ec]"
+                : "border-[#dbe5d6] bg-[#fbfbf7]"
+            }`}
           >
             <div className="flex items-start gap-3">
               <span
@@ -368,6 +378,9 @@ function ReadinessPanel({
                 {task.complete ? "✓" : "•"}
               </span>
               <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                  {task.step}
+                </p>
                 <h3 className="text-base font-black text-[#1f3429]">
                   {task.title}
                 </h3>
@@ -410,7 +423,7 @@ function ShareKit({
   });
 
   return (
-    <section className="pt-3">
+    <section id="kit-compartir" className="scroll-mt-8 pt-3">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2f7c5b]">
@@ -1051,7 +1064,7 @@ export default async function SellerDashboardPage({
           </aside>
 
           <div className="space-y-5">
-            <ReadinessPanel tasks={dashboardTasks} />
+            <FirstRunChecklist tasks={dashboardTasks} />
 
             <ShareKit
               addProductHref={addProductHref}
@@ -1061,7 +1074,10 @@ export default async function SellerDashboardPage({
               sellerName={sellerName}
             />
 
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div
+              id="productos-panel"
+              className="scroll-mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"
+            >
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
                   Productos
