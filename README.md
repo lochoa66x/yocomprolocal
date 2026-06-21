@@ -57,10 +57,18 @@ Environment variables used by the MVP:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SITE_URL=https://yocomprolocal.com.mx
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-5.5
 ```
+
+Use `.env.example` as the local setup template. Keep `.env.local` private.
+
+For production seller login setup, follow:
+
+`docs/production-auth-qa.md`
 
 Start the local development server:
 

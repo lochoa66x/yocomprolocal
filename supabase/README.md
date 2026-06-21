@@ -43,6 +43,10 @@ In Supabase Auth settings, add these redirect URLs:
 - `https://www.yocomprolocal.com.mx/auth/callback`
 - `http://localhost:3000/auth/callback`
 
+For the full production login checklist and smoke test, see:
+
+`docs/production-auth-qa.md`
+
 Demo seller seed:
 
 `supabase/seeds/20260620_la_cocina_de_maria_seller.sql`
