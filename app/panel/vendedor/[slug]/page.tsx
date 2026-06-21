@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import CopyLinkButton from "./CopyLinkButton";
 import {
@@ -12,11 +11,10 @@ import {
 import {
   getInitials,
   getProductImageStyle,
-  getSellerBySlug,
   getWhatsAppHref,
   type SellerRecord,
 } from "@/lib/storefront";
-import { createSupabaseAdminClient } from "@/lib/supabase-server";
+import { requireSellerAccess } from "@/lib/seller-auth";
 
 type DashboardProductRecord = ProductRecord & {
   status: string | null;
@@ -25,6 +23,7 @@ type DashboardProductRecord = ProductRecord & {
 type SellerDashboard = {
   seller: SellerRecord;
   products: DashboardProductRecord[];
+  userEmail: string;
 };
 
 type Props = {
@@ -92,26 +91,16 @@ async function getSellerProducts(
 async function getSellerDashboard(
   slug: string
 ): Promise<SellerDashboard | null> {
-  await connection();
-
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    console.error("Missing Supabase environment variables");
-    return null;
-  }
-
-  const seller = await getSellerBySlug(supabase, slug);
-
-  if (!seller) {
-    return null;
-  }
-
+  const { seller, supabase, user } = await requireSellerAccess({
+    slug,
+    nextPath: `/panel/vendedor/${slug}`,
+  });
   const products = await getSellerProducts(supabase, slug);
 
   return {
     seller,
     products,
+    userEmail: user.email ?? "sesión activa",
   };
 }
 
@@ -258,7 +247,7 @@ export default async function SellerDashboardPage({
     notFound();
   }
 
-  const { seller, products } = dashboard;
+  const { seller, products, userEmail } = dashboard;
   const sellerName = seller.name?.trim();
 
   if (!sellerName) {
@@ -300,12 +289,20 @@ export default async function SellerDashboardPage({
               YoComproLocal
             </span>
           </a>
-          <a
-            href={publicSellerHref}
-            className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
-          >
-            Ver página pública
-          </a>
+          <div className="flex shrink-0 items-center gap-3">
+            <a
+              href={publicSellerHref}
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
+            >
+              Ver página pública
+            </a>
+            <a
+              href="/auth/salir"
+              className="hidden min-h-10 items-center justify-center rounded-full bg-white/10 px-4 text-sm font-bold text-white transition hover:bg-white/15 sm:inline-flex"
+            >
+              Cerrar sesión
+            </a>
+          </div>
         </div>
       </section>
 
@@ -325,6 +322,9 @@ export default async function SellerDashboardPage({
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0">
+              <div className="rounded-full border border-white/18 bg-white/10 px-5 py-3 text-sm font-bold text-white/82">
+                {userEmail}
+              </div>
               <a
                 href={editProfileHref}
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 px-6 text-base font-black text-white transition hover:bg-white/10"
@@ -436,6 +436,12 @@ export default async function SellerDashboardPage({
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"
                 >
                   Ver mi página pública
+                </a>
+                <a
+                  href="/auth/salir"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4] sm:hidden"
+                >
+                  Cerrar sesión
                 </a>
               </div>
             </div>

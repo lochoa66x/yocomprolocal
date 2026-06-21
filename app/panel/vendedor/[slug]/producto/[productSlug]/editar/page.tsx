@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { connection } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import ProductAiAssistant from "@/app/producto/nuevo/ProductAiAssistant";
 import {
@@ -9,8 +8,8 @@ import {
   type ProductRecord,
 } from "@/lib/products";
 import { uploadProductImage } from "@/lib/product-images";
-import { getProductImageStyle, getSellerBySlug } from "@/lib/storefront";
-import { createSupabaseAdminClient } from "@/lib/supabase-server";
+import { requireSellerAccess } from "@/lib/seller-auth";
+import { getProductImageStyle } from "@/lib/storefront";
 
 type EditableProductRecord = ProductRecord & {
   status: string | null;
@@ -127,21 +126,13 @@ async function getEditProductPageData(
   sellerSlug: string,
   productSlug: string
 ): Promise<EditProductPageData | null> {
-  await connection();
+  const { supabase } = await requireSellerAccess({
+    slug: sellerSlug,
+    nextPath: `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`,
+  });
+  const product = await getProductForEdit(supabase, sellerSlug, productSlug);
 
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    console.error("Missing Supabase environment variables");
-    return null;
-  }
-
-  const [seller, product] = await Promise.all([
-    getSellerBySlug(supabase, sellerSlug),
-    getProductForEdit(supabase, sellerSlug, productSlug),
-  ]);
-
-  if (!seller || !product) {
+  if (!product) {
     return null;
   }
 
@@ -183,18 +174,13 @@ async function updateProduct(formData: FormData) {
     );
   }
 
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    console.error("Missing Supabase environment variables");
-    redirect(
-      getEditProductHref({
-        sellerSlug,
-        productSlug: currentSlug,
-        error: "server",
-      })
-    );
-  }
+  const { seller, supabase } = await requireSellerAccess({
+    slug: sellerSlug,
+    nextPath: getEditProductHref({
+      sellerSlug,
+      productSlug: currentSlug,
+    }),
+  });
 
   let imageUrl = fallbackImageUrl || null;
 
@@ -223,6 +209,7 @@ async function updateProduct(formData: FormData) {
   const { error } = await supabase
     .from("products")
     .update({
+      seller_id: seller.id,
       title,
       slug: nextSlug,
       price: priceValue,

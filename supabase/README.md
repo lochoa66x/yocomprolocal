@@ -24,7 +24,24 @@ For real product image uploads, run:
 
 This creates a public Supabase Storage bucket named `product-images`.
 
-Later, when the seller dashboard and authentication are ready, we can add a permanent `seller_id` relationship.
+For seller login and protected product management, run:
+
+`supabase/migrations/20260621_seller_auth_foundation.sql`
+
+This adds seller slugs, Supabase Auth ownership, `seller_id` on products, and
+RLS policies so sellers can manage their own profiles and products.
+
+Vercel also needs these environment variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+In Supabase Auth settings, add these redirect URLs:
+
+- `https://yocomprolocal.com.mx/auth/callback`
+- `https://www.yocomprolocal.com.mx/auth/callback`
+- `http://localhost:3000/auth/callback`
 
 Demo seller seed:
 

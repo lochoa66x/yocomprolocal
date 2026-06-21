@@ -6,8 +6,8 @@ import {
   createProductRecordSlug,
 } from "@/lib/products";
 import { uploadProductImage } from "@/lib/product-images";
+import { requireSellerAccess } from "@/lib/seller-auth";
 import { createSellerSlug } from "@/lib/slugs";
-import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
 type Props = {
   searchParams: Promise<{ seller?: string; error?: string }>;
@@ -96,29 +96,6 @@ function getSellerDashboardHref(sellerSlug: string) {
   )}?${params.toString()}`;
 }
 
-async function sellerExists(sellerSlug: string) {
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    return false;
-  }
-
-  const { data, error } = await supabase
-    .from("sellers")
-    .select("name")
-    .limit(200);
-
-  if (error) {
-    console.error("Supabase seller lookup error:", error);
-    return false;
-  }
-
-  return (data ?? []).some((seller) => {
-    const name = String(seller.name ?? "").trim();
-    return name && createSellerSlug(name) === sellerSlug;
-  });
-}
-
 async function submitProduct(formData: FormData) {
   "use server";
 
@@ -138,18 +115,10 @@ async function submitProduct(formData: FormData) {
     redirect(getNewProductHref({ sellerSlug, error: "price" }));
   }
 
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    console.error("Missing Supabase environment variables");
-    redirect(getNewProductHref({ sellerSlug, error: "server" }));
-  }
-
-  const hasSeller = await sellerExists(sellerSlug);
-
-  if (!hasSeller) {
-    redirect(getNewProductHref({ sellerSlug, error: "seller" }));
-  }
+  const { seller, supabase } = await requireSellerAccess({
+    slug: sellerSlug,
+    nextPath: getNewProductHref({ sellerSlug }),
+  });
 
   const slug = createProductRecordSlug(title);
   let imageUrl = fallbackImageUrl || null;
@@ -172,6 +141,7 @@ async function submitProduct(formData: FormData) {
   const { error } = await supabase.from("products").upsert(
     [
       {
+        seller_id: seller.id,
         seller_slug: sellerSlug,
         title,
         slug,
@@ -197,8 +167,13 @@ async function submitProduct(formData: FormData) {
 
 export default async function NewProductPage({ searchParams }: Props) {
   const params = await searchParams;
-  const sellerSlug = params.seller ?? "la-cocina-de-maria";
+  const sellerSlug = createSellerSlug(params.seller ?? "la-cocina-de-maria");
   const errorMessage = getErrorMessage(params.error);
+
+  await requireSellerAccess({
+    slug: sellerSlug,
+    nextPath: getNewProductHref({ sellerSlug }),
+  });
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -274,8 +249,9 @@ export default async function NewProductPage({ searchParams }: Props) {
                   name="sellerSlug"
                   type="text"
                   required
+                  readOnly
                   defaultValue={sellerSlug}
-                  className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
+                  className="mt-2 w-full rounded-lg border border-[#cddcc9] bg-[#eef5ec] px-4 py-3 text-base font-semibold text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 />
               </div>
 

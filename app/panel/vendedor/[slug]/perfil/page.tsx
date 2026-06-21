@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { connection } from "next/server";
 import { createSellerSlug } from "@/lib/slugs";
-import { getInitials, getSellerBySlug } from "@/lib/storefront";
-import { createSupabaseAdminClient } from "@/lib/supabase-server";
+import { requireSellerAccess } from "@/lib/seller-auth";
+import { getInitials } from "@/lib/storefront";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -68,14 +67,10 @@ async function updateSellerProfile(formData: FormData) {
     redirect(getProfileEditHref(currentSlug || "vendedor-local", "missing"));
   }
 
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    console.error("Missing Supabase environment variables");
-    redirect(getProfileEditHref(currentSlug, "server"));
-  }
-
-  const currentSeller = await getSellerBySlug(supabase, currentSlug);
+  const { seller: currentSeller, supabase } = await requireSellerAccess({
+    slug: currentSlug,
+    nextPath: getProfileEditHref(currentSlug),
+  });
 
   if (!currentSeller?.name) {
     redirect(getProfileEditHref(currentSlug, "server"));
@@ -83,17 +78,21 @@ async function updateSellerProfile(formData: FormData) {
 
   const currentName = currentSeller.name.trim();
   const nextSlug = createSellerSlug(name);
-
-  const { error: sellerError } = await supabase
+  const updateQuery = supabase
     .from("sellers")
     .update({
+      slug: nextSlug,
       name,
       email,
       whatsapp,
       zona,
       description,
-    })
-    .eq("name", currentName);
+      updated_at: new Date().toISOString(),
+    });
+
+  const { error: sellerError } = currentSeller.id
+    ? await updateQuery.eq("id", currentSeller.id)
+    : await updateQuery.eq("name", currentName);
 
   if (sellerError) {
     console.error("Supabase seller profile update error:", sellerError);
@@ -125,16 +124,10 @@ export default async function EditSellerProfilePage({
   const { slug } = await params;
   const query = await searchParams;
 
-  await connection();
-
-  const supabase = createSupabaseAdminClient();
-
-  if (!supabase) {
-    console.error("Missing Supabase environment variables");
-    notFound();
-  }
-
-  const seller = await getSellerBySlug(supabase, slug);
+  const { seller } = await requireSellerAccess({
+    slug,
+    nextPath: `/panel/vendedor/${slug}/perfil`,
+  });
 
   if (!seller?.name) {
     notFound();

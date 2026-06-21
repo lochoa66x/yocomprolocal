@@ -18,11 +18,14 @@ async function submitRegistration(formData: FormData) {
   }
 
   const name = getFormValue(formData, "name");
+  const email = getFormValue(formData, "email").toLowerCase();
+  const slug = createSellerSlug(name);
 
   const { error } = await supabase.from("sellers").insert([
     {
+      slug,
       name,
-      email: getFormValue(formData, "email"),
+      email,
       whatsapp: getFormValue(formData, "whatsapp"),
       zona: getFormValue(formData, "zona"),
       description: getFormValue(formData, "description"),
@@ -34,11 +37,15 @@ async function submitRegistration(formData: FormData) {
     redirect("/registro?error=1");
   }
 
-  const slug = createSellerSlug(name);
+  const nextPath = `/panel/vendedor/${encodeURIComponent(
+    slug
+  )}?registro=creado`;
+  const loginParams = new URLSearchParams({
+    email,
+    next: nextPath,
+  });
 
-  redirect(
-    `/panel/vendedor/${encodeURIComponent(slug)}?registro=creado`
-  );
+  redirect(`/entrar?${loginParams.toString()}`);
 }
 
 interface Props {
