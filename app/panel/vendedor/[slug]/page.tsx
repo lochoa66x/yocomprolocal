@@ -34,6 +34,12 @@ type DashboardTask = {
   title: string;
 };
 
+type ShareProduct = DashboardProductRecord & {
+  productHref: string;
+  productUrl: string;
+  title: string;
+};
+
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{
@@ -85,6 +91,54 @@ function getProductEditHref(sellerSlug: string, product: DashboardProductRecord)
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
 
   return `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
+}
+
+function getPublicProductHref(
+  sellerSlug: string,
+  product: DashboardProductRecord
+) {
+  const title = product.title?.trim() || "producto-local";
+  const productSlug = product.slug?.trim() || createProductRecordSlug(title);
+
+  return `/vendedor/${sellerSlug}/producto/${productSlug}`;
+}
+
+function getSellerShareMessage({
+  publicSellerUrl,
+  sellerName,
+}: {
+  publicSellerUrl: string;
+  sellerName: string;
+}) {
+  return `Hola, soy ${sellerName}. Te comparto mi tienda en YoComproLocal: ${publicSellerUrl}`;
+}
+
+function getProductShareMessage({
+  priceLabel,
+  productTitle,
+  productUrl,
+  sellerName,
+}: {
+  priceLabel: string;
+  productTitle: string;
+  productUrl: string;
+  sellerName: string;
+}) {
+  return `Hola, te comparto ${productTitle} de ${sellerName}. Precio: ${priceLabel}. Puedes verlo aquí: ${productUrl}`;
+}
+
+function getProductCaption({
+  priceLabel,
+  productTitle,
+  productUrl,
+  sellerName,
+}: {
+  priceLabel: string;
+  productTitle: string;
+  productUrl: string;
+  sellerName: string;
+}) {
+  return `${productTitle} disponible en ${sellerName}. ${priceLabel}. Pide directo por WhatsApp desde YoComproLocal: ${productUrl}`;
 }
 
 function getDashboardTasks({
@@ -248,6 +302,164 @@ function ReadinessPanel({
             </div>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function ShareKit({
+  addProductHref,
+  products,
+  publicSellerHref,
+  publicSellerUrl,
+  sellerName,
+}: {
+  addProductHref: string;
+  products: ShareProduct[];
+  publicSellerHref: string;
+  publicSellerUrl: string;
+  sellerName: string;
+}) {
+  const sellerMessage = getSellerShareMessage({
+    publicSellerUrl,
+    sellerName,
+  });
+
+  return (
+    <section className="pt-3">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2f7c5b]">
+            Kit para compartir
+          </p>
+          <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+            Links y mensajes listos.
+          </h2>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
+            Copia tu tienda o un producto para mandarlo por WhatsApp, Facebook,
+            Instagram o grupos locales.
+          </p>
+        </div>
+        <a
+          href={publicSellerHref}
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+        >
+          Ver tienda pública
+        </a>
+      </div>
+
+      <div className="mt-6 grid gap-4">
+        <article className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Tienda completa
+              </p>
+              <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+                Comparte tu página de vendedor
+              </h3>
+              <p className="mt-3 break-all rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
+                {publicSellerUrl}
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:min-w-72 lg:grid-cols-1">
+              <CopyLinkButton value={publicSellerUrl} />
+              <CopyLinkButton
+                copiedLabel="Mensaje copiado"
+                label="Copiar mensaje"
+                value={sellerMessage}
+                variant="secondary"
+              />
+            </div>
+          </div>
+        </article>
+
+        {products.length > 0 ? (
+          <div className="grid gap-4 xl:grid-cols-2">
+            {products.map((product) => {
+              const priceLabel = formatProductPrice(product.price);
+              const message = getProductShareMessage({
+                priceLabel,
+                productTitle: product.title,
+                productUrl: product.productUrl,
+                sellerName,
+              });
+              const caption = getProductCaption({
+                priceLabel,
+                productTitle: product.title,
+                productUrl: product.productUrl,
+                sellerName,
+              });
+
+              return (
+                <article
+                  key={product.id}
+                  className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]"
+                >
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                        Producto publicado
+                      </p>
+                      <div className="mt-2 flex items-start justify-between gap-4">
+                        <h3 className="text-2xl font-black leading-tight text-[#1f3429]">
+                          {product.title}
+                        </h3>
+                        <p className="shrink-0 text-lg font-black text-[#c05635]">
+                          {priceLabel}
+                        </p>
+                      </div>
+                      <p className="mt-3 rounded-lg bg-[#fbfbf7] px-3 py-3 text-sm font-semibold leading-6 text-[#53645a]">
+                        {caption}
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <a
+                        href={product.productHref}
+                        className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                      >
+                        Ver producto
+                      </a>
+                      <CopyLinkButton value={product.productUrl} />
+                      <CopyLinkButton
+                        copiedLabel="Mensaje copiado"
+                        label="Copiar WhatsApp"
+                        value={message}
+                        variant="secondary"
+                      />
+                      <CopyLinkButton
+                        copiedLabel="Caption copiado"
+                        label="Copiar caption"
+                        value={caption}
+                        variant="secondary"
+                      />
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <article className="rounded-lg border border-dashed border-[#b9cbb4] bg-white p-6 text-center shadow-[0_10px_28px_rgba(31,52,41,0.05)]">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
+              Productos pendientes
+            </p>
+            <h3 className="mt-3 text-2xl font-black text-[#1f3429]">
+              Publica un producto para generar mensajes de venta.
+            </h3>
+            <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-[#53645a]">
+              Cuando tengas productos publicados, aparecerán aquí con su link,
+              mensaje para WhatsApp y caption corto.
+            </p>
+            <a
+              href={addProductHref}
+              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+            >
+              Agregar producto
+            </a>
+          </article>
+        )}
       </div>
     </section>
   );
@@ -443,8 +655,9 @@ export default async function SellerDashboardPage({
   const description =
     seller.description?.trim() ||
     "Vendedor local registrado en YoComproLocal.";
+  const siteUrl = getSiteUrl();
   const publicSellerHref = `/vendedor/${slug}`;
-  const publicSellerUrl = `${getSiteUrl()}${publicSellerHref}`;
+  const publicSellerUrl = `${siteUrl}${publicSellerHref}`;
   const addProductHref = `/producto/nuevo?seller=${slug}`;
   const editProfileHref = `/panel/vendedor/${slug}/perfil`;
   const whatsappStatus = seller.whatsapp?.trim()
@@ -458,6 +671,20 @@ export default async function SellerDashboardPage({
     seller,
     slug,
   });
+  const shareProducts = products
+    .filter((product) => product.status === "published")
+    .slice(0, 3)
+    .map<ShareProduct>((product) => {
+      const title = product.title?.trim() || "Producto local";
+      const productHref = getPublicProductHref(slug, product);
+
+      return {
+        ...product,
+        productHref,
+        productUrl: `${siteUrl}${productHref}`,
+        title,
+      };
+    });
   const showProductCreated = query.producto === "creado";
   const showProductUpdated = query.producto === "actualizado";
   const showRegistrationCreated = query.registro === "creado";
@@ -642,6 +869,14 @@ export default async function SellerDashboardPage({
 
           <div className="space-y-5">
             <ReadinessPanel tasks={dashboardTasks} />
+
+            <ShareKit
+              addProductHref={addProductHref}
+              products={shareProducts}
+              publicSellerHref={publicSellerHref}
+              publicSellerUrl={publicSellerUrl}
+              sellerName={sellerName}
+            />
 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>

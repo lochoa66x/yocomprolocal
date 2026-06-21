@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 
-export default function CopyLinkButton({ value }: { value: string }) {
+export default function CopyLinkButton({
+  copiedLabel = "Link copiado",
+  label = "Copiar link",
+  value,
+  variant = "primary",
+}: {
+  copiedLabel?: string;
+  label?: string;
+  value: string;
+  variant?: "primary" | "secondary";
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copyLink() {
@@ -15,13 +25,18 @@ export default function CopyLinkButton({ value }: { value: string }) {
     }
   }
 
+  const className =
+    variant === "secondary"
+      ? "inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"
+      : "inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]";
+
   return (
     <button
       type="button"
       onClick={copyLink}
-      className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
+      className={className}
     >
-      {copied ? "Link copiado" : "Copiar link"}
+      {copied ? copiedLabel : label}
     </button>
   );
 }
