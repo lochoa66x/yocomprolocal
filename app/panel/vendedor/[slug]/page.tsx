@@ -26,6 +26,14 @@ type SellerDashboard = {
   userEmail: string;
 };
 
+type DashboardTask = {
+  actionLabel: string;
+  complete: boolean;
+  href: string;
+  text: string;
+  title: string;
+};
+
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{
@@ -66,6 +74,183 @@ function getStatusClassName(status: string | null) {
   }
 
   return "bg-[#fff1d8] text-[#8a5b14]";
+}
+
+function hasText(value: string | null | undefined) {
+  return Boolean(value?.trim());
+}
+
+function getProductEditHref(sellerSlug: string, product: DashboardProductRecord) {
+  const title = product.title?.trim() || "producto-local";
+  const productSlug = product.slug?.trim() || createProductRecordSlug(title);
+
+  return `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
+}
+
+function getDashboardTasks({
+  addProductHref,
+  editProfileHref,
+  products,
+  publicSellerHref,
+  seller,
+  slug,
+}: {
+  addProductHref: string;
+  editProfileHref: string;
+  products: DashboardProductRecord[];
+  publicSellerHref: string;
+  seller: SellerRecord;
+  slug: string;
+}): DashboardTask[] {
+  const profileReady = [
+    seller.name,
+    seller.email,
+    seller.whatsapp,
+    seller.zona,
+    seller.description,
+  ].every(hasText);
+  const publishedProducts = products.filter(
+    (product) => product.status === "published"
+  );
+  const productsWithPhotos = products.filter((product) =>
+    hasText(product.image_url)
+  );
+  const firstProductWithoutPhoto = products.find(
+    (product) => !hasText(product.image_url)
+  );
+
+  return [
+    {
+      title: "Completa tu perfil",
+      text: "Nombre, zona, descripción, correo y WhatsApp listos.",
+      complete: profileReady,
+      href: editProfileHref,
+      actionLabel: "Editar perfil",
+    },
+    {
+      title: "Publica tu primer producto",
+      text: "Agrega un producto con precio, categoría y descripción.",
+      complete: products.length > 0,
+      href: addProductHref,
+      actionLabel: "Agregar producto",
+    },
+    {
+      title: "Muestra una foto real",
+      text: "Una buena foto ayuda a que el producto se vea confiable.",
+      complete: productsWithPhotos.length > 0,
+      href: firstProductWithoutPhoto
+        ? getProductEditHref(slug, firstProductWithoutPhoto)
+        : addProductHref,
+      actionLabel: "Subir foto",
+    },
+    {
+      title: "Ten una página pública activa",
+      text: "Al menos un producto publicado debe verse en tu vitrina.",
+      complete: publishedProducts.length > 0,
+      href:
+        publishedProducts[0] && publishedProducts[0].slug
+          ? `/vendedor/${slug}/producto/${publishedProducts[0].slug}`
+          : publicSellerHref,
+      actionLabel: "Ver página",
+    },
+    {
+      title: "Lista para compartir",
+      text: "Perfil, WhatsApp y producto publicado preparados para clientes.",
+      complete: profileReady && publishedProducts.length > 0,
+      href: publicSellerHref,
+      actionLabel: "Compartir",
+    },
+  ];
+}
+
+function ReadinessPanel({
+  tasks,
+}: {
+  tasks: DashboardTask[];
+}) {
+  const completedTasks = tasks.filter((task) => task.complete).length;
+  const readinessPercent = Math.round((completedTasks / tasks.length) * 100);
+  const nextTask = tasks.find((task) => !task.complete);
+
+  return (
+    <section className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:p-6">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
+            Lista de avance
+          </p>
+          <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+            Tu tienda va {completedTasks} de {tasks.length}.
+          </h2>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
+            {nextTask
+              ? `Siguiente paso: ${nextTask.title.toLowerCase()}.`
+              : "Tu tienda ya tiene lo básico para recibir clientes."}
+          </p>
+        </div>
+        {nextTask ? (
+          <a
+            href={nextTask.href}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+          >
+            {nextTask.actionLabel}
+          </a>
+        ) : (
+          <a
+            href="/productos"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
+          >
+            Ver productos
+          </a>
+        )}
+      </div>
+
+      <div className="mt-6 h-3 overflow-hidden rounded-full bg-[#eef5ec]">
+        <div
+          className="h-full rounded-full bg-[#25d366]"
+          style={{ width: `${readinessPercent}%` }}
+        />
+      </div>
+
+      <div className="mt-6 grid gap-3 md:grid-cols-2">
+        {tasks.map((task) => (
+          <article
+            key={task.title}
+            className="rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4"
+          >
+            <div className="flex items-start gap-3">
+              <span
+                className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-black ${
+                  task.complete
+                    ? "bg-[#25d366] text-[#102318]"
+                    : "bg-[#fff1d8] text-[#8a5b14]"
+                }`}
+                aria-hidden="true"
+              >
+                {task.complete ? "✓" : "•"}
+              </span>
+              <div className="min-w-0">
+                <h3 className="text-base font-black text-[#1f3429]">
+                  {task.title}
+                </h3>
+                <p className="mt-1 text-sm leading-6 text-[#53645a]">
+                  {task.text}
+                </p>
+                {!task.complete && (
+                  <a
+                    href={task.href}
+                    className="mt-3 inline-flex text-sm font-black text-[#214e34] underline decoration-[#f6c55f] decoration-2 underline-offset-4 transition hover:text-[#2f7c5b]"
+                  >
+                    {task.actionLabel}
+                  </a>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 async function getSellerProducts(
@@ -265,6 +450,14 @@ export default async function SellerDashboardPage({
   const whatsappStatus = seller.whatsapp?.trim()
     ? "WhatsApp listo"
     : "Falta WhatsApp";
+  const dashboardTasks = getDashboardTasks({
+    addProductHref,
+    editProfileHref,
+    products,
+    publicSellerHref,
+    seller,
+    slug,
+  });
   const showProductCreated = query.producto === "creado";
   const showProductUpdated = query.producto === "actualizado";
   const showRegistrationCreated = query.registro === "creado";
@@ -448,6 +641,8 @@ export default async function SellerDashboardPage({
           </aside>
 
           <div className="space-y-5">
+            <ReadinessPanel tasks={dashboardTasks} />
+
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
