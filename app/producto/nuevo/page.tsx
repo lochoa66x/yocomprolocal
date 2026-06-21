@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import ProductAiAssistant from "@/app/producto/nuevo/ProductAiAssistant";
 import {
   PRODUCT_CATEGORIES,
   createProductRecordSlug,
@@ -229,6 +230,7 @@ export default async function NewProductPage({ searchParams }: Props) {
             )}
 
             <form
+              id="new-product-form"
               action={submitProduct}
               className="space-y-5"
               encType="multipart/form-data"
@@ -326,6 +328,8 @@ export default async function NewProductPage({ searchParams }: Props) {
                   className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base leading-7 text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 />
               </div>
+
+              <ProductAiAssistant formId="new-product-form" />
 
               <div>
                 <label

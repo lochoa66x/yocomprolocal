@@ -53,6 +53,15 @@ mobile-first, Spanish-first, and friendly to non-technical sellers.
 
 ## Development
 
+Environment variables used by the MVP:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-5.5
+```
+
 Start the local development server:
 
 ```bash
