@@ -10,6 +10,7 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">(
     "idle"
   );
+  const dashboardPath = `/panel/vendedor/${sellerSlug}`;
   const sellerPath = `/vendedor/${sellerSlug}`;
   const productPath = `/producto/nuevo?seller=${encodeURIComponent(
     sellerSlug
@@ -34,6 +35,12 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
   return (
     <div className="mt-7 grid gap-3">
       <a
+        href={dashboardPath}
+        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+      >
+        Ir a mi panel
+      </a>
+      <a
         href={sellerPath}
         className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
       >
@@ -41,7 +48,7 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
       </a>
       <a
         href={productPath}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
       >
         Agregar mi primer producto
       </a>

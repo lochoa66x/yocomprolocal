@@ -29,7 +29,7 @@ type SellerDashboard = {
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ producto?: string }>;
+  searchParams: Promise<{ producto?: string; registro?: string }>;
 };
 
 export const metadata: Metadata = {
@@ -264,6 +264,7 @@ export default async function SellerDashboardPage({
     ? "WhatsApp listo"
     : "Falta WhatsApp";
   const showProductCreated = query.producto === "creado";
+  const showRegistrationCreated = query.registro === "creado";
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -342,15 +343,17 @@ export default async function SellerDashboardPage({
         </div>
       </section>
 
-      {showProductCreated && (
+      {(showProductCreated || showRegistrationCreated) && (
         <section className="border-b border-[#dce4d6] bg-[#eef5ec]">
           <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
             <div className="rounded-lg border border-[#b9d8b8] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.05)]">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-[#2f7c5b]">
-                Producto publicado
+                {showProductCreated ? "Producto publicado" : "Registro listo"}
               </p>
               <p className="mt-2 text-lg font-bold leading-7 text-[#214e34]">
-                Producto publicado. Ya puedes compartirlo con tus clientes.
+                {showProductCreated
+                  ? "Producto publicado. Ya puedes compartirlo con tus clientes."
+                  : "Tu registro está listo. Agrega tu primer producto para empezar a compartir tu tienda."}
               </p>
             </div>
           </div>

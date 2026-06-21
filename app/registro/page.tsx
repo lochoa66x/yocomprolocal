@@ -36,7 +36,9 @@ async function submitRegistration(formData: FormData) {
 
   const slug = createSellerSlug(name);
 
-  redirect(`/registro?success=1&seller=${encodeURIComponent(slug)}`);
+  redirect(
+    `/panel/vendedor/${encodeURIComponent(slug)}?registro=creado`
+  );
 }
 
 interface Props {
@@ -65,9 +67,9 @@ export default async function RegistroPage({ searchParams }: Props) {
           </p>
           <h1 className="mt-3 text-3xl font-black text-[#1f3429]">¡Listo!</h1>
           <p className="mt-4 text-base leading-7 text-[#53645a]">
-            Recibimos tu registro y ya puedes revisar tu perfil público. El
-            siguiente paso natural es agregar tu primer producto para tener una
-            página lista para compartir por WhatsApp.
+            Recibimos tu registro y ya puedes entrar a tu panel. Desde ahí
+            puedes revisar tu perfil público, agregar productos y compartir tu
+            página por WhatsApp.
           </p>
 
           {sellerSlug ? (
