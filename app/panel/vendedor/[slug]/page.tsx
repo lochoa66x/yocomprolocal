@@ -29,6 +29,7 @@ type SellerDashboard = {
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ producto?: string }>;
 };
 
 export const metadata: Metadata = {
@@ -233,8 +234,12 @@ function EmptyProductsState({ sellerSlug }: { sellerSlug: string }) {
   );
 }
 
-export default async function SellerDashboardPage({ params }: Props) {
+export default async function SellerDashboardPage({
+  params,
+  searchParams,
+}: Props) {
   const { slug } = await params;
+  const query = await searchParams;
   const dashboard = await getSellerDashboard(slug);
 
   if (!dashboard) {
@@ -258,6 +263,7 @@ export default async function SellerDashboardPage({ params }: Props) {
   const whatsappStatus = seller.whatsapp?.trim()
     ? "WhatsApp listo"
     : "Falta WhatsApp";
+  const showProductCreated = query.producto === "creado";
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -335,6 +341,21 @@ export default async function SellerDashboardPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {showProductCreated && (
+        <section className="border-b border-[#dce4d6] bg-[#eef5ec]">
+          <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
+            <div className="rounded-lg border border-[#b9d8b8] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.05)]">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-[#2f7c5b]">
+                Producto publicado
+              </p>
+              <p className="mt-2 text-lg font-bold leading-7 text-[#214e34]">
+                Producto publicado. Ya puedes compartirlo con tus clientes.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-10 sm:py-14">
         <div className="mx-auto grid max-w-7xl items-start gap-8 px-5 sm:px-8 lg:grid-cols-[360px_1fr] lg:px-10 xl:grid-cols-[400px_1fr]">

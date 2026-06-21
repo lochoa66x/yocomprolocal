@@ -65,6 +65,37 @@ function getProductImageFile(formData: FormData) {
   return file;
 }
 
+function getNewProductHref({
+  sellerSlug,
+  error,
+}: {
+  sellerSlug?: string;
+  error?: string;
+}) {
+  const params = new URLSearchParams();
+
+  if (sellerSlug) {
+    params.set("seller", sellerSlug);
+  }
+
+  if (error) {
+    params.set("error", error);
+  }
+
+  const queryString = params.toString();
+  return queryString ? `/producto/nuevo?${queryString}` : "/producto/nuevo";
+}
+
+function getSellerDashboardHref(sellerSlug: string) {
+  const params = new URLSearchParams({
+    producto: "creado",
+  });
+
+  return `/panel/vendedor/${encodeURIComponent(
+    sellerSlug
+  )}?${params.toString()}`;
+}
+
 async function sellerExists(sellerSlug: string) {
   const supabase = createSupabaseAdminClient();
 
@@ -100,30 +131,24 @@ async function submitProduct(formData: FormData) {
   const imageFile = getProductImageFile(formData);
 
   if (!sellerSlug || !title || !category || !description) {
-    redirect("/producto/nuevo?error=missing");
+    redirect(getNewProductHref({ sellerSlug, error: "missing" }));
   }
 
   if (!Number.isFinite(priceValue) || priceValue < 0) {
-    redirect(
-      `/producto/nuevo?seller=${encodeURIComponent(sellerSlug)}&error=price`
-    );
+    redirect(getNewProductHref({ sellerSlug, error: "price" }));
   }
 
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
     console.error("Missing Supabase environment variables");
-    redirect(
-      `/producto/nuevo?seller=${encodeURIComponent(sellerSlug)}&error=server`
-    );
+    redirect(getNewProductHref({ sellerSlug, error: "server" }));
   }
 
   const hasSeller = await sellerExists(sellerSlug);
 
   if (!hasSeller) {
-    redirect(
-      `/producto/nuevo?seller=${encodeURIComponent(sellerSlug)}&error=seller`
-    );
+    redirect(getNewProductHref({ sellerSlug, error: "seller" }));
   }
 
   const slug = createProductRecordSlug(title);
@@ -138,11 +163,7 @@ async function submitProduct(formData: FormData) {
     });
 
     if (upload.error) {
-      redirect(
-        `/producto/nuevo?seller=${encodeURIComponent(sellerSlug)}&error=${
-          upload.error
-        }`
-      );
+      redirect(getNewProductHref({ sellerSlug, error: upload.error }));
     }
 
     imageUrl = upload.publicUrl;
@@ -168,12 +189,10 @@ async function submitProduct(formData: FormData) {
 
   if (error) {
     console.error("Supabase product save error:", error);
-    redirect(
-      `/producto/nuevo?seller=${encodeURIComponent(sellerSlug)}&error=server`
-    );
+    redirect(getNewProductHref({ sellerSlug, error: "server" }));
   }
 
-  redirect(`/vendedor/${encodeURIComponent(sellerSlug)}`);
+  redirect(getSellerDashboardHref(sellerSlug));
 }
 
 export default async function NewProductPage({ searchParams }: Props) {
@@ -197,12 +216,20 @@ export default async function NewProductPage({ searchParams }: Props) {
               YoComproLocal
             </span>
           </a>
-          <a
-            href={`/vendedor/${sellerSlug}`}
-            className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
-          >
-            Ver perfil
-          </a>
+          <div className="flex shrink-0 items-center gap-2">
+            <a
+              href={`/vendedor/${sellerSlug}`}
+              className="hidden min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10 sm:inline-flex"
+            >
+              Ver perfil
+            </a>
+            <a
+              href={`/panel/vendedor/${sellerSlug}`}
+              className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-black text-[#1c261f] transition hover:bg-[#ffd77a]"
+            >
+              Volver al panel
+            </a>
+          </div>
         </div>
       </section>
 
@@ -217,8 +244,8 @@ export default async function NewProductPage({ searchParams }: Props) {
             </h1>
             <p className="mt-5 text-lg leading-8 text-[#53645a]">
               Esta es la primera versión del flujo para vendedores: agrega los
-              datos básicos, guarda el producto y vuelve al perfil público para
-              verlo publicado.
+              datos básicos, guarda el producto y vuelve al panel para
+              compartirlo con tus clientes.
             </p>
           </div>
 
