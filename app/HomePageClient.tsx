@@ -34,6 +34,7 @@ const content = {
       city: "Izcalli",
     },
     cta: "Quiero vender",
+    panelCta: "Mi panel",
     heroAlt: "Vendedora local preparando productos para compartirlos en línea",
     eyebrow: "Compra local. Vende mejor.",
     heroTitle: "YoComproLocal",
@@ -152,6 +153,7 @@ const content = {
       city: "Izcalli",
     },
     cta: "I want to sell",
+    panelCta: "Seller login",
     heroAlt: "Local seller preparing products to share online",
     eyebrow: "Buy local. Sell better.",
     heroTitle: "YoComproLocal",
@@ -459,6 +461,12 @@ export default function HomePageClient({
                 {copy.languageButton as string}
               </button>
               <a
+                href="/panel"
+                className="hidden min-h-10 items-center justify-center rounded-full border border-white/40 bg-white/12 px-4 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20 sm:inline-flex"
+              >
+                {copy.panelCta as string}
+              </a>
+              <a
                 href="/registro"
                 className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-bold text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:px-5"
               >
@@ -496,6 +504,12 @@ export default function HomePageClient({
                   className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/45 bg-white/10 px-6 text-base font-bold text-white backdrop-blur transition hover:bg-white/18"
                 >
                   {copy.secondaryCta as string}
+                </a>
+                <a
+                  href="/panel"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/45 bg-white/10 px-6 text-base font-bold text-white backdrop-blur transition hover:bg-white/18 sm:hidden"
+                >
+                  {copy.panelCta as string}
                 </a>
               </div>
             </div>
@@ -742,12 +756,20 @@ export default function HomePageClient({
               {copy.registerTitle as string}
             </h2>
           </div>
-          <a
-            href={copy.registerHref as string}
-            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-[#173a2a] px-6 text-base font-black text-white transition hover:bg-[#214e34]"
-          >
-            {copy.registerCta as string}
-          </a>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <a
+              href={copy.registerHref as string}
+              className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-[#173a2a] px-6 text-base font-black text-white transition hover:bg-[#214e34]"
+            >
+              {copy.registerCta as string}
+            </a>
+            <a
+              href="/panel"
+              className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full border border-[#173a2a]/25 bg-white/20 px-6 text-base font-black text-[#173a2a] transition hover:bg-white/35"
+            >
+              {copy.panelCta as string}
+            </a>
+          </div>
         </div>
       </section>
     </main>

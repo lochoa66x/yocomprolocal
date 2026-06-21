@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { RegistrationSuccessActions } from "@/app/registro/RegistrationSuccessActions";
 import { createSellerSlug } from "@/lib/slugs";
-import { createSupabaseAdminClient } from "@/lib/supabase-server";
+import {
+  createSupabaseAdminClient,
+  getSupabaseUser,
+} from "@/lib/supabase-server";
 
 function getFormValue(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -20,10 +23,14 @@ async function submitRegistration(formData: FormData) {
   const name = getFormValue(formData, "name");
   const email = getFormValue(formData, "email").toLowerCase();
   const slug = createSellerSlug(name);
+  const user = await getSupabaseUser();
+  const shouldAttachUser =
+    user?.email?.trim().toLowerCase() === email ? user.id : null;
 
   const { error } = await supabase.from("sellers").insert([
     {
       slug,
+      user_id: shouldAttachUser,
       name,
       email,
       whatsapp: getFormValue(formData, "whatsapp"),
@@ -40,6 +47,11 @@ async function submitRegistration(formData: FormData) {
   const nextPath = `/panel/vendedor/${encodeURIComponent(
     slug
   )}?registro=creado`;
+
+  if (shouldAttachUser) {
+    redirect(nextPath);
+  }
+
   const loginParams = new URLSearchParams({
     email,
     next: nextPath,

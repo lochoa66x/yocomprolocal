@@ -24,7 +24,7 @@ function getFormValue(formData: FormData, key: string) {
 
 function getSafeNextPath(nextPath: string) {
   if (!nextPath || !nextPath.startsWith("/") || nextPath.startsWith("//")) {
-    return "/";
+    return "/panel";
   }
 
   return nextPath;
@@ -137,7 +137,7 @@ function getErrorMessage(error?: string) {
 
 export default async function LoginPage({ searchParams }: Props) {
   const params = await searchParams;
-  const nextPath = getSafeNextPath(params.next ?? "/");
+  const nextPath = getSafeNextPath(params.next ?? "/panel");
   const email = params.email?.trim().toLowerCase() ?? "";
   const errorMessage = getErrorMessage(params.error);
   const linkSent = params.sent === "1";

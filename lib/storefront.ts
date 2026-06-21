@@ -100,6 +100,60 @@ export async function getSellerBySlug(
   return sellersBySlug[slug] ?? null;
 }
 
+export async function getSellerByUser(
+  supabase: SupabaseClient,
+  user: User
+) {
+  const { data: ownedData, error: ownedError } = await supabase
+    .from("sellers")
+    .select(SELLER_SELECT)
+    .eq("user_id", user.id)
+    .limit(1);
+
+  if (ownedError) {
+    console.error("Supabase seller owner lookup error:", ownedError);
+    return null;
+  }
+
+  const ownedSeller = ((ownedData ?? []) as SellerRecord[])[0];
+
+  if (ownedSeller) {
+    return ownedSeller;
+  }
+
+  const userEmail = user.email?.trim().toLowerCase();
+
+  if (!userEmail) {
+    return null;
+  }
+
+  const { data: claimData, error: claimError } = await supabase
+    .from("sellers")
+    .select(SELLER_SELECT)
+    .ilike("email", userEmail)
+    .limit(1);
+
+  if (claimError) {
+    console.error("Supabase seller email lookup error:", claimError);
+    return null;
+  }
+
+  const claimableSeller = ((claimData ?? []) as SellerRecord[])[0];
+  const claimableSlug = claimableSeller
+    ? getSellerRecordSlug(claimableSeller)
+    : "";
+
+  if (!claimableSeller || !claimableSlug) {
+    return null;
+  }
+
+  return getAuthorizedSellerBySlug({
+    supabase,
+    slug: claimableSlug,
+    user,
+  });
+}
+
 export async function getAuthorizedSellerBySlug({
   supabase,
   slug,
