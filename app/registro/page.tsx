@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { RegistrationSuccessActions } from "@/app/registro/RegistrationSuccessActions";
 import { createSellerSlug } from "@/lib/slugs";
 import {
@@ -10,6 +11,102 @@ function getFormValue(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function getRegistrationHref({
+  email,
+  error,
+}: {
+  email?: string;
+  error: string;
+}) {
+  const params = new URLSearchParams({
+    error,
+  });
+
+  if (email) {
+    params.set("email", email);
+  }
+
+  return `/registro?${params.toString()}`;
+}
+
+function getRegistrationErrorMessage(error?: string) {
+  if (error === "missing") {
+    return "Faltan datos. Revisa el formulario e intenta de nuevo.";
+  }
+
+  if (error === "email_exists") {
+    return "Ya existe un negocio con ese correo. Entra al panel usando ese mismo correo.";
+  }
+
+  if (error === "duplicate") {
+    return "Ese nombre de negocio ya estaba ocupado. Intenta agregar tu zona o una palabra extra al nombre.";
+  }
+
+  if (error) {
+    return "Algo salió mal. Intenta de nuevo en un momento.";
+  }
+
+  return null;
+}
+
+async function sellerExistsForEmail(supabase: SupabaseClient, email: string) {
+  const { data, error } = await supabase
+    .from("sellers")
+    .select("id")
+    .ilike("email", email)
+    .limit(1);
+
+  if (error) {
+    console.error("Supabase registration email lookup error:", error);
+    return false;
+  }
+
+  return Boolean(data?.[0]);
+}
+
+async function getAvailableSellerSlug(
+  supabase: SupabaseClient,
+  baseSlug: string
+) {
+  const { data, error } = await supabase
+    .from("sellers")
+    .select("slug")
+    .like("slug", `${baseSlug}%`)
+    .limit(200);
+
+  if (error) {
+    console.error("Supabase registration slug lookup error:", error);
+    return baseSlug;
+  }
+
+  const usedSlugs = new Set(
+    (data ?? [])
+      .map((seller) => String(seller.slug ?? "").trim())
+      .filter(Boolean)
+  );
+
+  if (!usedSlugs.has(baseSlug)) {
+    return baseSlug;
+  }
+
+  for (let index = 2; index <= 200; index += 1) {
+    const nextSlug = `${baseSlug}-${index}`;
+
+    if (!usedSlugs.has(nextSlug)) {
+      return nextSlug;
+    }
+  }
+
+  return `${baseSlug}-${Date.now().toString(36)}`;
+}
+
+function isUniqueViolation(error: { code?: string; message?: string }) {
+  return (
+    error.code === "23505" ||
+    error.message?.toLowerCase().includes("duplicate key")
+  );
+}
+
 async function submitRegistration(formData: FormData) {
   "use server";
 
@@ -17,12 +114,30 @@ async function submitRegistration(formData: FormData) {
 
   if (!supabase) {
     console.error("Missing Supabase environment variables");
-    redirect("/registro?error=1");
+    redirect(getRegistrationHref({ error: "server" }));
   }
 
   const name = getFormValue(formData, "name");
   const email = getFormValue(formData, "email").toLowerCase();
-  const slug = createSellerSlug(name);
+  const baseSlug = createSellerSlug(name);
+  const slug = await getAvailableSellerSlug(supabase, baseSlug);
+
+  if (
+    !name ||
+    !email ||
+    !getFormValue(formData, "whatsapp") ||
+    !getFormValue(formData, "zona") ||
+    !getFormValue(formData, "description")
+  ) {
+    redirect(getRegistrationHref({ email, error: "missing" }));
+  }
+
+  const existingEmail = await sellerExistsForEmail(supabase, email);
+
+  if (existingEmail) {
+    redirect(getRegistrationHref({ email, error: "email_exists" }));
+  }
+
   const user = await getSupabaseUser();
   const shouldAttachUser =
     user?.email?.trim().toLowerCase() === email ? user.id : null;
@@ -41,7 +156,12 @@ async function submitRegistration(formData: FormData) {
 
   if (error) {
     console.error("Supabase error:", error);
-    redirect("/registro?error=1");
+    redirect(
+      getRegistrationHref({
+        email,
+        error: isUniqueViolation(error) ? "duplicate" : "server",
+      })
+    );
   }
 
   const nextPath = `/panel/vendedor/${encodeURIComponent(
@@ -64,6 +184,7 @@ interface Props {
   searchParams: Promise<{
     success?: string;
     error?: string;
+    email?: string;
     seller?: string;
     slug?: string;
   }>;
@@ -71,6 +192,8 @@ interface Props {
 
 export default async function RegistroPage({ searchParams }: Props) {
   const params = await Promise.resolve(searchParams);
+  const errorMessage = getRegistrationErrorMessage(params.error);
+  const email = params.email?.trim().toLowerCase() ?? "";
 
   if (params.success) {
     const sellerSlug = params.seller ?? params.slug;
@@ -183,11 +306,22 @@ export default async function RegistroPage({ searchParams }: Props) {
               activar tu panel.
             </p>
 
-            {params.error && (
+            {errorMessage && (
               <p className="mt-5 rounded-lg bg-[#fff1ec] p-4 text-sm font-semibold leading-6 text-[#a74429]">
-                Algo salió mal. Revisa si ese negocio ya existe o intenta de
-                nuevo.
+                {errorMessage}
               </p>
+            )}
+
+            {params.error === "email_exists" && (
+              <a
+                href={`/entrar?${new URLSearchParams({
+                  email,
+                  next: "/panel",
+                }).toString()}`}
+                className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+              >
+                Entrar con ese correo
+              </a>
             )}
 
             <form action={submitRegistration} className="mt-7 space-y-5">
@@ -211,6 +345,7 @@ export default async function RegistroPage({ searchParams }: Props) {
                   type="email"
                   name="email"
                   required
+                  defaultValue={email}
                   placeholder="tu@negocio.com"
                   className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base text-[#1e261f] outline-none transition placeholder:text-[#8a988f] focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 />
