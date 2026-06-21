@@ -213,6 +213,12 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
           <p className="mt-1 text-sm font-semibold text-[#6a7a70]">
             {sellerZone}
           </p>
+          <a
+            href={sellerHref}
+            className="relative z-20 mt-3 inline-flex min-h-10 w-full items-center justify-center rounded-full bg-white px-4 text-sm font-black text-[#214e34] ring-1 ring-[#214e34]/15 transition hover:bg-[#f6c55f]"
+          >
+            Ver tienda del vendedor
+          </a>
         </div>
 
         <div className="relative z-20 mt-5 grid gap-3">
