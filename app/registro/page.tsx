@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { RegistrationSuccessActions } from "@/app/registro/RegistrationSuccessActions";
 import { createSellerSlug } from "@/lib/slugs";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
@@ -35,32 +36,48 @@ async function submitRegistration(formData: FormData) {
 
   const slug = createSellerSlug(name);
 
-  redirect(`/registro?success=1&slug=${encodeURIComponent(slug)}`);
+  redirect(`/registro?success=1&seller=${encodeURIComponent(slug)}`);
 }
 
 interface Props {
-  searchParams: Promise<{ success?: string; error?: string; slug?: string }>;
+  searchParams: Promise<{
+    success?: string;
+    error?: string;
+    seller?: string;
+    slug?: string;
+  }>;
 }
 
 export default async function RegistroPage({ searchParams }: Props) {
   const params = await Promise.resolve(searchParams);
 
   if (params.success) {
+    const sellerSlug = params.seller ?? params.slug;
+
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow">
-          <div className="text-4xl mb-4">🎉</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">¡Listo!</h1>
-          <p className="text-gray-600">
-            Recibimos tu registro y preparamos tu perfil público. Puedes
-            revisar cómo se ve y compartirlo cuando quieras.
+      <div className="flex min-h-screen items-center justify-center bg-[#fbfbf7] p-4 text-[#1e261f]">
+        <div className="w-full max-w-lg rounded-lg border border-[#dbe5d6] bg-white p-6 text-center shadow-[0_18px_45px_rgba(31,52,41,0.10)] sm:p-8">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-lg bg-[#e6f1e8] text-lg font-black text-[#214e34]">
+            YCL
+          </div>
+          <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#c05635]">
+            Registro recibido
           </p>
-          {params.slug && (
+          <h1 className="mt-3 text-3xl font-black text-[#1f3429]">¡Listo!</h1>
+          <p className="mt-4 text-base leading-7 text-[#53645a]">
+            Recibimos tu registro y ya puedes revisar tu perfil público. El
+            siguiente paso natural es agregar tu primer producto para tener una
+            página lista para compartir por WhatsApp.
+          </p>
+
+          {sellerSlug ? (
+            <RegistrationSuccessActions sellerSlug={sellerSlug} />
+          ) : (
             <a
-              href={`/vendedor/${params.slug}`}
-              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-green-600 px-5 text-sm font-semibold text-white transition hover:bg-green-700"
+              href="/registro"
+              className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
             >
-              Ver perfil público
+              Registrar otro vendedor
             </a>
           )}
         </div>
