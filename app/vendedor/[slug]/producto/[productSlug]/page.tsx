@@ -117,8 +117,22 @@ export default async function ProductDetailPage({ params }: Props) {
             href={`/vendedor/${sellerSlug}`}
             className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
           >
-            Ver vendedor
+            Volver al vendedor
           </a>
+        </div>
+      </section>
+
+      <section className="border-b border-[#dce4d6] bg-[#173a2a] text-white">
+        <div className="mx-auto max-w-6xl px-5 pb-10 pt-8 sm:px-8 sm:pb-14 lg:px-10">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f6c55f]">
+            Producto local
+          </p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight tracking-normal sm:text-6xl">
+            {title}
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/82">
+            De {sellerName}, disponible en {zona}.
+          </p>
         </div>
       </section>
 
@@ -135,33 +149,43 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
 
           <div className="flex flex-col justify-center">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-              Producto local
-            </p>
-            <h1 className="mt-4 text-4xl font-black leading-tight text-[#1f3429] sm:text-6xl">
-              {title}
-            </h1>
-            <p className="mt-5 text-3xl font-black text-[#c05635]">
-              {formatProductPrice(product.price)}
-            </p>
-            <p className="mt-6 text-lg leading-8 text-[#53645a]">
-              {description}
-            </p>
-
-            {productWhatsAppHref ? (
-              <a
-                href={productWhatsAppHref}
-                className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-6 text-base font-black text-[#102318] shadow-sm transition hover:bg-[#39df78] sm:w-auto"
-              >
-                Preguntar por WhatsApp
-              </a>
-            ) : (
-              <p className="mt-8 rounded-lg bg-[#eef5ec] p-4 text-sm font-semibold leading-6 text-[#53645a]">
-                Este vendedor todavía no agregó WhatsApp público.
+            <section className="rounded-lg border border-[#dbe5d6] bg-white p-6 shadow-[0_14px_36px_rgba(31,52,41,0.08)] sm:p-8">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
+                Precio
               </p>
-            )}
+              <p className="mt-3 text-4xl font-black text-[#c05635]">
+                {formatProductPrice(product.price)}
+              </p>
+              <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
+                Descripción
+              </p>
+              <p className="mt-3 whitespace-pre-line text-lg leading-8 text-[#53645a]">
+                {description}
+              </p>
 
-            <section className="mt-8 rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {productWhatsAppHref ? (
+                  <a
+                    href={productWhatsAppHref}
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-base font-black text-[#102318] shadow-sm transition hover:bg-[#39df78]"
+                  >
+                    Preguntar por WhatsApp
+                  </a>
+                ) : (
+                  <p className="rounded-lg bg-[#eef5ec] p-4 text-sm font-semibold leading-6 text-[#53645a] sm:col-span-2">
+                    Este vendedor todavía no agregó WhatsApp público.
+                  </p>
+                )}
+                <a
+                  href={`/vendedor/${sellerSlug}`}
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-6 text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                >
+                  Ver tienda
+                </a>
+              </div>
+            </section>
+
+            <section className="mt-5 rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
                 Vendedor
               </p>

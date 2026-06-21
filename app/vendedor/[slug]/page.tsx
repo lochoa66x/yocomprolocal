@@ -79,6 +79,18 @@ async function getSellerProfileBySlug(
   };
 }
 
+function getCardDescription(description: string) {
+  const maxLength = 150;
+  const trimmed = description.trim();
+
+  if (trimmed.length <= maxLength) {
+    return trimmed;
+  }
+
+  const shortened = trimmed.slice(0, maxLength).replace(/\s+\S*$/, "");
+  return `${shortened || trimmed.slice(0, maxLength).trimEnd()}...`;
+}
+
 function ProductCard({
   product,
   sellerName,
@@ -94,6 +106,7 @@ function ProductCard({
   const category = product.category?.trim() || "Producto local";
   const description =
     product.description?.trim() || "Producto publicado en YoComproLocal.";
+  const cardDescription = getCardDescription(description);
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
   const imageStyle = getProductImageStyle(product.image_url);
@@ -126,20 +139,31 @@ function ProductCard({
             {formatProductPrice(product.price)}
           </p>
         </div>
-        <p className="mt-3 text-sm leading-6 text-[#53645a]">{description}</p>
+        <p className="mt-3 text-sm leading-6 text-[#53645a]">
+          {cardDescription}
+        </p>
 
-        {productWhatsAppHref ? (
+        <div className="relative z-20 mt-5 grid gap-3">
           <a
-            href={productWhatsAppHref}
-            className="relative z-20 mt-5 inline-flex w-full min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+            href={productHref}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
           >
-            Preguntar por WhatsApp
+            Ver producto
           </a>
-        ) : (
-          <p className="mt-5 rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
-            Contacto pendiente.
-          </p>
-        )}
+
+          {productWhatsAppHref ? (
+            <a
+              href={productWhatsAppHref}
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+            >
+              Preguntar por WhatsApp
+            </a>
+          ) : (
+            <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
+              Contacto pendiente.
+            </p>
+          )}
+        </div>
       </div>
     </article>
   );
