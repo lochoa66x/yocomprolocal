@@ -29,7 +29,11 @@ type SellerDashboard = {
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ producto?: string; registro?: string }>;
+  searchParams: Promise<{
+    producto?: string;
+    registro?: string;
+    perfil?: string;
+  }>;
 };
 
 export const metadata: Metadata = {
@@ -268,12 +272,14 @@ export default async function SellerDashboardPage({
   const publicSellerHref = `/vendedor/${slug}`;
   const publicSellerUrl = `${getSiteUrl()}${publicSellerHref}`;
   const addProductHref = `/producto/nuevo?seller=${slug}`;
+  const editProfileHref = `/panel/vendedor/${slug}/perfil`;
   const whatsappStatus = seller.whatsapp?.trim()
     ? "WhatsApp listo"
     : "Falta WhatsApp";
   const showProductCreated = query.producto === "creado";
   const showProductUpdated = query.producto === "actualizado";
   const showRegistrationCreated = query.registro === "creado";
+  const showProfileUpdated = query.perfil === "actualizado";
   const productMessage = showProductUpdated
     ? "Producto actualizado. Tu vitrina ya muestra los cambios."
     : "Producto publicado. Ya puedes compartirlo con tus clientes.";
@@ -318,12 +324,20 @@ export default async function SellerDashboardPage({
                 productos cuando quieras.
               </p>
             </div>
-            <a
-              href={addProductHref}
-              className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
-            >
-              Agregar producto
-            </a>
+            <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0">
+              <a
+                href={editProfileHref}
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 px-6 text-base font-black text-white transition hover:bg-white/10"
+              >
+                Editar perfil
+              </a>
+              <a
+                href={addProductHref}
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+              >
+                Agregar producto
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -355,16 +369,25 @@ export default async function SellerDashboardPage({
         </div>
       </section>
 
-      {(showProductCreated || showProductUpdated || showRegistrationCreated) && (
+      {(showProductCreated ||
+        showProductUpdated ||
+        showRegistrationCreated ||
+        showProfileUpdated) && (
         <section className="border-b border-[#dce4d6] bg-[#eef5ec]">
           <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
             <div className="rounded-lg border border-[#b9d8b8] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.05)]">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-[#2f7c5b]">
-                {showRegistrationCreated ? "Registro listo" : "Producto listo"}
+                {showRegistrationCreated
+                  ? "Registro listo"
+                  : showProfileUpdated
+                  ? "Perfil actualizado"
+                  : "Producto listo"}
               </p>
               <p className="mt-2 text-lg font-bold leading-7 text-[#214e34]">
                 {showRegistrationCreated
                   ? "Tu registro está listo. Agrega tu primer producto para empezar a compartir tu tienda."
+                  : showProfileUpdated
+                  ? "Perfil actualizado. Tu página pública ya muestra los cambios."
                   : productMessage}
               </p>
             </div>
@@ -402,6 +425,12 @@ export default async function SellerDashboardPage({
               </p>
               <div className="mt-4 grid gap-3">
                 <CopyLinkButton value={publicSellerUrl} />
+                <a
+                  href={editProfileHref}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
+                >
+                  Editar perfil
+                </a>
                 <a
                   href={publicSellerHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"

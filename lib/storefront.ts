@@ -3,6 +3,7 @@ import { createSellerSlug } from "@/lib/slugs";
 
 export type SellerRecord = {
   name: string | null;
+  email: string | null;
   whatsapp: string | null;
   zona: string | null;
   description: string | null;
@@ -52,7 +53,7 @@ export function getWhatsAppHref(
 export async function getSellersBySlug(supabase: SupabaseClient) {
   const { data, error } = await supabase
     .from("sellers")
-    .select("name, whatsapp, zona, description")
+    .select("name, email, whatsapp, zona, description")
     .limit(200);
 
   if (error) {
