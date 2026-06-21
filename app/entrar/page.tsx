@@ -137,7 +137,7 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "callback") {
-    return "Ese enlace ya venció o ya se usó. Escribe tu correo y pide uno nuevo.";
+    return "No pudimos abrir ese enlace. Escribe tu correo y usa el enlace nuevo más reciente.";
   }
 
   if (error === "no_seller") {

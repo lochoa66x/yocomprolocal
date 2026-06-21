@@ -111,6 +111,21 @@ Optional preview redirect for Vercel branches:
 https://*.vercel.app/auth/callback
 ```
 
+## Supabase Email Template
+
+To avoid `bad_code_verifier` errors, the magic-link email should use Supabase's
+token hash instead of the default PKCE `code` link. In Supabase, open
+**Authentication > Email Templates > Magic Link** and make the main button link:
+
+```html
+<a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email&next=/panel">
+  Abrir mi panel
+</a>
+```
+
+If Supabase also sends a signup confirmation template for first-time sellers,
+use the same link format there too.
+
 ## Production Smoke Test
 
 Use an email that exists in `public.sellers`.
@@ -140,6 +155,11 @@ enabled and watch for provider rate limits.
 
 The callback URL is probably missing from Supabase Auth redirect URLs, or the
 magic link expired. Add the redirect URL and request a new link.
+
+If Vercel logs show `bad_code_verifier`, update the Supabase email template to
+use `token_hash` as described above. That link format is friendlier for sellers
+because it does not depend on the hidden browser verifier from the exact login
+request.
 
 ### Magic Link Opens Localhost
 

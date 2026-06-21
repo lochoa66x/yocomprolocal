@@ -43,6 +43,14 @@ In Supabase Auth settings, add these redirect URLs:
 - `https://www.yocomprolocal.com.mx/auth/callback`
 - `http://localhost:3000/auth/callback`
 
+Set the Magic Link email button to:
+
+```html
+<a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email&next=/panel">
+  Abrir mi panel
+</a>
+```
+
 For the full production login checklist and smoke test, see:
 
 `docs/production-auth-qa.md`

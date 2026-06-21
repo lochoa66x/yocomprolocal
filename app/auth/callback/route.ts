@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { createSupabaseAuthClient } from "@/lib/supabase-server";
 import { getCanonicalSiteOrigin, isLocalOrigin } from "@/lib/site-url";
+
+const EMAIL_OTP_TYPES = new Set([
+  "email",
+  "magiclink",
+  "signup",
+  "invite",
+  "recovery",
+  "email_change",
+]);
 
 function getSafeNextPath(nextPath: string | null) {
   if (!nextPath || !nextPath.startsWith("/") || nextPath.startsWith("//")) {
@@ -8,6 +18,14 @@ function getSafeNextPath(nextPath: string | null) {
   }
 
   return nextPath;
+}
+
+function getEmailOtpType(type: string | null): EmailOtpType {
+  if (type && EMAIL_OTP_TYPES.has(type)) {
+    return type as EmailOtpType;
+  }
+
+  return "email";
 }
 
 function getRedirectUrl(requestUrl: URL, path: string) {
@@ -37,19 +55,19 @@ function getCanonicalCallbackUrl(requestUrl: URL, code: string, nextPath: string
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
+  const tokenHash = requestUrl.searchParams.get("token_hash");
+  const otpType = getEmailOtpType(requestUrl.searchParams.get("type"));
   const nextPath = getSafeNextPath(requestUrl.searchParams.get("next"));
 
-  if (!code) {
+  if (!code && !tokenHash) {
     return NextResponse.redirect(
       getRedirectUrl(requestUrl, "/entrar?error=callback")
     );
   }
 
-  const canonicalCallbackUrl = getCanonicalCallbackUrl(
-    requestUrl,
-    code,
-    nextPath
-  );
+  const canonicalCallbackUrl = code
+    ? getCanonicalCallbackUrl(requestUrl, code, nextPath)
+    : null;
 
   if (canonicalCallbackUrl) {
     return NextResponse.redirect(canonicalCallbackUrl);
@@ -64,7 +82,12 @@ export async function GET(request: Request) {
     );
   }
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const { error } = tokenHash
+    ? await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: otpType,
+      })
+    : await supabase.auth.exchangeCodeForSession(code!);
 
   if (error) {
     console.error("Supabase auth callback error:", error);
