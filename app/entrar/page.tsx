@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   createSupabaseAdminClient,
   createSupabaseAuthClient,
 } from "@/lib/supabase-server";
-
-const DEFAULT_SITE_URL = "https://yocomprolocal.com.mx";
+import { getAuthRedirectOrigin } from "@/lib/site-url";
 
 type Props = {
   searchParams: Promise<{
@@ -67,54 +65,6 @@ function getLoginHref({
   const queryString = params.toString();
 
   return `/entrar${queryString ? `?${queryString}` : ""}`;
-}
-
-function normalizeOrigin(value: string | null | undefined) {
-  const trimmedValue = value?.trim().replace(/\/$/, "");
-
-  if (!trimmedValue) {
-    return null;
-  }
-
-  try {
-    return new URL(trimmedValue).origin;
-  } catch {
-    return trimmedValue;
-  }
-}
-
-function isLocalOrigin(origin: string) {
-  try {
-    const { hostname } = new URL(origin);
-
-    return hostname === "localhost" || hostname === "127.0.0.1";
-  } catch {
-    return origin.includes("localhost") || origin.includes("127.0.0.1");
-  }
-}
-
-async function getAuthRedirectOrigin() {
-  const configuredSiteUrl = normalizeOrigin(process.env.NEXT_PUBLIC_SITE_URL);
-
-  if (configuredSiteUrl) {
-    return configuredSiteUrl;
-  }
-
-  const headersList = await headers();
-  const origin = normalizeOrigin(headersList.get("origin"));
-  const forwardedHost =
-    headersList.get("x-forwarded-host") || headersList.get("host");
-  const forwardedProto = headersList.get("x-forwarded-proto") || "https";
-  const forwardedOrigin = normalizeOrigin(
-    forwardedHost ? `${forwardedProto}://${forwardedHost}` : null
-  );
-  const requestOrigin = origin || forwardedOrigin;
-
-  if (requestOrigin && !isLocalOrigin(requestOrigin)) {
-    return requestOrigin;
-  }
-
-  return DEFAULT_SITE_URL;
 }
 
 async function sellerExistsForEmail(email: string) {
