@@ -27,8 +27,8 @@ function getBackgroundStyle(imageUrl: string): CSSProperties {
 export function ProductImageFrame({
   alt,
   badge,
-  className = "aspect-[4/3]",
-  imageClassName = "p-5 sm:p-6",
+  className = "aspect-square",
+  imageClassName = "p-7 sm:p-8",
   imageUrl,
 }: ProductImageFrameProps) {
   const validImageUrl = getValidImageUrl(imageUrl);
@@ -40,11 +40,11 @@ export function ProductImageFrame({
       {validImageUrl ? (
         <>
           <div
-            className="absolute inset-0 z-0 scale-125 bg-cover bg-center opacity-65 blur-2xl saturate-125"
+            className="absolute inset-0 z-0 scale-125 bg-cover bg-center opacity-70 blur-3xl saturate-150"
             style={getBackgroundStyle(validImageUrl)}
           />
-          <div className="absolute inset-0 z-0 bg-[linear-gradient(135deg,rgba(255,248,226,0.64),rgba(238,245,236,0.5),rgba(47,124,91,0.3))]" />
-          <div className="absolute inset-2 z-0 rounded-xl bg-white/28 shadow-[inset_0_0_42px_rgba(33,78,52,0.12)] sm:inset-3" />
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_40%,rgba(255,255,255,0.32),transparent_42%),linear-gradient(135deg,rgba(255,248,226,0.7),rgba(238,245,236,0.5),rgba(47,124,91,0.34))]" />
+          <div className="absolute inset-3 z-0 rounded-xl bg-white/30 shadow-[inset_0_0_52px_rgba(33,78,52,0.14)] sm:inset-4" />
           <div
             className={`absolute inset-0 z-10 flex items-center justify-center ${imageClassName}`}
           >
@@ -53,7 +53,7 @@ export function ProductImageFrame({
               alt={alt}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(23,58,42,0.24)]"
+              className="h-full w-full object-contain object-center drop-shadow-[0_20px_30px_rgba(23,58,42,0.24)]"
             />
           </div>
         </>
