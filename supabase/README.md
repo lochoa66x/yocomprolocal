@@ -59,6 +59,10 @@ If the email template Source panel is grayed out, leave the default Supabase
 magic-link template in place for now. The app also supports the default link
 format and will complete the login through `/auth/session`.
 
+For the YoComproLocal-branded subject, body, sender notes, and QA checklist, see:
+
+`docs/supabase-auth-email-template.md`
+
 For the full production login checklist and smoke test, see:
 
 `docs/production-auth-qa.md`

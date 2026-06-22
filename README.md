@@ -70,6 +70,10 @@ For production seller login setup, follow:
 
 `docs/production-auth-qa.md`
 
+For the branded Supabase seller access email template, follow:
+
+`docs/supabase-auth-email-template.md`
+
 For product concerns, future login ideas, and seller UX notes, follow:
 
 `docs/product-notes.md`

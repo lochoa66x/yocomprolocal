@@ -31,6 +31,7 @@ Short-term goal:
 - Use a friendly Spanish subject, for example:
   `Tu acceso a YoComproLocal`.
 - Keep the email body very simple: explain that the link opens the seller panel.
+- Keep `docs/supabase-auth-email-template.md` as the working setup guide.
 
 Future production goal:
 
@@ -121,18 +122,19 @@ Keep improving:
 
 ## Recommended Next Prompt
 
-Title: `Seller Onboarding QA And Auth Email Branding`
+Title: `Seller Product Sharing QA`
 
 Goal:
 
-Verify the full seller onboarding path in production and prepare the Supabase
-Auth email template so sellers receive a YoComproLocal-branded access message.
+Test the seller dashboard sharing tools from a real seller account and make sure
+store links, product links, and WhatsApp messages are obvious and copy-ready.
 
 Scope:
 
-- Test `/vender -> /registro -> /entrar -> /panel`.
-- Confirm wrong-email recovery is understandable.
-- Confirm expired-link recovery is understandable.
-- Draft Supabase Auth email subject/body with YoComproLocal language.
-- Confirm production `NEXT_PUBLIC_SITE_URL` and Supabase redirect URLs.
-- Do not add SMS, WhatsApp OTP, payments, shipping, or admin approval yet.
+- Open a seller dashboard after magic-link login.
+- Confirm the public store link is easy to find and copy.
+- Confirm each published product has a visible public link and WhatsApp share
+  message.
+- Confirm draft products explain why buyers cannot see them yet.
+- Confirm all labels feel human and Latin American Spanish.
+- Do not add payments, shipping, buyer accounts, or admin approval yet.

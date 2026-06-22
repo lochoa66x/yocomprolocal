@@ -113,9 +113,22 @@ https://*.vercel.app/auth/callback
 
 ## Supabase Email Template
 
-If Supabase's email template editor is locked because custom SMTP is not set
-up yet, keep the default Magic Link email. The app supports Supabase's default
-implicit magic link and will finish the seller session through `/auth/session`.
+For branded seller access email copy, use:
+
+```text
+docs/supabase-auth-email-template.md
+```
+
+If Supabase's email template editor is locked or the Source tab is grayed out,
+custom SMTP is not fully configured yet. Keep the default Magic Link email for
+MVP testing. The app supports Supabase's default implicit magic link and will
+finish the seller session through `/auth/session`.
+
+When SMTP is ready, use this email subject:
+
+```text
+Tu acceso a YoComproLocal
+```
 
 Later, after custom SMTP is configured, the magic-link email can use Supabase's
 token hash instead of the default link. In Supabase, open **Authentication >
