@@ -206,7 +206,7 @@ export default async function ProductDetailPage({ params }: Props) {
             href={sellerHref}
             className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
           >
-            Ver negocio
+            Ver tienda
           </a>
         </div>
       </section>
@@ -216,12 +216,12 @@ export default async function ProductDetailPage({ params }: Props) {
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f6c55f]">
             Producto local
           </p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight tracking-normal sm:text-6xl">
+          <h1 className="mt-4 max-w-4xl break-words text-4xl font-black leading-tight tracking-normal sm:text-6xl">
             {title}
           </h1>
           <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/82">
-            De {sellerName}, en {zona}. Escribe por WhatsApp para confirmar
-            disponibilidad y acordar entrega.
+            De {sellerName}, en {zona}. Pregunta por WhatsApp para confirmar
+            disponibilidad, pago y entrega.
           </p>
         </div>
       </section>
@@ -241,7 +241,7 @@ export default async function ProductDetailPage({ params }: Props) {
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#c05635]">
                 {category}
               </p>
-              <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+              <h2 className="mt-3 break-words text-3xl font-black leading-tight text-[#1f3429]">
                 {title}
               </h2>
               <p className="mt-6 text-xs font-black uppercase tracking-[0.18em] text-[#567164]">
@@ -261,9 +261,9 @@ export default async function ProductDetailPage({ params }: Props) {
                 {productWhatsAppHref ? (
                   <a
                     href={productWhatsAppHref}
-                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-base font-black text-[#102318] shadow-sm transition hover:bg-[#39df78]"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-center text-base font-black text-[#102318] shadow-sm transition hover:bg-[#39df78]"
                   >
-                    Escribir por WhatsApp
+                    Preguntar por WhatsApp
                   </a>
                 ) : (
                   <p className="rounded-lg bg-[#eef5ec] p-4 text-sm font-semibold leading-6 text-[#53645a] sm:col-span-2">
@@ -272,9 +272,9 @@ export default async function ProductDetailPage({ params }: Props) {
                 )}
                 <a
                   href={sellerHref}
-                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-6 text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-6 text-center text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
-                  Ver negocio
+                  Ver tienda completa
                 </a>
               </div>
             </section>
@@ -304,7 +304,7 @@ export default async function ProductDetailPage({ params }: Props) {
                   Cómo comprar
                 </p>
                 <p className="mt-3 text-sm font-semibold leading-6 text-[#53645a]">
-                  YoComproLocal no cobra ni organiza entregas. Escribe por
+                  YoComproLocal no cobra ni organiza entregas. Pregunta por
                   WhatsApp, confirma disponibilidad y acuerda todo directo con{" "}
                   {sellerName}.
                 </p>
@@ -319,7 +319,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 </p>
                 <a
                   href={shareProductHref}
-                  className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                  className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-center text-sm font-black leading-5 text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
                   Compartir por WhatsApp
                 </a>

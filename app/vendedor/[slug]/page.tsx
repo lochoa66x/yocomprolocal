@@ -104,11 +104,11 @@ function ProductCard({
     : null;
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(31,52,41,0.12)]">
+    <article className="group relative overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(31,52,41,0.12)]">
       <a
         href={productHref}
         className="absolute inset-0 z-10"
-        aria-label={`Ver producto ${title}`}
+        aria-label={`Abrir página del producto ${title}`}
       />
       <ProductImageFrame
         alt={title}
@@ -117,7 +117,7 @@ function ProductCard({
       />
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-xl font-black leading-tight text-[#1f3429]">
+          <h3 className="min-w-0 break-words text-xl font-black leading-tight text-[#1f3429] transition group-hover:text-[#2f7c5b]">
             {title}
           </h3>
           <p className="shrink-0 text-lg font-black text-[#c05635]">
@@ -127,21 +127,24 @@ function ProductCard({
         <p className="mt-3 text-sm leading-6 text-[#53645a]">
           {cardDescription}
         </p>
+        <p className="mt-4 rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
+          Abre la página del producto para ver detalles y compartir el link.
+        </p>
 
         <div className="relative z-20 mt-5 grid gap-3">
           <a
             href={productHref}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#214e34] px-5 text-center text-sm font-black leading-5 text-white transition hover:bg-[#2f7c5b]"
           >
-            Ver producto
+            Ver página del producto
           </a>
 
           {productWhatsAppHref ? (
             <a
               href={productWhatsAppHref}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-center text-sm font-black leading-5 text-[#102318] transition hover:bg-[#39df78]"
             >
-              Escribir por WhatsApp
+              Preguntar por WhatsApp
             </a>
           ) : (
             <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
@@ -262,21 +265,20 @@ export default async function SellerProfilePage({ params }: Props) {
               </h1>
               <p className="mt-4 max-w-2xl text-lg font-semibold leading-8 text-white/88">
                 Compra directo con este negocio de {zona}. YoComproLocal te
-                conecta por WhatsApp; el pedido se acuerda directo con quien
-                vende.
+                ayuda a descubrirlo; el pedido se acuerda directo por WhatsApp.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 {whatsappHref && (
                   <a
                     href={whatsappHref}
-                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-center text-base font-black text-[#102318] transition hover:bg-[#39df78]"
                   >
                     Escribir por WhatsApp
                   </a>
                 )}
                 <a
                   href="#productos"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/40 bg-white/10 px-6 text-base font-black text-white transition hover:bg-white/18"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/40 bg-white/10 px-6 text-center text-base font-black text-white transition hover:bg-white/18"
                 >
                   Ver productos
                 </a>
@@ -303,7 +305,7 @@ export default async function SellerProfilePage({ params }: Props) {
                 href={whatsappHref}
                 className="mt-2 inline-flex text-2xl font-black text-[#214e34] underline decoration-[#25d366] decoration-2 underline-offset-4"
               >
-                Directo por WhatsApp
+                Pregunta por WhatsApp
               </a>
             ) : (
               <p className="mt-2 text-2xl font-black text-[#214e34]">
@@ -346,15 +348,16 @@ export default async function SellerProfilePage({ params }: Props) {
                 Cómo comprar
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
-                Revisa los productos y escribe por WhatsApp. El pago, entrega y
-                disponibilidad se acuerdan directo con el negocio.
+                Revisa un producto, abre su página y escribe por WhatsApp. El
+                pago, entrega y disponibilidad se acuerdan directo con el
+                negocio.
               </p>
             </div>
 
             {whatsappHref ? (
               <a
                 href={whatsappHref}
-                className="mt-6 inline-flex w-full min-h-12 items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
+                className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-center text-base font-black text-[#102318] transition hover:bg-[#39df78]"
               >
                 Escribir por WhatsApp
               </a>
@@ -373,32 +376,39 @@ export default async function SellerProfilePage({ params }: Props) {
               </p>
               <a
                 href={shareStoreHref}
-                className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-center text-sm font-black leading-5 text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
               >
                 Compartir por WhatsApp
               </a>
             </div>
+
+            <a
+              href="/panel"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-center text-sm font-black leading-5 text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            >
+              Entrar como vendedor
+            </a>
           </aside>
 
           <div id="productos" className="scroll-mt-8 space-y-6">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-                  Productos
+                  Escaparate
                 </p>
-                <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
+                <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-4xl">
                   Productos de este negocio
                 </h2>
                 <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                  Cada producto tiene su propia página para ver foto, precio,
-                  descripción y escribir directo por WhatsApp.
+                  Toca un producto para abrir su página con foto, precio,
+                  descripción y contacto directo.
                 </p>
               </div>
               <a
                 href="/panel"
-                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                className="hidden min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec] sm:inline-flex"
               >
-                Soy dueño de este negocio
+                Entrar como vendedor
               </a>
             </div>
 

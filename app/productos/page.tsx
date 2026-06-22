@@ -170,11 +170,11 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
     : null;
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(31,52,41,0.12)]">
+    <article className="group relative overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(31,52,41,0.12)]">
       <a
         href={productHref}
         className="absolute inset-0 z-10"
-        aria-label={`Ver producto ${title}`}
+        aria-label={`Abrir página del producto ${title}`}
       />
       <ProductImageFrame
         alt={title}
@@ -184,7 +184,7 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
 
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-xl font-black leading-tight text-[#1f3429]">
+          <h3 className="min-w-0 break-words text-xl font-black leading-tight text-[#1f3429] transition group-hover:text-[#2f7c5b]">
             {title}
           </h3>
           <p className="shrink-0 text-lg font-black text-[#c05635]">
@@ -193,6 +193,9 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
         </div>
         <p className="mt-3 text-sm leading-6 text-[#53645a]">
           {cardDescription}
+        </p>
+        <p className="mt-4 rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
+          Abre la página del producto para ver detalles y compartir el link.
         </p>
 
         <div className="mt-5 rounded-lg bg-[#eef5ec] p-4">
@@ -219,17 +222,17 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
         <div className="relative z-20 mt-5 grid gap-3">
           <a
             href={productHref}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#214e34] px-5 text-center text-sm font-black leading-5 text-white transition hover:bg-[#2f7c5b]"
           >
-            Ver producto
+            Ver página del producto
           </a>
 
           {productWhatsAppHref ? (
             <a
               href={productWhatsAppHref}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-center text-sm font-black leading-5 text-[#102318] transition hover:bg-[#39df78]"
             >
-              Escribir por WhatsApp
+              Preguntar por WhatsApp
             </a>
           ) : (
             <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
