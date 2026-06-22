@@ -25,18 +25,6 @@ export function getInitials(name: string) {
     .toUpperCase();
 }
 
-export function getProductImageStyle(imageUrl: string | null) {
-  const trimmedUrl = imageUrl?.trim();
-
-  if (!trimmedUrl || !/^https?:\/\//.test(trimmedUrl)) {
-    return undefined;
-  }
-
-  return {
-    backgroundImage: `url(${trimmedUrl})`,
-  };
-}
-
 export function getSellerRecordSlug(seller: SellerRecord) {
   const storedSlug = seller.slug?.trim();
   const name = seller.name?.trim();

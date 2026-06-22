@@ -8,9 +8,9 @@ import {
   getProductCardDescription,
   type ProductRecord,
 } from "@/lib/products";
+import { ProductImageFrame } from "@/components/product-image-frame";
 import {
   getInitials,
-  getProductImageStyle,
   getWhatsAppHref,
   type SellerRecord,
 } from "@/lib/storefront";
@@ -619,7 +619,6 @@ function DashboardProductCard({
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
   const productUrl = `${siteUrl}${productHref}`;
   const editProductHref = `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
-  const imageStyle = getProductImageStyle(product.image_url);
   const status = product.status?.trim() || "draft";
   const nextStatus = status === "published" ? "draft" : "published";
   const statusActionLabel =
@@ -631,15 +630,13 @@ function DashboardProductCard({
   return (
     <article className="overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
       <div className="grid gap-0 md:grid-cols-[220px_1fr]">
-        <div
-          className="relative flex min-h-52 items-end bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4 md:min-h-full"
-          style={imageStyle}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#173a2a]/65 via-transparent to-transparent" />
-          <span className="relative rounded-full bg-white/90 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-[#214e34]">
-            {category}
-          </span>
-        </div>
+        <ProductImageFrame
+          alt={title}
+          badge={category}
+          className="min-h-52 md:min-h-full"
+          imageClassName="p-5"
+          imageUrl={product.image_url}
+        />
 
         <div className="p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

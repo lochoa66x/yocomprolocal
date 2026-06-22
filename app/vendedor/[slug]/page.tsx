@@ -9,9 +9,9 @@ import {
   getProductCardDescription,
   type ProductRecord,
 } from "@/lib/products";
+import { ProductImageFrame } from "@/components/product-image-frame";
 import {
   getInitials,
-  getProductImageStyle,
   getSellerBySlug,
   getWhatsAppHref,
   type SellerRecord,
@@ -99,7 +99,6 @@ function ProductCard({
   const cardDescription = getProductCardDescription(description);
   const productSlug = product.slug?.trim() || createProductRecordSlug(title);
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
-  const imageStyle = getProductImageStyle(product.image_url);
   const productWhatsAppHref = sellerWhatsapp
     ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
     : null;
@@ -111,15 +110,11 @@ function ProductCard({
         className="absolute inset-0 z-10"
         aria-label={`Ver producto ${title}`}
       />
-      <div
-        className="relative flex aspect-[4/3] items-end bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4"
-        style={imageStyle}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-[#173a2a]/60 via-transparent to-transparent" />
-        <span className="relative rounded-full bg-white/90 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-[#214e34]">
-          {category}
-        </span>
-      </div>
+      <ProductImageFrame
+        alt={title}
+        badge={category}
+        imageUrl={product.image_url}
+      />
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-xl font-black leading-tight text-[#1f3429]">

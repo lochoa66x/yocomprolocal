@@ -7,9 +7,9 @@ import {
   createProductRecordSlug,
   type ProductRecord,
 } from "@/lib/products";
+import { ProductImageFrame } from "@/components/product-image-frame";
 import { uploadProductImage } from "@/lib/product-images";
 import { requireSellerAccess } from "@/lib/seller-auth";
-import { getProductImageStyle } from "@/lib/storefront";
 
 type EditableProductRecord = ProductRecord & {
   status: string | null;
@@ -324,7 +324,6 @@ export default async function EditProductPage({ params, searchParams }: Props) {
   const description = product.description?.trim() || "";
   const status = product.status?.trim() || "published";
   const imageUrl = product.image_url?.trim() || "";
-  const imageStyle = getProductImageStyle(imageUrl);
   const errorMessage = getErrorMessage(query.error);
 
   return (
@@ -366,14 +365,12 @@ export default async function EditProductPage({ params, searchParams }: Props) {
               tu panel para seguir compartiendo tu vitrina.
             </p>
 
-            <div
-              className="mt-8 flex min-h-60 items-end overflow-hidden rounded-lg border border-[#dbe5d6] bg-[linear-gradient(135deg,#f6c55f_0%,#e37852_48%,#2f7c5b_100%)] bg-cover bg-center p-4 shadow-[0_14px_36px_rgba(31,52,41,0.08)]"
-              style={imageStyle}
-            >
-              <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-[#214e34]">
-                {category}
-              </div>
-            </div>
+            <ProductImageFrame
+              alt={title}
+              badge={category}
+              className="mt-8 min-h-60 rounded-lg border border-[#dbe5d6] shadow-[0_14px_36px_rgba(31,52,41,0.08)]"
+              imageUrl={imageUrl}
+            />
           </div>
 
           <div className="rounded-lg border border-[#dbe5d6] bg-white p-6 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:p-8">
