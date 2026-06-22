@@ -85,6 +85,10 @@ function getStatusClassName(status: string | null) {
   return "bg-[#fff1d8] text-[#8a5b14]";
 }
 
+function getAddProductLabel(productCount: number) {
+  return productCount > 0 ? "Agregar otro producto" : "Agrega tu primer producto";
+}
+
 function hasText(value: string | null | undefined) {
   return Boolean(value?.trim());
 }
@@ -747,6 +751,7 @@ function DashboardProductCard({
   const editProductHref = `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
   const deleteProductHref = `${editProductHref}#eliminar-producto`;
   const status = product.status?.trim() || "draft";
+  const priceLabel = formatProductPrice(product.price);
   const nextStatus = status === "published" ? "draft" : "published";
   const statusActionLabel =
     status === "published" ? "Ocultar de público" : "Publicar página";
@@ -785,7 +790,7 @@ function DashboardProductCard({
               </p>
             </div>
             <p className="shrink-0 text-xl font-black text-[#c05635]">
-              {formatProductPrice(product.price)}
+              {priceLabel}
             </p>
           </div>
 
@@ -802,11 +807,11 @@ function DashboardProductCard({
                   href={productHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
-                  Abrir página del producto
+                  Ver producto público
                 </a>
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Copiar link del producto"
+                  label="Compartir enlace"
                   value={productUrl}
                   variant="secondary"
                 />
@@ -824,63 +829,87 @@ function DashboardProductCard({
             </div>
           )}
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            <a
-              href={editProductHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
-            >
-              Editar producto
-            </a>
-
-            <a
-              href={deleteProductHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
-            >
-              Eliminar
-            </a>
-
-            {status === "published" ? (
-              productWhatsAppHref ? (
-                <a
-                  href={productWhatsAppHref}
-                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+          <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                  Acciones del producto
+                </p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-[#53645a]">
+                  Estado:{" "}
+                  <span className="font-black text-[#214e34]">
+                    {getStatusLabel(status)}
+                  </span>
+                </p>
+              </div>
+              <form action={updateProductStatus} className="lg:min-w-52">
+                <input type="hidden" name="sellerSlug" value={sellerSlug} />
+                <input type="hidden" name="productId" value={product.id} />
+                <input type="hidden" name="productSlug" value={productSlug} />
+                <input type="hidden" name="nextStatus" value={nextStatus} />
+                <button
+                  type="submit"
+                  className={`inline-flex min-h-11 w-full items-center justify-center rounded-full px-5 text-sm font-black transition ${
+                    nextStatus === "published"
+                      ? "bg-[#25d366] text-[#102318] hover:bg-[#39df78]"
+                      : "border border-[#214e34]/20 bg-white text-[#214e34] hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                  }`}
                 >
-                  Probar WhatsApp
+                  {statusActionLabel}
+                </button>
+              </form>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {status === "published" ? (
+                <a
+                  href={productHref}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                >
+                  Ver producto público
                 </a>
               ) : (
                 <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                  WhatsApp pendiente
+                  Cliente no lo ve
                 </p>
-              )
-            ) : (
-              <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                Cliente no lo ve
-              </p>
-            )}
+              )}
 
-            <form action={updateProductStatus}>
-              <input type="hidden" name="sellerSlug" value={sellerSlug} />
-              <input type="hidden" name="productId" value={product.id} />
-              <input type="hidden" name="productSlug" value={productSlug} />
-              <input type="hidden" name="nextStatus" value={nextStatus} />
-              <button
-                type="submit"
-                className={`inline-flex min-h-11 w-full items-center justify-center rounded-full px-5 text-sm font-black transition ${
-                  nextStatus === "published"
-                    ? "bg-[#25d366] text-[#102318] hover:bg-[#39df78]"
-                    : "border border-[#214e34]/20 bg-white text-[#214e34] hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
-                }`}
+              <a
+                href={editProductHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
               >
-                {statusActionLabel}
-              </button>
-            </form>
+                Editar
+              </a>
 
-            <a
-              href={`/producto/nuevo?seller=${sellerSlug}`}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] transition hover:bg-[#ffd77a]"
-            >
-              Agregar otro
-            </a>
+              {status === "published" ? (
+                <CopyLinkButton
+                  copiedLabel="Link copiado"
+                  label="Compartir enlace"
+                  value={productUrl}
+                  variant="secondary"
+                />
+              ) : (
+                <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
+                  Publica para compartir
+                </p>
+              )}
+
+              <a
+                href={deleteProductHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
+              >
+                Eliminar
+              </a>
+            </div>
+
+            {status === "published" && productWhatsAppHref && (
+              <a
+                href={productWhatsAppHref}
+                className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+              >
+                Probar mensaje por WhatsApp
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -895,11 +924,11 @@ function EmptyProductsState({ sellerSlug }: { sellerSlug: string }) {
         Primer producto
       </p>
       <h2 className="mt-4 text-3xl font-black leading-tight text-[#1f3429]">
-        Agrega tu primer producto y compártelo hoy.
+        Agrega tu primer producto para abrir tu vitrina.
       </h2>
       <p className="mt-4 max-w-2xl text-base leading-7 text-[#53645a]">
-        Solo necesitas una foto, nombre, precio y una descripción corta. Al
-        publicarlo, tendrás una página lista para mandar por WhatsApp.
+        Empieza con el producto que más te piden. Con una foto, precio y
+        descripción corta tendrás una página lista para mandar por WhatsApp.
       </p>
 
       <ol className="mt-6 grid gap-3 text-sm font-bold leading-6 text-[#53645a] md:grid-cols-3">
@@ -918,7 +947,7 @@ function EmptyProductsState({ sellerSlug }: { sellerSlug: string }) {
         href={`/producto/nuevo?seller=${sellerSlug}`}
         className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
       >
-        Agregar mi primer producto ahora
+        Agrega tu primer producto
       </a>
     </section>
   );
@@ -951,6 +980,7 @@ export default async function SellerDashboardPage({
   const publicSellerHref = `/vendedor/${slug}`;
   const publicSellerUrl = `${siteUrl}${publicSellerHref}`;
   const addProductHref = `/producto/nuevo?seller=${slug}`;
+  const addProductLabel = getAddProductLabel(products.length);
   const editProfileHref = `/panel/vendedor/${slug}/perfil`;
   const whatsappStatus = seller.whatsapp?.trim()
     ? "WhatsApp listo"
@@ -1091,7 +1121,7 @@ export default async function SellerDashboardPage({
                 href={addProductHref}
                 className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
               >
-                Agregar producto
+                {addProductLabel}
               </a>
             </div>
           </div>
@@ -1265,7 +1295,7 @@ export default async function SellerDashboardPage({
                 href={addProductHref}
                 className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
               >
-                Agregar producto
+                {addProductLabel}
               </a>
             </div>
 
