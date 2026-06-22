@@ -20,6 +20,17 @@ export type FeaturedProduct = {
   whatsappHref: string | null;
 };
 
+export type FeaturedSeller = {
+  id: string;
+  initials: string;
+  name: string;
+  zone: string;
+  description: string;
+  productCountLabel: string;
+  sellerHref: string;
+  whatsappHref: string | null;
+};
+
 const content = {
   es: {
     pageTitle: "YoComproLocal | Compra local. Vende mejor.",
@@ -72,6 +83,8 @@ const content = {
       "Busca negocios por nombre, zona o lo que ofrecen. Cada perfil reúne productos, contacto y una página lista para compartir.",
     directoryCta: "Ver vendedores",
     directorySecondaryCta: "Ver productos",
+    directorySellerLink: "Ver tienda",
+    directorySellerWhatsapp: "Contactar por WhatsApp",
     directoryHighlights: [
       "Tiendas locales con contacto directo.",
       "Productos publicados por cada vendedor.",
@@ -203,6 +216,8 @@ const content = {
       "Search businesses by name, zone, or what they offer. Each profile brings together products, contact, and a share-ready page.",
     directoryCta: "Browse sellers",
     directorySecondaryCta: "Browse products",
+    directorySellerLink: "View store",
+    directorySellerWhatsapp: "Contact on WhatsApp",
     directoryHighlights: [
       "Local stores with direct contact.",
       "Products published by each seller.",
@@ -391,7 +406,13 @@ function FeaturedProductsSection({
   );
 }
 
-function SellerDirectorySection({ copy }: { copy: (typeof content)[Locale] }) {
+function SellerDirectorySection({
+  copy,
+  featuredSellers,
+}: {
+  copy: (typeof content)[Locale];
+  featuredSellers: FeaturedSeller[];
+}) {
   return (
     <section className="bg-[#fbfbf7] py-16 sm:py-20">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
@@ -421,24 +442,71 @@ function SellerDirectorySection({ copy }: { copy: (typeof content)[Locale] }) {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          {copy.directoryHighlights.map((highlight) => (
-            <article
-              key={highlight}
-              className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]"
-            >
-              <span
-                className="flex size-9 items-center justify-center rounded-lg bg-[#e6f1e8] text-sm font-black text-[#214e34]"
-                aria-hidden="true"
+        {featuredSellers.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-1">
+            {featuredSellers.map((seller) => (
+              <article
+                key={seller.id}
+                className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(31,52,41,0.12)]"
               >
-                YCL
-              </span>
-              <p className="mt-4 text-base font-semibold leading-7 text-[#25372d]">
-                {highlight}
-              </p>
-            </article>
-          ))}
-        </div>
+                <div className="flex items-start gap-4">
+                  <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-[#e6f1e8] text-lg font-black text-[#214e34]">
+                    {seller.initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[#c05635]">
+                      {seller.productCountLabel}
+                    </p>
+                    <h3 className="mt-2 text-xl font-black leading-tight text-[#1f3429]">
+                      {seller.name}
+                    </h3>
+                    <p className="mt-1 text-sm font-bold text-[#6a7a70]">
+                      {seller.zone}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-6 text-[#53645a]">
+                  {seller.description}
+                </p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
+                  <a
+                    href={seller.sellerHref}
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
+                  >
+                    {copy.directorySellerLink as string}
+                  </a>
+                  {seller.whatsappHref ? (
+                    <a
+                      href={seller.whatsappHref}
+                      className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                    >
+                      {copy.directorySellerWhatsapp as string}
+                    </a>
+                  ) : null}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {copy.directoryHighlights.map((highlight) => (
+              <article
+                key={highlight}
+                className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]"
+              >
+                <span
+                  className="flex size-9 items-center justify-center rounded-lg bg-[#e6f1e8] text-sm font-black text-[#214e34]"
+                  aria-hidden="true"
+                >
+                  YCL
+                </span>
+                <p className="mt-4 text-base font-semibold leading-7 text-[#25372d]">
+                  {highlight}
+                </p>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -446,8 +514,10 @@ function SellerDirectorySection({ copy }: { copy: (typeof content)[Locale] }) {
 
 export default function HomePageClient({
   featuredProducts,
+  featuredSellers,
 }: {
   featuredProducts: FeaturedProduct[];
+  featuredSellers: FeaturedSeller[];
 }) {
   const [locale, setLocale] = useState<Locale>("es");
   const copy = content[locale];
@@ -692,7 +762,7 @@ export default function HomePageClient({
         featuredProducts={featuredProducts}
       />
 
-      <SellerDirectorySection copy={copy} />
+      <SellerDirectorySection copy={copy} featuredSellers={featuredSellers} />
 
       <section id="como-funciona" className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
