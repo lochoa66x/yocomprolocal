@@ -86,7 +86,21 @@ function getStatusClassName(status: string | null) {
 }
 
 function getAddProductLabel(productCount: number) {
-  return productCount > 0 ? "Agregar otro producto" : "Agrega tu primer producto";
+  return productCount > 0
+    ? "Agregar otro producto"
+    : "Agrega tu primer producto";
+}
+
+function getStatusDescription(status: string | null) {
+  if (status === "published") {
+    return "Tus clientes pueden verlo en tu tienda pública y preguntar por WhatsApp.";
+  }
+
+  if (status === "draft") {
+    return "Solo tú lo ves en este panel. Publícalo cuando esté listo.";
+  }
+
+  return "Revisa este producto antes de compartirlo.";
 }
 
 function hasText(value: string | null | undefined) {
@@ -669,7 +683,11 @@ function ProductReadyShareCard({
 
           <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-              Administrar producto
+              Controles privados
+            </p>
+            <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
+              Esto solo lo ves tú. Tus clientes ven la página pública, no estos
+              botones de edición.
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <a
@@ -811,7 +829,7 @@ function DashboardProductCard({
                 </a>
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Compartir enlace"
+                  label="Copiar link público"
                   value={productUrl}
                   variant="secondary"
                 />
@@ -840,6 +858,9 @@ function DashboardProductCard({
                   <span className="font-black text-[#214e34]">
                     {getStatusLabel(status)}
                   </span>
+                </p>
+                <p className="mt-1 text-xs font-semibold leading-5 text-[#6a7a70]">
+                  {getStatusDescription(status)}
                 </p>
               </div>
               <form action={updateProductStatus} className="lg:min-w-52">
@@ -870,7 +891,7 @@ function DashboardProductCard({
                 </a>
               ) : (
                 <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                  Cliente no lo ve
+                  Privado por ahora
                 </p>
               )}
 
@@ -884,13 +905,13 @@ function DashboardProductCard({
               {status === "published" ? (
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Compartir enlace"
+                  label="Copiar link público"
                   value={productUrl}
                   variant="secondary"
                 />
               ) : (
                 <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                  Publica para compartir
+                  Publica para copiar link
                 </p>
               )}
 
@@ -898,7 +919,7 @@ function DashboardProductCard({
                 href={deleteProductHref}
                 className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
               >
-                Eliminar
+                Eliminar con cuidado
               </a>
             </div>
 
@@ -1033,27 +1054,27 @@ export default async function SellerDashboardPage({
       : null;
   const productMessage = (() => {
     if (showProductCreated) {
-      return "Producto publicado. Ahora comparte el link para empezar a recibir pedidos.";
+      return "Producto publicado. Copia el link o compártelo por WhatsApp para empezar a recibir pedidos.";
     }
 
     if (showProductUpdated) {
-      return "Producto actualizado. Revisa la página y compártela con tus clientes.";
+      return "Cambios guardados. Revisa la página pública o copia el link actualizado.";
     }
 
     if (showProductPublished) {
-      return "Producto publicado. Ya aparece en tu página pública y está listo para compartir.";
+      return "Producto publicado. Tus clientes ya pueden verlo en tu tienda.";
     }
 
     if (showProductDrafted) {
-      return "Producto movido a borrador. Ya no aparece en la página pública.";
+      return "Producto oculto. Tus clientes ya no lo ven, pero sigue guardado en tu panel.";
     }
 
     if (showProductDeleted) {
-      return "Producto eliminado. Tu panel ya está actualizado.";
+      return "Producto eliminado. Ya no aparece en tu panel ni en tu tienda pública.";
     }
 
     if (showProductError) {
-      return "No pudimos actualizar el producto. Intenta de nuevo.";
+      return "No pudimos actualizar el producto. Revisa tu conexión e intenta de nuevo.";
     }
 
     return "Producto publicado. Ya puedes compartirlo con tus clientes.";

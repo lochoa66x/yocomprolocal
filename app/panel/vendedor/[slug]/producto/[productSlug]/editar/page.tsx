@@ -54,7 +54,7 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "image-upload") {
-    return "No pudimos subir la imagen. Revisa que el bucket product-images exista en Supabase.";
+    return "No pudimos subir la imagen. Intenta con otra foto o vuelve a intentarlo en unos minutos.";
   }
 
   if (error === "price") {
@@ -66,18 +66,26 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "delete-confirm") {
-    return "Marca la casilla de confirmación antes de eliminar el producto.";
+    return "Para eliminarlo, primero marca la casilla de confirmación.";
   }
 
   if (error === "delete") {
-    return "No pudimos eliminar el producto. Intenta de nuevo.";
+    return "No pudimos eliminar el producto. Intenta de nuevo en un momento.";
   }
 
   if (error) {
-    return "No pudimos actualizar el producto. Intenta de nuevo.";
+    return "No pudimos guardar los cambios. Intenta de nuevo en un momento.";
   }
 
   return null;
+}
+
+function getStatusHelpText(status: string) {
+  if (status === "draft") {
+    return "Ahora está en borrador: solo tú lo ves en tu panel.";
+  }
+
+  return "Ahora está publicado: tus clientes lo pueden ver y preguntar por WhatsApp.";
 }
 
 function getEditProductHref({
@@ -332,6 +340,7 @@ export default async function EditProductPage({ params, searchParams }: Props) {
   const status = product.status?.trim() || "published";
   const imageUrl = product.image_url?.trim() || "";
   const errorMessage = getErrorMessage(query.error);
+  const isDraft = status === "draft";
 
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
@@ -368,16 +377,16 @@ export default async function EditProductPage({ params, searchParams }: Props) {
               Ajusta tu producto sin volver a empezar.
             </h1>
             <p className="mt-5 text-lg leading-8 text-[#53645a]">
-              Cambia precio, descripción, foto o estado. Al guardar, volverás a
-              tu panel para seguir compartiendo tu vitrina.
+              Cambia precio, descripción, foto o visibilidad. Si no quieres que
+              tus clientes lo vean todavía, muévelo a borrador.
             </p>
             <div className="mt-6 rounded-lg border border-[#dbe5d6] bg-white p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
                 Control del producto
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
-                Desde aquí puedes actualizar datos, cambiar la foto, ocultarlo
-                como borrador o eliminarlo si ya no lo vendes.
+                Publicado significa que aparece para clientes. Borrador lo
+                guarda solo en tu panel. Eliminar es permanente.
               </p>
             </div>
 
@@ -387,6 +396,23 @@ export default async function EditProductPage({ params, searchParams }: Props) {
               className="mt-8 min-h-60 rounded-lg border border-[#dbe5d6] shadow-[0_14px_36px_rgba(31,52,41,0.08)]"
               imageUrl={imageUrl}
             />
+            <div
+              className={`mt-4 rounded-lg border p-4 ${
+                isDraft
+                  ? "border-[#f0d6a2] bg-[#fff8ec]"
+                  : "border-[#b9d8b8] bg-[#eef5ec]"
+              }`}
+            >
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Estado actual
+              </p>
+              <p className="mt-2 text-lg font-black text-[#1f3429]">
+                {isDraft ? "Borrador privado" : "Publicado al público"}
+              </p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-[#53645a]">
+                {getStatusHelpText(status)}
+              </p>
+            </div>
           </div>
 
           <div className="rounded-lg border border-[#dbe5d6] bg-white p-6 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:p-8">
@@ -498,9 +524,15 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                   defaultValue={status === "draft" ? "draft" : "published"}
                   className="mt-2 w-full rounded-lg border border-[#cddcc9] bg-white px-4 py-3 text-base text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 >
-                  <option value="published">Publicado</option>
-                  <option value="draft">Borrador</option>
+                  <option value="published">
+                    Publicado - los clientes lo ven
+                  </option>
+                  <option value="draft">Borrador - solo tú lo ves</option>
                 </select>
+                <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
+                  Publicado aparece en tu tienda pública. Borrador se queda
+                  guardado solo en tu panel.
+                </p>
               </div>
 
               <div>
@@ -567,9 +599,15 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                 Eliminar producto
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#6a4f45]">
-                Esta acción quita el producto de tu panel y de tu página pública.
-                Úsala solo si ya no quieres conservarlo.
+                Eliminar es permanente para este producto. Si solo quieres
+                ocultarlo, cambia el estado a Borrador y guarda cambios.
               </p>
+              <a
+                href="#status"
+                className="mt-3 inline-flex text-sm font-black text-[#a74429] underline decoration-[#f6c55f] decoration-2 underline-offset-4"
+              >
+                Prefiero moverlo a borrador
+              </a>
               <form action={deleteProduct} className="mt-4 space-y-4">
                 <input type="hidden" name="sellerSlug" value={sellerSlug} />
                 <input type="hidden" name="currentSlug" value={productSlug} />
@@ -580,13 +618,13 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                     value="yes"
                     className="mt-1 size-4 rounded border-[#d49b87] text-[#a74429]"
                   />
-                  Entiendo que quiero eliminar este producto.
+                  Sí, quiero eliminar este producto de forma permanente.
                 </label>
                 <button
                   type="submit"
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
                 >
-                  Eliminar producto
+                  Eliminar definitivamente
                 </button>
               </form>
             </div>
