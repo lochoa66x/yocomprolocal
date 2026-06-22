@@ -53,9 +53,9 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Panel de vendedor | YoComproLocal",
+  title: "Panel del negocio | YoComproLocal",
   description:
-    "Panel simple para revisar productos, compartir links y administrar una vitrina local en YoComproLocal.",
+    "Panel simple para agregar productos, copiar links y administrar tu página de negocio en YoComproLocal.",
 };
 
 function getSiteUrl() {
@@ -93,7 +93,7 @@ function getAddProductLabel(productCount: number) {
 
 function getStatusDescription(status: string | null) {
   if (status === "published") {
-    return "Tus clientes pueden verlo en tu tienda pública y preguntar por WhatsApp.";
+    return "Tus clientes pueden verlo en tu página y escribirte por WhatsApp.";
   }
 
   if (status === "draft") {
@@ -161,7 +161,7 @@ function getSellerShareMessage({
   publicSellerUrl: string;
   sellerName: string;
 }) {
-  return `Hola, soy ${sellerName}. Te comparto mi tienda en YoComproLocal: ${publicSellerUrl}`;
+  return `Hola, soy ${sellerName}. Te comparto mi página en YoComproLocal: ${publicSellerUrl}`;
 }
 
 function getProductShareMessage({
@@ -189,7 +189,7 @@ function getProductCaption({
   productUrl: string;
   sellerName: string;
 }) {
-  return `${productTitle} disponible en ${sellerName}. ${priceLabel}. Pide directo por WhatsApp desde YoComproLocal: ${productUrl}`;
+  return `${productTitle} disponible en ${sellerName}. ${priceLabel}. Pídelo directo por WhatsApp desde YoComproLocal: ${productUrl}`;
 }
 
 function getWhatsAppShareHref(message: string) {
@@ -293,11 +293,11 @@ function getDashboardTasks({
   return [
     {
       step: "Paso 1",
-      title: "Perfil del negocio completo",
+      title: "Datos del negocio completos",
       text: "Nombre, zona, descripción, correo y WhatsApp quedan listos para tus clientes.",
       complete: profileReady,
       href: editProfileHref,
-      actionLabel: "Editar perfil",
+      actionLabel: "Editar datos",
     },
     {
       step: "Paso 2",
@@ -309,8 +309,8 @@ function getDashboardTasks({
     },
     {
       step: "Paso 3",
-      title: "Ver página pública",
-      text: "Revisa la vitrina que ven tus clientes antes de mandarla por WhatsApp.",
+      title: "Ver página del negocio",
+      text: "Revisa la página que ven tus clientes antes de mandarla por WhatsApp.",
       complete: profileReady,
       href: publicSellerHref,
       actionLabel: "Ver página",
@@ -318,7 +318,7 @@ function getDashboardTasks({
     {
       step: "Paso 4",
       title: "Copiar link para WhatsApp",
-      text: "Usa el kit para copiar tu tienda o un producto con mensaje listo.",
+      text: "Usa el kit para copiar tu página o un producto con mensaje listo.",
       complete: profileReady,
       href: "#kit-compartir",
       actionLabel: "Copiar link",
@@ -355,12 +355,12 @@ function FirstRunChecklist({
             Primer recorrido
           </p>
           <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
-            Tu tienda va {completedTasks} de {tasks.length} pasos.
+            Tu negocio va {completedTasks} de {tasks.length} pasos.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
             {nextTask
               ? `Siguiente acción: ${nextTask.title.toLowerCase()}.`
-              : "Ya tienes lo básico para recibir clientes y compartir tus productos."}
+              : "Ya tienes lo básico para recibir mensajes y compartir tus productos."}
           </p>
         </div>
         {nextTask ? (
@@ -464,7 +464,7 @@ function ShareKit({
             Links y mensajes listos.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
-            Copia tu tienda o un producto para mandarlo por WhatsApp, Facebook,
+            Copia tu página o un producto para mandarlo por WhatsApp, Facebook,
             Instagram o grupos locales.
           </p>
         </div>
@@ -472,7 +472,7 @@ function ShareKit({
           href={publicSellerHref}
           className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
         >
-          Ver tienda pública
+          Ver página de mi negocio
         </a>
       </div>
 
@@ -481,10 +481,10 @@ function ShareKit({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Tienda completa
+                Página del negocio
               </p>
               <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
-                Comparte tu página de vendedor
+                Comparte tu página de negocio
               </h3>
               <p className="mt-3 break-all rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
                 {publicSellerUrl}
@@ -557,8 +557,8 @@ function ShareKit({
                         variant="secondary"
                       />
                       <CopyLinkButton
-                        copiedLabel="Caption copiado"
-                        label="Copiar caption"
+                        copiedLabel="Texto copiado"
+                        label="Copiar texto"
                         value={caption}
                         variant="secondary"
                       />
@@ -578,7 +578,7 @@ function ShareKit({
             </h3>
             <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-[#53645a]">
               Cuando tengas productos publicados, aparecerán aquí con su link,
-              mensaje para WhatsApp y caption corto.
+              mensaje para WhatsApp y texto corto para redes.
             </p>
             <a
               href={addProductHref}
@@ -677,7 +677,7 @@ function ProductReadyShareCard({
               href={publicSellerHref}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
             >
-              Ver mi tienda
+              Ver mi negocio
             </a>
           </div>
 
@@ -686,7 +686,7 @@ function ProductReadyShareCard({
               Controles privados
             </p>
             <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
-              Esto solo lo ves tú. Tus clientes ven la página pública, no estos
+              Esto solo lo ves tú. Tus clientes ven la página del producto, no estos
               botones de edición.
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
@@ -772,7 +772,7 @@ function DashboardProductCard({
   const priceLabel = formatProductPrice(product.price);
   const nextStatus = status === "published" ? "draft" : "published";
   const statusActionLabel =
-    status === "published" ? "Ocultar de público" : "Publicar página";
+    status === "published" ? "Ocultar a clientes" : "Publicar página";
   const productWhatsAppHref = sellerWhatsapp
     ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
     : null;
@@ -815,7 +815,7 @@ function DashboardProductCard({
           {status === "published" ? (
             <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Página pública del producto
+                Página que ven tus clientes
               </p>
               <p className="mt-2 break-all text-sm font-semibold leading-6 text-[#214e34]">
                 {productUrl}
@@ -825,11 +825,11 @@ function DashboardProductCard({
                   href={productHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
-                  Ver producto público
+                  Ver como cliente
                 </a>
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Copiar link público"
+                  label="Copiar link"
                   value={productUrl}
                   variant="secondary"
                 />
@@ -838,11 +838,11 @@ function DashboardProductCard({
           ) : (
             <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#eef5ec] p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Sin página pública todavía
+                Todavía no lo ven tus clientes
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
                 Este producto está en borrador. Publícalo cuando quieras que
-                los clientes puedan verlo.
+                tus clientes puedan verlo.
               </p>
             </div>
           )}
@@ -887,7 +887,7 @@ function DashboardProductCard({
                   href={productHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
-                  Ver producto público
+                  Ver como cliente
                 </a>
               ) : (
                 <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
@@ -905,7 +905,7 @@ function DashboardProductCard({
               {status === "published" ? (
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Copiar link público"
+                  label="Copiar link"
                   value={productUrl}
                   variant="secondary"
                 />
@@ -945,7 +945,7 @@ function EmptyProductsState({ sellerSlug }: { sellerSlug: string }) {
         Primer producto
       </p>
       <h2 className="mt-4 text-3xl font-black leading-tight text-[#1f3429]">
-        Agrega tu primer producto para abrir tu vitrina.
+        Agrega tu primer producto para empezar a vender.
       </h2>
       <p className="mt-4 max-w-2xl text-base leading-7 text-[#53645a]">
         Empieza con el producto que más te piden. Con una foto, precio y
@@ -996,7 +996,7 @@ export default async function SellerDashboardPage({
   const zona = seller.zona?.trim() || "Cuautitlán Izcalli";
   const description =
     seller.description?.trim() ||
-    "Vendedor local registrado en YoComproLocal.";
+    "Negocio local registrado en YoComproLocal.";
   const siteUrl = getSiteUrl();
   const publicSellerHref = `/vendedor/${slug}`;
   const publicSellerUrl = `${siteUrl}${publicSellerHref}`;
@@ -1058,11 +1058,11 @@ export default async function SellerDashboardPage({
     }
 
     if (showProductUpdated) {
-      return "Cambios guardados. Revisa la página pública o copia el link actualizado.";
+      return "Cambios guardados. Revisa la página que ven tus clientes o copia el link actualizado.";
     }
 
     if (showProductPublished) {
-      return "Producto publicado. Tus clientes ya pueden verlo en tu tienda.";
+      return "Producto publicado. Tus clientes ya pueden verlo en tu página.";
     }
 
     if (showProductDrafted) {
@@ -1070,7 +1070,7 @@ export default async function SellerDashboardPage({
     }
 
     if (showProductDeleted) {
-      return "Producto eliminado. Ya no aparece en tu panel ni en tu tienda pública.";
+      return "Producto eliminado. Ya no aparece en tu panel ni en tu página.";
     }
 
     if (showProductError) {
@@ -1101,7 +1101,7 @@ export default async function SellerDashboardPage({
               href={publicSellerHref}
               className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
             >
-              Ver página pública
+              Ver mi página
             </a>
             <a
               href="/auth/salir"
@@ -1116,7 +1116,7 @@ export default async function SellerDashboardPage({
       <section className="bg-[#173a2a] text-white">
         <div className="mx-auto max-w-7xl px-5 pb-9 pt-8 sm:px-8 sm:pb-12 lg:px-10">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f6c55f]">
-            Panel de vendedor
+            Panel del negocio
           </p>
           <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -1124,8 +1124,8 @@ export default async function SellerDashboardPage({
                 {sellerName}
               </h1>
               <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-white/82">
-                Este es tu panel privado. Aquí agregas productos, copias links
-                y revisas lo que tus clientes ven en tu página pública.
+                Este es tu espacio privado. Aquí agregas productos, copias
+                links y revisas lo que tus clientes ven.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0">
@@ -1136,7 +1136,7 @@ export default async function SellerDashboardPage({
                 href={editProfileHref}
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 px-6 text-base font-black text-white transition hover:bg-white/10"
               >
-                Editar perfil
+                Editar datos
               </a>
               <a
                 href={addProductHref}
@@ -1191,16 +1191,16 @@ export default async function SellerDashboardPage({
                 {showRegistrationCreated
                   ? "Registro listo"
                   : showProfileUpdated
-                  ? "Perfil actualizado"
+                  ? "Datos actualizados"
                   : showProductError
                   ? "Producto pendiente"
                   : "Producto listo"}
               </p>
               <p className="mt-2 text-lg font-bold leading-7 text-[#214e34]">
                 {showRegistrationCreated
-                  ? "Tu registro está listo. Agrega tu primer producto para empezar a compartir tu tienda."
+                  ? "Tu registro está listo. Agrega tu primer producto para empezar a compartir tu página."
                   : showProfileUpdated
-                  ? "Perfil actualizado. Tu página pública ya muestra los cambios."
+                  ? "Datos actualizados. La página que ven tus clientes ya muestra los cambios."
                   : productMessage}
               </p>
             </div>
@@ -1238,42 +1238,42 @@ export default async function SellerDashboardPage({
 
             <div className="mt-6 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Panel privado
+                Tu espacio privado
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
-                Solo tú ves esta pantalla. Tus clientes ven tu página pública y
-                las páginas de tus productos.
+                Solo tú ves esta pantalla. Tus clientes ven la página de tu
+                negocio y las páginas de tus productos.
               </p>
             </div>
 
             <div className="mt-6 rounded-lg bg-[#eef5ec] p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Página pública de tu negocio
+                Página de tu negocio
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
                 Este es el link que puedes mandar a clientes para mostrar tu
-                tienda.
+                negocio.
               </p>
               <p className="mt-3 break-all rounded-lg bg-white px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
                 {publicSellerUrl}
               </p>
               <div className="mt-4 grid gap-3">
                 <CopyLinkButton
-                  copiedLabel="Link público copiado"
-                  label="Copiar link de mi página pública"
+                  copiedLabel="Link copiado"
+                  label="Copiar link de mi negocio"
                   value={publicSellerUrl}
                 />
                 <a
                   href={editProfileHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
                 >
-                  Editar perfil
+                  Editar datos
                 </a>
                 <a
                   href={publicSellerHref}
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"
                 >
-                  Ver mi página pública
+                  Ver mi página
                 </a>
                 <a
                   href="/auth/salir"
@@ -1305,11 +1305,11 @@ export default async function SellerDashboardPage({
                   Productos
                 </p>
                 <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
-                  Tu vitrina local
+                  Tus productos
                 </h2>
                 <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                  Cada producto puede vivir en su propia página pública y
-                  conectar directo por WhatsApp.
+                  Cada producto puede tener su propia página para compartir y
+                  recibir mensajes por WhatsApp.
                 </p>
               </div>
               <a

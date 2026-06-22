@@ -49,8 +49,8 @@ export function getWhatsAppHref(
 
   const phone = digits.startsWith("52") ? digits : `52${digits}`;
   const message = productTitle
-    ? `Hola, vi "${productTitle}" de ${sellerName} en YoComproLocal y me interesa.`
-    : `Hola, vi el perfil de ${sellerName} en YoComproLocal y me interesa lo que vende.`;
+    ? `Hola, vi "${productTitle}" de ${sellerName} en YoComproLocal. ¿Me puedes dar más información?`
+    : `Hola, vi tu negocio en YoComproLocal y me interesa saber más.`;
 
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }

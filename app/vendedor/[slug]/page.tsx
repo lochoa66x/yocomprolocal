@@ -29,9 +29,9 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Vendedor local | YoComproLocal",
+  title: "Negocio local | YoComproLocal",
   description:
-    "Perfil público de vendedor local en YoComproLocal para contactar directo por WhatsApp.",
+    "Página de negocio local en YoComproLocal para escribir directo por WhatsApp.",
 };
 
 async function getPublishedProducts(
@@ -133,7 +133,7 @@ function ProductCard({
             href={productHref}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
           >
-            Ver página del producto
+            Ver producto
           </a>
 
           {productWhatsAppHref ? (
@@ -141,11 +141,11 @@ function ProductCard({
               href={productWhatsAppHref}
               className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
             >
-              Preguntar por WhatsApp
+              Escribir por WhatsApp
             </a>
           ) : (
             <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
-              Contacto pendiente.
+              WhatsApp pendiente.
             </p>
           )}
         </div>
@@ -164,13 +164,13 @@ function EmptyProductsState({
   return (
     <section className="rounded-lg border border-[#dbe5d6] bg-white p-7 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
       <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-        Tienda en preparación
+        Productos en camino
       </p>
       <h3 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
         {sellerName} pronto tendrá productos aquí.
       </h3>
       <p className="mt-4 max-w-2xl text-base leading-7 text-[#53645a]">
-        Esta tienda local ya tiene contacto directo. Cuando publique productos,
+        Este negocio ya tiene contacto directo. Cuando publique productos,
         verás fotos, precios y páginas listas para compartir por WhatsApp.
       </p>
       {whatsappHref ? (
@@ -178,11 +178,11 @@ function EmptyProductsState({
           href={whatsappHref}
           className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
         >
-          Preguntar por WhatsApp
+          Escribir por WhatsApp
         </a>
       ) : (
         <p className="mt-6 rounded-lg bg-[#eef5ec] p-4 text-sm font-semibold leading-6 text-[#53645a]">
-          El vendedor todavía no agregó WhatsApp público.
+          Este negocio todavía no agregó WhatsApp.
         </p>
       )}
     </section>
@@ -208,14 +208,14 @@ export default async function SellerProfilePage({ params }: Props) {
   const zona = seller.zona?.trim() || "Cuautitlán Izcalli";
   const description =
     seller.description?.trim() ||
-    "Vendedor local registrado en YoComproLocal.";
+    "Negocio local registrado en YoComproLocal.";
   const whatsappHref = seller.whatsapp
     ? getWhatsAppHref(seller.whatsapp, name)
     : null;
   const storeHref = `/vendedor/${slug}`;
   const storeUrl = new URL(storeHref, getCanonicalSiteOrigin()).toString();
   const shareStoreHref = `https://wa.me/?text=${encodeURIComponent(
-    `Mira la tienda local de ${name} en YoComproLocal: ${storeUrl}`
+    `Mira este negocio local de ${name} en YoComproLocal: ${storeUrl}`
   )}`;
 
   return (
@@ -255,14 +255,15 @@ export default async function SellerProfilePage({ params }: Props) {
           <div className="flex flex-1 items-end pb-8 pt-12 sm:pb-10 sm:pt-16">
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#f6c55f]">
-                Mini tienda local
+                Negocio local
               </p>
               <h1 className="mt-4 text-4xl font-black leading-tight tracking-normal sm:text-6xl">
                 {name}
               </h1>
               <p className="mt-4 max-w-2xl text-lg font-semibold leading-8 text-white/88">
-                Compra directo con este negocio de {zona}. YoComproLocal solo
-                conecta comprador y vendedor, sin carrito ni checkout.
+                Compra directo con este negocio de {zona}. YoComproLocal te
+                conecta por WhatsApp; el pedido se acuerda directo con quien
+                vende.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 {whatsappHref && (
@@ -270,7 +271,7 @@ export default async function SellerProfilePage({ params }: Props) {
                     href={whatsappHref}
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#25d366] px-6 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
                   >
-                    Contactar por WhatsApp
+                    Escribir por WhatsApp
                   </a>
                 )}
                 <a
@@ -302,7 +303,7 @@ export default async function SellerProfilePage({ params }: Props) {
                 href={whatsappHref}
                 className="mt-2 inline-flex text-2xl font-black text-[#214e34] underline decoration-[#25d366] decoration-2 underline-offset-4"
               >
-                Directo con vendedor
+                Directo por WhatsApp
               </a>
             ) : (
               <p className="mt-2 text-2xl font-black text-[#214e34]">
@@ -346,7 +347,7 @@ export default async function SellerProfilePage({ params }: Props) {
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
                 Revisa los productos y escribe por WhatsApp. El pago, entrega y
-                disponibilidad se acuerdan directo con el vendedor.
+                disponibilidad se acuerdan directo con el negocio.
               </p>
             </div>
 
@@ -355,17 +356,17 @@ export default async function SellerProfilePage({ params }: Props) {
                 href={whatsappHref}
                 className="mt-6 inline-flex w-full min-h-12 items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
               >
-                Contactar por WhatsApp
+                Escribir por WhatsApp
               </a>
             ) : (
               <p className="mt-6 rounded-lg bg-[#eef5ec] p-4 text-sm font-semibold leading-6 text-[#53645a]">
-                Este vendedor todavía no agregó WhatsApp público.
+                Este negocio todavía no agregó WhatsApp.
               </p>
             )}
 
             <div className="mt-4 rounded-lg border border-[#dbe5d6] bg-white p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-                Compartir tienda
+                Compartir negocio
               </p>
               <p className="mt-2 break-all rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#214e34]">
                 {storeUrl}
@@ -383,21 +384,21 @@ export default async function SellerProfilePage({ params }: Props) {
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-                  Escaparate
+                  Productos
                 </p>
                 <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
-                  Productos de la tienda
+                  Productos de este negocio
                 </h2>
                 <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
                   Cada producto tiene su propia página para ver foto, precio,
-                  descripción y preguntar directo por WhatsApp.
+                  descripción y escribir directo por WhatsApp.
                 </p>
               </div>
               <a
                 href="/panel"
                 className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
               >
-                Soy este vendedor
+                Soy dueño de este negocio
               </a>
             </div>
 

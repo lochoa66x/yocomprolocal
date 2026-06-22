@@ -14,7 +14,7 @@ import {
 export const metadata: Metadata = {
   title: "Mi panel | YoComproLocal",
   description:
-    "Acceso al panel de vendedor para administrar perfiles y productos en YoComproLocal.",
+    "Acceso al panel del negocio para administrar productos y la página de YoComproLocal.",
 };
 
 export default async function SellerPanelEntryPage() {
@@ -40,8 +40,8 @@ export default async function SellerPanelEntryPage() {
             Falta conectar Supabase.
           </h1>
           <p className="mt-4 text-base leading-7 text-[#53645a]">
-            El panel necesita las variables de Supabase para encontrar tu perfil
-            de vendedor.
+            El panel necesita la conexión de Supabase para encontrar tu
+            negocio.
           </p>
         </section>
       </main>

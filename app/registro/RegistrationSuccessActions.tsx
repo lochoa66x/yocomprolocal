@@ -50,7 +50,7 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
         href={sellerPath}
         className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
       >
-        Ver mi página pública
+        Ver la página de mi negocio
       </a>
       <button
         type="button"
@@ -59,12 +59,12 @@ export function RegistrationSuccessActions({ sellerSlug }: Props) {
       >
         {copyState === "copied"
           ? "Enlace copiado"
-          : "Copiar link de mi página pública"}
+          : "Copiar link de mi página"}
       </button>
       {copyState === "error" && (
         <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
-          No se pudo copiar automáticamente. Abre tu perfil y copia el enlace
-          desde el navegador.
+          No se pudo copiar automáticamente. Abre tu página y copia el enlace
+          desde la barra del navegador.
         </p>
       )}
     </div>

@@ -10,9 +10,9 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Editar perfil | YoComproLocal",
+  title: "Editar datos | YoComproLocal",
   description:
-    "Actualiza los datos del perfil público de vendedor en YoComproLocal.",
+    "Actualiza los datos de la página de tu negocio en YoComproLocal.",
 };
 
 function getFormValue(formData: FormData, key: string) {
@@ -39,11 +39,11 @@ function getDashboardProfileUpdatedHref(sellerSlug: string) {
 
 function getErrorMessage(error?: string) {
   if (error === "missing") {
-    return "Completa nombre, correo, WhatsApp, zona y descripción para guardar tu perfil.";
+    return "Completa nombre, correo, WhatsApp, zona y descripción para guardar los datos.";
   }
 
   if (error === "server") {
-    return "No pudimos actualizar el perfil. Intenta de nuevo.";
+    return "No pudimos actualizar los datos. Intenta de nuevo.";
   }
 
   if (error) {
@@ -169,10 +169,10 @@ export default async function EditSellerProfilePage({
         <div className="mx-auto grid max-w-5xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-              Editar perfil
+              Editar datos
             </p>
             <h1 className="mt-4 text-4xl font-black leading-tight text-[#1f3429] sm:text-5xl">
-              Mantén tu tienda clara y fácil de contactar.
+              Mantén tu negocio claro y fácil de contactar.
             </h1>
             <p className="mt-5 text-lg leading-8 text-[#53645a]">
               Actualiza el nombre, WhatsApp, zona y descripción de tu negocio.
@@ -196,7 +196,7 @@ export default async function EditSellerProfilePage({
               </div>
               <p className="mt-5 text-base leading-7 text-[#53645a]">
                 {description ||
-                  "Esta descripción aparecerá en tu página pública de vendedor."}
+                  "Esta descripción aparecerá en la página de tu negocio."}
               </p>
             </div>
           </div>
@@ -216,7 +216,7 @@ export default async function EditSellerProfilePage({
                   htmlFor="name"
                   className="block text-sm font-bold text-[#1f3429]"
                 >
-                  Nombre o nombre del negocio
+                  Nombre del negocio
                 </label>
                 <input
                   id="name"
@@ -304,7 +304,7 @@ export default async function EditSellerProfilePage({
                   type="submit"
                   className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
                 >
-                  Guardar perfil
+                  Guardar datos
                 </button>
                 <a
                   href={`/panel/vendedor/${slug}`}

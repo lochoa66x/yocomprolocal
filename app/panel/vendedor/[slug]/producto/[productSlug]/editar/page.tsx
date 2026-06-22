@@ -27,7 +27,7 @@ type Props = {
 export const metadata: Metadata = {
   title: "Editar producto | YoComproLocal",
   description:
-    "Edita la información de un producto publicado en YoComproLocal.",
+    "Edita la información de un producto de tu negocio en YoComproLocal.",
 };
 
 function getFormValue(formData: FormData, key: string) {
@@ -85,7 +85,7 @@ function getStatusHelpText(status: string) {
     return "Ahora está en borrador: solo tú lo ves en tu panel.";
   }
 
-  return "Ahora está publicado: tus clientes lo pueden ver y preguntar por WhatsApp.";
+  return "Ahora está publicado: tus clientes lo pueden ver y escribirte por WhatsApp.";
 }
 
 function getEditProductHref({
@@ -374,18 +374,18 @@ export default async function EditProductPage({ params, searchParams }: Props) {
               Editar producto
             </p>
             <h1 className="mt-4 text-4xl font-black leading-tight text-[#1f3429] sm:text-5xl">
-              Ajusta tu producto sin volver a empezar.
+              Actualiza tu producto sin volver a capturarlo.
             </h1>
             <p className="mt-5 text-lg leading-8 text-[#53645a]">
-              Cambia precio, descripción, foto o visibilidad. Si no quieres que
-              tus clientes lo vean todavía, muévelo a borrador.
+              Cambia precio, descripción, foto o si tus clientes lo pueden ver.
+              Si todavía no está listo, déjalo como borrador.
             </p>
             <div className="mt-6 rounded-lg border border-[#dbe5d6] bg-white p-4">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
                 Control del producto
               </p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
-                Publicado significa que aparece para clientes. Borrador lo
+                Publicado significa que tus clientes lo pueden ver. Borrador lo
                 guarda solo en tu panel. Eliminar es permanente.
               </p>
             </div>
@@ -407,7 +407,7 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                 Estado actual
               </p>
               <p className="mt-2 text-lg font-black text-[#1f3429]">
-                {isDraft ? "Borrador privado" : "Publicado al público"}
+                {isDraft ? "Borrador privado" : "Visible para clientes"}
               </p>
               <p className="mt-1 text-sm font-semibold leading-6 text-[#53645a]">
                 {getStatusHelpText(status)}
@@ -525,13 +525,13 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                   className="mt-2 w-full rounded-lg border border-[#cddcc9] bg-white px-4 py-3 text-base text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 >
                   <option value="published">
-                    Publicado - los clientes lo ven
+                  Publicado - visible para clientes
                   </option>
                   <option value="draft">Borrador - solo tú lo ves</option>
                 </select>
                 <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
-                  Publicado aparece en tu tienda pública. Borrador se queda
-                  guardado solo en tu panel.
+                  Publicado aparece en la página de tu negocio. Borrador se
+                  queda guardado solo en tu panel.
                 </p>
               </div>
 

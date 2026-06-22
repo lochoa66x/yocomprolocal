@@ -18,7 +18,7 @@ type Props = {
 export const metadata: Metadata = {
   title: "Entrar | YoComproLocal",
   description:
-    "Acceso para vendedores de YoComproLocal con enlace seguro por correo.",
+    "Acceso al panel de negocios de YoComproLocal con enlace seguro por correo.",
 };
 
 function getFormValue(formData: FormData, key: string) {
@@ -133,11 +133,11 @@ async function sendMagicLink(formData: FormData) {
 
 function getErrorMessage(error?: string) {
   if (error === "missing") {
-    return "Escribe tu correo para enviarte el link.";
+    return "Escribe tu correo para mandarte el enlace.";
   }
 
   if (error === "callback") {
-    return "No pudimos abrir ese enlace. Escribe tu correo y usa el enlace nuevo más reciente.";
+    return "Ese enlace ya no funcionó. Escribe tu correo y usa el enlace nuevo que te llegue.";
   }
 
   if (error === "no_seller") {
@@ -145,7 +145,7 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "server") {
-    return "No pudimos enviar el link. Revisa la configuración de Supabase e intenta de nuevo.";
+    return "No pudimos enviar el enlace. Intenta otra vez en un momento.";
   }
 
   if (error) {
@@ -177,14 +177,14 @@ export default async function LoginPage({ searchParams }: Props) {
         </a>
 
         <p className="mt-8 text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-          Acceso vendedor
+          Acceso al panel
         </p>
         <h1 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
-          Entra a tu panel con un enlace por correo.
+          Entra a tu panel con un enlace seguro.
         </h1>
         <p className="mt-4 text-base leading-7 text-[#53645a]">
-          Usa el mismo correo con el que registraste tu negocio. Te enviaremos
-          un botón seguro para abrir tu panel privado sin contraseña.
+          Escribe el correo con el que registraste tu negocio. Te mandaremos un
+          botón para entrar sin contraseña.
         </p>
 
         <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
@@ -192,19 +192,18 @@ export default async function LoginPage({ searchParams }: Props) {
             Para evitar errores
           </p>
           <p className="mt-2 text-sm leading-6 text-[#53645a]">
-            El acceso depende del correo, no del WhatsApp. Si registraste tu
-            negocio con otro correo, sal y solicita el enlace con ese correo.
+            Tu acceso depende del correo, no del WhatsApp. Usa el mismo correo
+            que pusiste al registrar tu negocio.
           </p>
         </div>
 
         {linkSent && (
           <div className="mt-6 rounded-lg border border-[#b9d8b8] bg-[#eef5ec] p-4">
             <p className="text-sm font-black text-[#214e34]">
-              Link enviado.
+              Te mandamos el enlace.
             </p>
             <p className="mt-1 text-sm leading-6 text-[#53645a]">
-              Revisa tu correo y abre el enlace para continuar a tu panel
-              privado.
+              Revisa tu correo y toca el botón para entrar a tu panel.
             </p>
           </div>
         )}
@@ -240,14 +239,14 @@ export default async function LoginPage({ searchParams }: Props) {
             type="submit"
             className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
           >
-            Enviarme enlace de acceso
+            Mandarme enlace de acceso
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm leading-6 text-[#6a7a70]">
-          ¿Todavía no tienes perfil?{" "}
+          ¿Todavía no tienes negocio registrado?{" "}
           <a href="/vender" className="font-black text-[#214e34] underline">
-            Ver cómo empezar
+            Quiero registrar mi negocio
           </a>
         </p>
       </section>

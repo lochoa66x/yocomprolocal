@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Quiero vender | YoComproLocal",
   description:
-    "Guía simple para registrar un negocio local, entrar al panel y publicar productos en YoComproLocal.",
+    "Guía simple para registrar tu negocio, entrar al panel y publicar productos en YoComproLocal.",
 };
 
 const steps = [
@@ -25,9 +25,9 @@ const steps = [
 ];
 
 const requirements = [
-  "Nombre del negocio o vendedor",
+  "Nombre del negocio",
   "Correo al que sí puedas entrar",
-  "Número de WhatsApp",
+  "WhatsApp donde atiendes pedidos",
   "Zona en Cuautitlán Izcalli",
   "Una descripción corta de lo que vendes",
   "Fotos de tus productos para el siguiente paso",
@@ -65,12 +65,12 @@ export default function SellOnboardingPage() {
                 Vende mejor, sin complicarte
               </p>
               <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight tracking-normal sm:text-6xl">
-                Empieza tu vitrina local en YoComproLocal.
+                Empieza tu página local en YoComproLocal.
               </h1>
               <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-white/86">
                 Te guiamos paso a paso para que tu negocio tenga una página
-                pública, productos compartibles y mensajes listos para vender
-                por WhatsApp.
+                clara, productos fáciles de compartir y mensajes listos para
+                WhatsApp.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
@@ -133,8 +133,8 @@ export default function SellOnboardingPage() {
               Ten esto a la mano.
             </h2>
             <p className="mt-5 text-lg leading-8 text-[#53645a]">
-              El registro debe sentirse como llenar una tarjeta de negocio, no
-              como configurar una tienda complicada.
+              El registro debe sentirse como llenar una tarjeta de negocio:
+              rápido, claro y sin palabras raras.
             </p>
           </div>
 

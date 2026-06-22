@@ -25,9 +25,9 @@ type ProductSellerSlugRecord = {
 };
 
 export const metadata: Metadata = {
-  title: "Vendedores locales | YoComproLocal",
+  title: "Negocios locales | YoComproLocal",
   description:
-    "Explora vendedores locales de Cuautitlán Izcalli y contacta directo por WhatsApp.",
+    "Explora negocios locales de Cuautitlán Izcalli y escribe directo por WhatsApp.",
 };
 
 function normalizeSearchValue(value: string) {
@@ -146,7 +146,7 @@ function SellerCard({
   sellerSlug,
   productCount,
 }: SellerDirectoryRecord) {
-  const sellerName = seller.name?.trim() || "Vendedor local";
+  const sellerName = seller.name?.trim() || "Negocio local";
   const sellerZone = seller.zona?.trim() || "Cuautitlán Izcalli";
   const description =
     seller.description?.trim() ||
@@ -164,7 +164,7 @@ function SellerCard({
         </span>
         <div className="min-w-0">
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[#c05635]">
-            Vendedor local
+            Negocio local
           </p>
           <h2 className="mt-2 text-2xl font-black leading-tight text-[#1f3429]">
             {sellerName}
@@ -199,14 +199,14 @@ function SellerCard({
           href={sellerHref}
           className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
         >
-          Ver tienda
+          Ver negocio
         </a>
         {whatsappHref ? (
           <a
             href={whatsappHref}
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
           >
-            Contactar por WhatsApp
+            Escribir por WhatsApp
           </a>
         ) : (
           <span className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#53645a]">
@@ -224,17 +224,17 @@ function EmptySellersState({ searchQuery }: { searchQuery: string }) {
   return (
     <section className="rounded-lg border border-[#dbe5d6] bg-white p-8 text-center shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
       <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
-        Vendedores
+        Negocios
       </p>
       <h2 className="mt-3 text-2xl font-black text-[#1f3429]">
         {hasSearch
-          ? "No encontramos vendedores con esa búsqueda."
-          : "Aún no hay vendedores publicados."}
+          ? "No encontramos negocios con esa búsqueda."
+          : "Aún no hay negocios publicados."}
       </h2>
       <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-[#53645a]">
         {hasSearch
-          ? `Intenta buscar otra palabra o revisa todos los vendedores. Buscaste: "${searchQuery}".`
-          : "Cuando los negocios locales creen su perfil, aparecerán aquí para que los compradores puedan descubrirlos."}
+          ? `Intenta buscar otra palabra o revisa todos los negocios. Buscaste: "${searchQuery}".`
+          : "Cuando los negocios locales creen su página, aparecerán aquí para que puedas descubrirlos."}
       </p>
       <a
         href={hasSearch ? "/vendedores" : "/vender"}
@@ -255,7 +255,7 @@ export default async function SellersPage({ searchParams }: Props) {
   );
   const resultLabel = searchQuery
     ? `Resultados para "${searchQuery}"`
-    : "Vendedores locales";
+    : "Negocios locales";
   const productTotal = allSellers.reduce(
     (total, seller) => total + seller.productCount,
     0
@@ -299,11 +299,11 @@ export default async function SellersPage({ searchParams }: Props) {
               Compra local
             </p>
             <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight tracking-normal sm:text-6xl">
-              Vendedores locales de Cuautitlán Izcalli
+              Negocios locales de Cuautitlán Izcalli
             </h1>
             <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/84">
-              Encuentra negocios cercanos, revisa qué venden y contacta directo
-              por WhatsApp sin carrito ni checkout.
+              Encuentra negocios cercanos, revisa qué venden y escribe por
+              WhatsApp, sin carrito ni pagos dentro de YoComproLocal.
             </p>
           </div>
         </div>
@@ -313,7 +313,7 @@ export default async function SellersPage({ searchParams }: Props) {
         <div className="mx-auto grid max-w-7xl gap-0 divide-y divide-[#dce4d6] px-5 sm:px-8 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-10">
           <div className="py-6">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#567164]">
-              Vendedores
+              Negocios
             </p>
             <p className="mt-2 text-2xl font-black text-[#214e34]">
               {sellers.length}
@@ -349,8 +349,8 @@ export default async function SellersPage({ searchParams }: Props) {
                 {resultLabel}
               </h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                Busca por nombre del negocio, zona o lo que ofrece. Cada tienda
-                tiene una página pública lista para compartir.
+                Busca por nombre del negocio, zona o lo que ofrece. Cada
+                negocio tiene una página lista para compartir.
               </p>
             </div>
             <a
@@ -366,7 +366,7 @@ export default async function SellersPage({ searchParams }: Props) {
             className="mt-8 grid gap-3 rounded-lg border border-[#dbe5d6] bg-white p-4 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:grid-cols-[1fr_auto_auto]"
           >
             <label className="sr-only" htmlFor="seller-search">
-              Buscar vendedores
+              Buscar negocios
             </label>
             <input
               id="seller-search"

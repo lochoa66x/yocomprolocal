@@ -31,7 +31,7 @@ function getRegistrationHref({
 
 function getRegistrationErrorMessage(error?: string) {
   if (error === "missing") {
-    return "Faltan datos. Revisa el formulario e intenta de nuevo.";
+    return "Nos faltan algunos datos. Revísalos e intenta de nuevo.";
   }
 
   if (error === "email_exists") {
@@ -39,7 +39,7 @@ function getRegistrationErrorMessage(error?: string) {
   }
 
   if (error === "duplicate") {
-    return "Ese nombre de negocio ya estaba ocupado. Intenta agregar tu zona o una palabra extra al nombre.";
+    return "Ese nombre ya está ocupado. Puedes agregar tu zona o una palabra extra al nombre.";
   }
 
   if (error) {
@@ -208,12 +208,12 @@ export default async function RegistroPage({ searchParams }: Props) {
             Registro recibido
           </p>
           <h1 className="mt-3 text-3xl font-black text-[#1f3429]">
-            Tu negocio quedó registrado.
+            Listo, tu negocio quedó registrado.
           </h1>
           <p className="mt-4 text-base leading-7 text-[#53645a]">
-            Primero entra a tu panel privado. Desde ahí puedes agregar
-            productos, revisar tu página pública y copiar links para compartir
-            por WhatsApp.
+            Ahora entra a tu panel. Desde ahí puedes agregar productos,
+            revisar la página que verán tus clientes y copiar links para
+            WhatsApp.
           </p>
 
           {sellerSlug ? (
@@ -223,7 +223,7 @@ export default async function RegistroPage({ searchParams }: Props) {
               href="/registro"
               className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
             >
-              Registrar otro vendedor
+              Registrar otro negocio
             </a>
           )}
         </div>
@@ -264,15 +264,15 @@ export default async function RegistroPage({ searchParams }: Props) {
               Registra tu negocio local.
             </h1>
             <p className="mt-5 text-lg font-semibold leading-8 text-white/84">
-              Este formulario crea la base de tu panel privado y tu página
-              pública. Después entrarás con el mismo correo para agregar tus
+              Con este registro creamos tu panel privado y la página de tu
+              negocio. Después entrarás con este mismo correo para agregar
               productos.
             </p>
 
             <div className="mt-8 grid gap-3">
               {[
                 "Usa un correo al que puedas entrar ahora.",
-                "Tu WhatsApp será el contacto directo para compradores.",
+                "Tu WhatsApp será el contacto directo para tus clientes.",
                 "En el siguiente paso podrás subir productos con foto.",
               ].map((item) => (
                 <div
@@ -302,7 +302,7 @@ export default async function RegistroPage({ searchParams }: Props) {
               Quiero vender en YoComproLocal
             </h2>
             <p className="mt-4 text-base leading-7 text-[#53645a]">
-              Completa estos datos y te llevaremos al acceso por correo para
+              Completa estos datos y te llevamos al acceso por correo para
               activar tu panel.
             </p>
 
@@ -327,7 +327,7 @@ export default async function RegistroPage({ searchParams }: Props) {
             <form action={submitRegistration} className="mt-7 space-y-5">
               <div>
                 <label className="block text-sm font-bold text-[#1f3429]">
-                  Nombre o nombre del negocio
+                  Nombre del negocio
                 </label>
                 <input
                   type="text"
@@ -350,7 +350,7 @@ export default async function RegistroPage({ searchParams }: Props) {
                   className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base text-[#1e261f] outline-none transition placeholder:text-[#8a988f] focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
                 />
                 <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
-                  Guarda este correo. Lo usarás para entrar al panel.
+                  Guarda este correo. Con este entrarás a tu panel.
                 </p>
               </div>
               <div>
@@ -393,7 +393,7 @@ export default async function RegistroPage({ searchParams }: Props) {
                 type="submit"
                 className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-base font-black text-[#102318] transition hover:bg-[#39df78]"
               >
-                Registrar y abrir mi panel
+                Registrar mi negocio
               </button>
             </form>
           </section>

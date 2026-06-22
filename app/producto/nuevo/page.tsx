@@ -16,7 +16,7 @@ type Props = {
 export const metadata: Metadata = {
   title: "Nuevo producto | YoComproLocal",
   description:
-    "Carga un producto para publicarlo en un perfil local de YoComproLocal.",
+    "Agrega un producto para compartirlo desde tu negocio en YoComproLocal.",
 };
 
 function getFormValue(formData: FormData, key: string) {
@@ -25,7 +25,7 @@ function getFormValue(formData: FormData, key: string) {
 
 function getErrorMessage(error?: string) {
   if (error === "seller") {
-    return "No encontramos ese vendedor. Revisa el slug o registra primero el negocio.";
+    return "No encontramos ese negocio. Revisa el enlace o registra primero tu negocio.";
   }
 
   if (error === "image-size") {
@@ -37,7 +37,7 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "image-upload") {
-    return "No pudimos subir la imagen. Revisa que el bucket product-images exista en Supabase.";
+    return "No pudimos subir la imagen. Intenta con otra foto o vuelve a intentarlo en unos minutos.";
   }
 
   if (error === "price") {
@@ -45,11 +45,11 @@ function getErrorMessage(error?: string) {
   }
 
   if (error === "missing") {
-    return "Completa los campos obligatorios para publicar el producto.";
+    return "Completa los datos básicos para publicar tu producto.";
   }
 
   if (error) {
-    return "No pudimos guardar el producto. Intenta de nuevo.";
+    return "No pudimos guardar el producto. Intenta de nuevo en un momento.";
   }
 
   return null;
@@ -197,7 +197,7 @@ export default async function NewProductPage({ searchParams }: Props) {
               href={`/vendedor/${sellerSlug}`}
               className="hidden min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10 sm:inline-flex"
             >
-              Ver perfil
+              Ver mi página
             </a>
             <a
               href={`/panel/vendedor/${sellerSlug}`}
@@ -219,9 +219,8 @@ export default async function NewProductPage({ searchParams }: Props) {
               Publica un producto en minutos.
             </h1>
             <p className="mt-5 text-lg leading-8 text-[#53645a]">
-              Esta es la primera versión del flujo para vendedores: agrega los
-              datos básicos, guarda el producto y vuelve al panel para
-              compartirlo con tus clientes.
+              Agrega los datos básicos, guarda el producto y vuelve al panel
+              para compartirlo por WhatsApp.
             </p>
           </div>
 
@@ -243,7 +242,7 @@ export default async function NewProductPage({ searchParams }: Props) {
                   htmlFor="sellerSlug"
                   className="block text-sm font-bold text-[#1f3429]"
                 >
-                  Slug del vendedor
+                  Negocio
                 </label>
                 <input
                   id="sellerSlug"

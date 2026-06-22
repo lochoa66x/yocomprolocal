@@ -29,7 +29,7 @@ type Props = {
 export const metadata: Metadata = {
   title: "Productos locales | YoComproLocal",
   description:
-    "Explora productos locales de Cuautitlán Izcalli y contacta directo por WhatsApp.",
+    "Explora productos de negocios locales de Cuautitlán Izcalli y escribe directo por WhatsApp.",
 };
 
 function isProductCategory(value: string | undefined) {
@@ -155,7 +155,7 @@ async function getProductDiscovery(selectedCategory: string | null) {
 }
 
 function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
-  const sellerName = seller.name?.trim() || "Vendedor local";
+  const sellerName = seller.name?.trim() || "Negocio local";
   const sellerZone = seller.zona?.trim() || "Cuautitlán Izcalli";
   const title = product.title?.trim() || "Producto local";
   const category = product.category?.trim() || "Producto local";
@@ -197,7 +197,7 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
 
         <div className="mt-5 rounded-lg bg-[#eef5ec] p-4">
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
-            Vendedor
+            Negocio
           </p>
           <a
             href={sellerHref}
@@ -212,7 +212,7 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
             href={sellerHref}
             className="relative z-20 mt-3 inline-flex min-h-10 w-full items-center justify-center rounded-full bg-white px-4 text-sm font-black text-[#214e34] ring-1 ring-[#214e34]/15 transition hover:bg-[#f6c55f]"
           >
-            Ver tienda del vendedor
+            Ver negocio
           </a>
         </div>
 
@@ -229,11 +229,11 @@ function ProductCard({ product, seller, sellerSlug }: ProductWithSeller) {
               href={productWhatsAppHref}
               className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
             >
-              Preguntar por WhatsApp
+              Escribir por WhatsApp
             </a>
           ) : (
             <p className="rounded-lg bg-[#eef5ec] p-3 text-sm font-semibold leading-6 text-[#53645a]">
-              Contacto pendiente.
+              WhatsApp pendiente.
             </p>
           )}
         </div>
@@ -306,7 +306,7 @@ function EmptyProductsState({
       <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-[#53645a]">
         {hasSearch
           ? `Intenta buscar otra palabra o revisa todas las categorías. Buscaste: "${searchQuery}".`
-          : "Cuando los vendedores locales publiquen productos, aparecerán en este catálogo para que los compradores puedan contactar directo por WhatsApp."}
+          : "Cuando los negocios locales publiquen productos, aparecerán en este catálogo para que puedas escribirles directo por WhatsApp."}
       </p>
       <a
         href={hasSearch ? getProductsHref({ category: selectedCategory }) : "/vender"}
@@ -413,8 +413,9 @@ export default async function ProductsPage({ searchParams }: Props) {
                 {resultLabel}
               </h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
-                Busca por producto, vendedor, zona o categoría. Abre la página
-                del producto o contacta al vendedor sin carrito ni checkout.
+                Busca por producto, negocio, zona o categoría. Abre la página
+                del producto o escribe directo por WhatsApp, sin carrito ni
+                pagos dentro de YoComproLocal.
               </p>
             </div>
             <CategoryFilters
