@@ -66,6 +66,17 @@ const content = {
       "Ver información clara del vendedor antes de escribirle.",
       "Contactar directo por WhatsApp, sin pasos innecesarios.",
     ],
+    directoryEyebrow: "Directorio local",
+    directoryTitle: "Explora vendedores de Cuautitlán Izcalli.",
+    directoryText:
+      "Busca negocios por nombre, zona o lo que ofrecen. Cada perfil reúne productos, contacto y una página lista para compartir.",
+    directoryCta: "Ver vendedores",
+    directorySecondaryCta: "Ver productos",
+    directoryHighlights: [
+      "Tiendas locales con contacto directo.",
+      "Productos publicados por cada vendedor.",
+      "Búsqueda simple para encontrar opciones cercanas.",
+    ],
     featuredEyebrow: "Productos destacados",
     featuredTitle: "Lo más reciente de negocios locales.",
     featuredText:
@@ -185,6 +196,17 @@ const content = {
       "Discover products and services close to home.",
       "See clear seller information before reaching out.",
       "Contact sellers directly through WhatsApp, without unnecessary steps.",
+    ],
+    directoryEyebrow: "Local directory",
+    directoryTitle: "Browse sellers from Cuautitlán Izcalli.",
+    directoryText:
+      "Search businesses by name, zone, or what they offer. Each profile brings together products, contact, and a share-ready page.",
+    directoryCta: "Browse sellers",
+    directorySecondaryCta: "Browse products",
+    directoryHighlights: [
+      "Local stores with direct contact.",
+      "Products published by each seller.",
+      "Simple search for nearby options.",
     ],
     featuredEyebrow: "Featured products",
     featuredTitle: "The latest from local businesses.",
@@ -369,6 +391,59 @@ function FeaturedProductsSection({
   );
 }
 
+function SellerDirectorySection({ copy }: { copy: (typeof content)[Locale] }) {
+  return (
+    <section className="bg-[#fbfbf7] py-16 sm:py-20">
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
+            {copy.directoryEyebrow as string}
+          </p>
+          <h2 className="mt-4 max-w-2xl text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
+            {copy.directoryTitle as string}
+          </h2>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-[#53645a]">
+            {copy.directoryText as string}
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="/vendedores"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+            >
+              {copy.directoryCta as string}
+            </a>
+            <a
+              href="/productos"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-6 text-base font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            >
+              {copy.directorySecondaryCta as string}
+            </a>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {copy.directoryHighlights.map((highlight) => (
+            <article
+              key={highlight}
+              className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]"
+            >
+              <span
+                className="flex size-9 items-center justify-center rounded-lg bg-[#e6f1e8] text-sm font-black text-[#214e34]"
+                aria-hidden="true"
+              >
+                YCL
+              </span>
+              <p className="mt-4 text-base font-semibold leading-7 text-[#25372d]">
+                {highlight}
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePageClient({
   featuredProducts,
 }: {
@@ -422,7 +497,7 @@ export default function HomePageClient({
               <a href="/productos" className="transition hover:text-white">
                 {copy.nav.products}
               </a>
-              <a href="#vendedores" className="transition hover:text-white">
+              <a href="/vendedores" className="transition hover:text-white">
                 {copy.nav.sellers}
               </a>
               <a href="#como-funciona" className="transition hover:text-white">
@@ -616,6 +691,8 @@ export default function HomePageClient({
         copy={copy}
         featuredProducts={featuredProducts}
       />
+
+      <SellerDirectorySection copy={copy} />
 
       <section id="como-funciona" className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
