@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import ProductAiAssistant from "@/app/producto/nuevo/ProductAiAssistant";
+import ProductPhotoPreviewField from "@/app/producto/nuevo/ProductPhotoPreviewField";
 import {
   PRODUCT_CATEGORIES,
   createProductRecordSlug,
@@ -535,42 +536,14 @@ export default async function EditProductPage({ params, searchParams }: Props) {
                 </p>
               </div>
 
-              <div>
-                <label
-                  htmlFor="imageFile"
-                  className="block text-sm font-bold text-[#1f3429]"
-                >
-                  Reemplazar foto
-                </label>
-                <input
-                  id="imageFile"
-                  name="imageFile"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  className="mt-2 w-full rounded-lg border border-dashed border-[#cddcc9] bg-[#fbfbf7] px-4 py-4 text-sm text-[#53645a] outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-[#214e34] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
-                />
-                <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
-                  Si subes una nueva foto, reemplazará la imagen actual. Máximo
-                  5 MB.
-                </p>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="imageUrl"
-                  className="block text-sm font-bold text-[#1f3429]"
-                >
-                  URL de imagen
-                </label>
-                <input
-                  id="imageUrl"
-                  name="imageUrl"
-                  type="url"
-                  defaultValue={imageUrl}
-                  placeholder="https://..."
-                  className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
-                />
-              </div>
+              <ProductPhotoPreviewField
+                currentImageUrl={imageUrl}
+                fileHelpText="Si subes una nueva foto, reemplazará la imagen actual. Máximo 5 MB."
+                fileLabel="Reemplazar foto"
+                previewAlt={title}
+                urlHelpText="Puedes dejar la URL actual o cambiarla por otra imagen."
+                urlLabel="URL de imagen"
+              />
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <button

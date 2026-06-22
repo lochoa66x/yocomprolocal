@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import ProductAiAssistant from "@/app/producto/nuevo/ProductAiAssistant";
+import ProductPhotoPreviewField from "@/app/producto/nuevo/ProductPhotoPreviewField";
 import {
   PRODUCT_CATEGORIES,
   createProductRecordSlug,
@@ -334,43 +335,13 @@ export default async function NewProductPage({ searchParams }: Props) {
 
               <ProductAiAssistant formId="new-product-form" />
 
-              <div>
-                <label
-                  htmlFor="imageFile"
-                  className="block text-sm font-bold text-[#1f3429]"
-                >
-                  Foto del producto
-                </label>
-                <input
-                  id="imageFile"
-                  name="imageFile"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  className="mt-2 w-full rounded-lg border border-dashed border-[#cddcc9] bg-[#fbfbf7] px-4 py-4 text-sm text-[#53645a] outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-[#214e34] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
-                />
-                <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
-                  JPG, PNG, WebP o GIF. Máximo 5 MB.
-                </p>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="imageUrl"
-                  className="block text-sm font-bold text-[#1f3429]"
-                >
-                  URL de imagen opcional
-                </label>
-                <input
-                  id="imageUrl"
-                  name="imageUrl"
-                  type="url"
-                  placeholder="https://..."
-                  className="mt-2 w-full rounded-lg border border-[#cddcc9] px-4 py-3 text-base text-[#1e261f] outline-none transition focus:border-[#2f7c5b] focus:ring-2 focus:ring-[#2f7c5b]/20"
-                />
-                <p className="mt-2 text-xs font-semibold leading-5 text-[#6a7a70]">
-                  Usa este campo solo si todavía no tienes una foto para subir.
-                </p>
-              </div>
+              <ProductPhotoPreviewField
+                fileHelpText="JPG, PNG, WebP o GIF. Máximo 5 MB."
+                fileLabel="Foto del producto"
+                previewAlt="Vista previa del producto"
+                urlHelpText="Usa este campo solo si todavía no tienes una foto para subir."
+                urlLabel="URL de imagen opcional"
+              />
 
               <button
                 type="submit"
