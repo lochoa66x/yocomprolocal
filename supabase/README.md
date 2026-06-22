@@ -36,6 +36,10 @@ Vercel also needs these environment variables:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `ADMIN_ACCESS_CODE`
+
+`ADMIN_ACCESS_CODE` protects `/admin`, the internal moderation page. Use a long
+private code and keep it only in Vercel/local environment variables.
 
 In Supabase Auth settings, add these redirect URLs:
 
