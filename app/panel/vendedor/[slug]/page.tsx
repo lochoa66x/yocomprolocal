@@ -317,11 +317,11 @@ function getDashboardTasks({
     },
     {
       step: "Paso 4",
-      title: "Copiar link para WhatsApp",
-      text: "Usa el kit para copiar tu página o un producto con mensaje listo.",
+      title: "Compartir tienda y productos",
+      text: "Ten a la mano tu link público, links de producto y mensajes listos para WhatsApp.",
       complete: profileReady,
-      href: "#kit-compartir",
-      actionLabel: "Copiar link",
+      href: "#accesos-rapidos",
+      actionLabel: "Ver accesos",
     },
     {
       step: "Paso 5",
@@ -435,6 +435,216 @@ function FirstRunChecklist({
   );
 }
 
+function DashboardShortcuts({
+  addProductHref,
+  products,
+  publicSellerHref,
+  publicSellerUrl,
+  sellerName,
+}: {
+  addProductHref: string;
+  products: ShareProduct[];
+  publicSellerHref: string;
+  publicSellerUrl: string;
+  sellerName: string;
+}) {
+  const sellerMessage = getSellerShareMessage({
+    publicSellerUrl,
+    sellerName,
+  });
+  const sellerWhatsAppHref = getWhatsAppShareHref(sellerMessage);
+  const featuredProducts = products.slice(0, 3);
+  const featuredProduct = featuredProducts[0] ?? null;
+  const featuredProductMessage = featuredProduct
+    ? getProductShareMessage({
+        priceLabel: formatProductPrice(featuredProduct.price),
+        productTitle: featuredProduct.title,
+        productUrl: featuredProduct.productUrl,
+        sellerName,
+      })
+    : "";
+  const featuredProductWhatsAppHref = featuredProductMessage
+    ? getWhatsAppShareHref(featuredProductMessage)
+    : "";
+
+  return (
+    <section id="accesos-rapidos" className="scroll-mt-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
+            Accesos rápidos
+          </p>
+          <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+            Lo que más vas a compartir.
+          </h2>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
+            Copia links, abre tu tienda y manda mensajes de WhatsApp sin buscar
+            entre pantallas.
+          </p>
+        </div>
+        <a
+          href="#kit-compartir"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+        >
+          Ver kit completo
+        </a>
+      </div>
+
+      <div className="mt-6 grid gap-4 xl:grid-cols-3">
+        <article className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+            Tienda pública
+          </p>
+          <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+            Link de tu negocio
+          </h3>
+          <p className="mt-3 text-sm font-semibold leading-6 text-[#53645a]">
+            Mándalo cuando alguien quiera ver todo lo que vendes.
+          </p>
+          <p className="mt-4 break-all rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
+            {publicSellerUrl}
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+            <CopyLinkButton
+              copiedLabel="Link copiado"
+              label="Copiar link"
+              value={publicSellerUrl}
+            />
+            <a
+              href={publicSellerHref}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"
+            >
+              Abrir tienda
+            </a>
+          </div>
+        </article>
+
+        <article className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+            Productos publicados
+          </p>
+          <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+            Links de producto
+          </h3>
+          {featuredProducts.length > 0 ? (
+            <div className="mt-4 divide-y divide-[#dbe5d6]">
+              {featuredProducts.map((product) => (
+                <div key={product.id} className="py-3 first:pt-0 last:pb-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="line-clamp-2 text-sm font-black leading-5 text-[#1f3429]">
+                        {product.title}
+                      </p>
+                      <p className="mt-1 text-xs font-black text-[#c05635]">
+                        {formatProductPrice(product.price)}
+                      </p>
+                    </div>
+                    <a
+                      href={product.productHref}
+                      className="shrink-0 text-sm font-black text-[#214e34] underline decoration-[#f6c55f] decoration-2 underline-offset-4 transition hover:text-[#2f7c5b]"
+                    >
+                      Abrir
+                    </a>
+                  </div>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <CopyLinkButton
+                      copiedLabel="Link copiado"
+                      label="Copiar link"
+                      value={product.productUrl}
+                      variant="secondary"
+                    />
+                    <a
+                      href={getWhatsAppShareHref(
+                        getProductShareMessage({
+                          priceLabel: formatProductPrice(product.price),
+                          productTitle: product.title,
+                          productUrl: product.productUrl,
+                          sellerName,
+                        })
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                    >
+                      WhatsApp
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4 rounded-lg border border-dashed border-[#b9cbb4] bg-[#fbfbf7] p-4">
+              <p className="text-sm font-semibold leading-6 text-[#53645a]">
+                Publica un producto y aquí tendrás su link listo para copiar.
+              </p>
+              <a
+                href={addProductHref}
+                className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+              >
+                Agregar producto
+              </a>
+            </div>
+          )}
+        </article>
+
+        <article className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+            Mensajes listos
+          </p>
+          <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+            Para mandar por WhatsApp
+          </h3>
+          <p className="mt-3 rounded-lg bg-[#fbfbf7] px-3 py-3 text-sm font-semibold leading-6 text-[#53645a]">
+            {sellerMessage}
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+            <a
+              href={sellerWhatsAppHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+            >
+              Enviar tienda
+            </a>
+            <CopyLinkButton
+              copiedLabel="Mensaje copiado"
+              label="Copiar mensaje"
+              value={sellerMessage}
+              variant="secondary"
+            />
+          </div>
+          {featuredProduct && (
+            <div className="mt-5 border-t border-[#dbe5d6] pt-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Producto destacado
+              </p>
+              <p className="mt-2 line-clamp-2 text-sm font-black leading-5 text-[#1f3429]">
+                {featuredProduct.title}
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                <a
+                  href={featuredProductWhatsAppHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                >
+                  Enviar producto
+                </a>
+                <CopyLinkButton
+                  copiedLabel="Mensaje copiado"
+                  label="Copiar producto"
+                  value={featuredProductMessage}
+                  variant="secondary"
+                />
+              </div>
+            </div>
+          )}
+        </article>
+      </div>
+    </section>
+  );
+}
+
 function ShareKit({
   addProductHref,
   products,
@@ -452,6 +662,7 @@ function ShareKit({
     publicSellerUrl,
     sellerName,
   });
+  const sellerWhatsAppHref = getWhatsAppShareHref(sellerMessage);
 
   return (
     <section id="kit-compartir" className="scroll-mt-8 pt-3">
@@ -492,6 +703,14 @@ function ShareKit({
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:min-w-72 lg:grid-cols-1">
               <CopyLinkButton value={publicSellerUrl} />
+              <a
+                href={sellerWhatsAppHref}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+              >
+                Enviar por WhatsApp
+              </a>
               <CopyLinkButton
                 copiedLabel="Mensaje copiado"
                 label="Copiar mensaje"
@@ -518,6 +737,7 @@ function ShareKit({
                 productUrl: product.productUrl,
                 sellerName,
               });
+              const whatsappShareHref = getWhatsAppShareHref(message);
 
               return (
                 <article
@@ -550,6 +770,14 @@ function ShareKit({
                         Ver producto
                       </a>
                       <CopyLinkButton value={product.productUrl} />
+                      <a
+                        href={whatsappShareHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                      >
+                        Enviar WhatsApp
+                      </a>
                       <CopyLinkButton
                         copiedLabel="Mensaje copiado"
                         label="Copiar WhatsApp"
@@ -1287,6 +1515,14 @@ export default async function SellerDashboardPage({
 
           <div className="space-y-5">
             <FirstRunChecklist tasks={dashboardTasks} />
+
+            <DashboardShortcuts
+              addProductHref={addProductHref}
+              products={shareProducts}
+              publicSellerHref={publicSellerHref}
+              publicSellerUrl={publicSellerUrl}
+              sellerName={sellerName}
+            />
 
             <ShareKit
               addProductHref={addProductHref}
