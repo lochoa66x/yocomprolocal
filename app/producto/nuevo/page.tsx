@@ -86,9 +86,10 @@ function getNewProductHref({
   return queryString ? `/producto/nuevo?${queryString}` : "/producto/nuevo";
 }
 
-function getSellerDashboardHref(sellerSlug: string) {
+function getSellerDashboardHref(sellerSlug: string, productSlug: string) {
   const params = new URLSearchParams({
     producto: "creado",
+    productSlug,
   });
 
   return `/panel/vendedor/${encodeURIComponent(
@@ -162,7 +163,7 @@ async function submitProduct(formData: FormData) {
     redirect(getNewProductHref({ sellerSlug, error: "server" }));
   }
 
-  redirect(getSellerDashboardHref(sellerSlug));
+  redirect(getSellerDashboardHref(sellerSlug, slug));
 }
 
 export default async function NewProductPage({ searchParams }: Props) {

@@ -45,6 +45,7 @@ type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{
     producto?: string;
+    productSlug?: string;
     registro?: string;
     perfil?: string;
   }>;
@@ -109,9 +110,11 @@ function getPublicProductHref(
 }
 
 function getDashboardProductActionHref({
+  productSlug,
   productStatus,
   sellerSlug,
 }: {
+  productSlug?: string;
   productStatus?: string;
   sellerSlug: string;
 }) {
@@ -119,6 +122,10 @@ function getDashboardProductActionHref({
 
   if (productStatus) {
     params.set("producto", productStatus);
+  }
+
+  if (productSlug) {
+    params.set("productSlug", productSlug);
   }
 
   const queryString = params.toString();
@@ -164,6 +171,10 @@ function getProductCaption({
   sellerName: string;
 }) {
   return `${productTitle} disponible en ${sellerName}. ${priceLabel}. Pide directo por WhatsApp desde YoComproLocal: ${productUrl}`;
+}
+
+function getWhatsAppShareHref(message: string) {
+  return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
 async function updateProductStatus(formData: FormData) {
@@ -220,6 +231,7 @@ async function updateProductStatus(formData: FormData) {
 
   redirect(
     getDashboardProductActionHref({
+      productSlug,
       sellerSlug,
       productStatus: nextStatus === "published" ? "publicado" : "borrador",
     })
@@ -562,6 +574,99 @@ function ShareKit({
   );
 }
 
+function ProductReadyShareCard({
+  product,
+  publicSellerHref,
+  sellerName,
+}: {
+  product: ShareProduct;
+  publicSellerHref: string;
+  sellerName: string;
+}) {
+  const priceLabel = formatProductPrice(product.price);
+  const message = getProductShareMessage({
+    priceLabel,
+    productTitle: product.title,
+    productUrl: product.productUrl,
+    sellerName,
+  });
+  const caption = getProductCaption({
+    priceLabel,
+    productTitle: product.title,
+    productUrl: product.productUrl,
+    sellerName,
+  });
+  const whatsappShareHref = getWhatsAppShareHref(message);
+
+  return (
+    <article className="mt-5 overflow-hidden rounded-lg border border-[#b9d8b8] bg-white shadow-[0_14px_38px_rgba(31,52,41,0.08)]">
+      <div className="grid gap-0 lg:grid-cols-[260px_1fr]">
+        <ProductImageFrame
+          alt={product.title}
+          badge={product.category?.trim() || "Producto"}
+          className="min-h-64 lg:min-h-full"
+          imageClassName="p-6"
+          imageUrl={product.image_url}
+        />
+
+        <div className="p-5 sm:p-6">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2f7c5b]">
+            Producto listo para compartir
+          </p>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h3 className="text-3xl font-black leading-tight text-[#1f3429]">
+                {product.title}
+              </h3>
+              <p className="mt-2 text-lg font-black text-[#c05635]">
+                {priceLabel}
+              </p>
+            </div>
+            <a
+              href={product.productHref}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            >
+              Ver producto
+            </a>
+          </div>
+
+          <p className="mt-4 rounded-lg bg-[#eef5ec] px-4 py-3 text-sm font-semibold leading-6 text-[#214e34]">
+            {caption}
+          </p>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <CopyLinkButton
+              copiedLabel="Link copiado"
+              label="Copiar link"
+              value={product.productUrl}
+            />
+            <a
+              href={whatsappShareHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+            >
+              Compartir por WhatsApp
+            </a>
+            <CopyLinkButton
+              copiedLabel="Mensaje copiado"
+              label="Copiar mensaje"
+              value={message}
+              variant="secondary"
+            />
+            <a
+              href={publicSellerHref}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+            >
+              Ver mi tienda
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 async function getSellerProducts(
   supabase: SupabaseClient,
   sellerSlug: string
@@ -756,22 +861,35 @@ function DashboardProductCard({
 
 function EmptyProductsState({ sellerSlug }: { sellerSlug: string }) {
   return (
-    <section className="rounded-lg border border-dashed border-[#b9cbb4] bg-white p-8 text-center shadow-[0_10px_28px_rgba(31,52,41,0.05)]">
+    <section className="rounded-lg border border-dashed border-[#b9cbb4] bg-white p-6 shadow-[0_10px_28px_rgba(31,52,41,0.05)] sm:p-8">
       <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
         Primer producto
       </p>
       <h2 className="mt-4 text-3xl font-black leading-tight text-[#1f3429]">
-        Tu vitrina todavía está vacía.
+        Agrega tu primer producto y compártelo hoy.
       </h2>
-      <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#53645a]">
-        Agrega una foto, precio y descripción. YoComproLocal creará una página
-        lista para compartir por WhatsApp.
+      <p className="mt-4 max-w-2xl text-base leading-7 text-[#53645a]">
+        Solo necesitas una foto, nombre, precio y una descripción corta. Al
+        publicarlo, tendrás una página lista para mandar por WhatsApp.
       </p>
+
+      <ol className="mt-6 grid gap-3 text-sm font-bold leading-6 text-[#53645a] md:grid-cols-3">
+        <li className="border-l-4 border-[#f6c55f] pl-4">
+          1. Sube una foto clara del producto.
+        </li>
+        <li className="border-l-4 border-[#f6c55f] pl-4">
+          2. Agrega precio y categoría.
+        </li>
+        <li className="border-l-4 border-[#f6c55f] pl-4">
+          3. Copia el link y envíalo a tus clientes.
+        </li>
+      </ol>
+
       <a
         href={`/producto/nuevo?seller=${sellerSlug}`}
-        className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+        className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
       >
-        Agregar mi primer producto
+        Agregar mi primer producto ahora
       </a>
     </section>
   );
@@ -816,9 +934,8 @@ export default async function SellerDashboardPage({
     seller,
     slug,
   });
-  const shareProducts = products
+  const allPublishedShareProducts = products
     .filter((product) => product.status === "published")
-    .slice(0, 3)
     .map<ShareProduct>((product) => {
       const title = product.title?.trim() || "Producto local";
       const productHref = getPublicProductHref(slug, product);
@@ -830,6 +947,18 @@ export default async function SellerDashboardPage({
         title,
       };
     });
+  const shareProducts = allPublishedShareProducts.slice(0, 3);
+  const requestedProductSlug = query.productSlug?.trim();
+  const highlightedShareProduct = requestedProductSlug
+    ? allPublishedShareProducts.find((product) => {
+        const storedSlug = product.slug?.trim();
+
+        return (
+          storedSlug === requestedProductSlug ||
+          createProductRecordSlug(product.title) === requestedProductSlug
+        );
+      }) ?? null
+    : null;
   const showProductCreated = query.producto === "creado";
   const showProductUpdated = query.producto === "actualizado";
   const showProductPublished = query.producto === "publicado";
@@ -838,13 +967,21 @@ export default async function SellerDashboardPage({
   const showProductError = query.producto === "error";
   const showRegistrationCreated = query.registro === "creado";
   const showProfileUpdated = query.perfil === "actualizado";
+  const productReadyToShare =
+    showProductCreated || showProductUpdated || showProductPublished
+      ? highlightedShareProduct ?? allPublishedShareProducts[0] ?? null
+      : null;
   const productMessage = (() => {
+    if (showProductCreated) {
+      return "Producto publicado. Ahora comparte el link para empezar a recibir pedidos.";
+    }
+
     if (showProductUpdated) {
-      return "Producto actualizado. Tu vitrina ya muestra los cambios.";
+      return "Producto actualizado. Revisa la página y compártela con tus clientes.";
     }
 
     if (showProductPublished) {
-      return "Producto publicado. Ya aparece en tu página pública.";
+      return "Producto publicado. Ya aparece en tu página pública y está listo para compartir.";
     }
 
     if (showProductDrafted) {
@@ -986,6 +1123,13 @@ export default async function SellerDashboardPage({
                   : productMessage}
               </p>
             </div>
+            {productReadyToShare && (
+              <ProductReadyShareCard
+                product={productReadyToShare}
+                publicSellerHref={publicSellerHref}
+                sellerName={sellerName}
+              />
+            )}
           </div>
         </section>
       )}

@@ -104,8 +104,15 @@ function getEditProductHref({
   }`;
 }
 
-function getDashboardUpdatedHref(sellerSlug: string) {
-  return `/panel/vendedor/${encodeURIComponent(sellerSlug)}?producto=actualizado`;
+function getDashboardUpdatedHref(sellerSlug: string, productSlug: string) {
+  const params = new URLSearchParams({
+    producto: "actualizado",
+    productSlug,
+  });
+
+  return `/panel/vendedor/${encodeURIComponent(
+    sellerSlug
+  )}?${params.toString()}`;
 }
 
 function getDashboardDeletedHref(sellerSlug: string) {
@@ -245,7 +252,7 @@ async function updateProduct(formData: FormData) {
     );
   }
 
-  redirect(getDashboardUpdatedHref(sellerSlug));
+  redirect(getDashboardUpdatedHref(sellerSlug, nextSlug));
 }
 
 async function deleteProduct(formData: FormData) {
