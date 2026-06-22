@@ -18,3 +18,9 @@ Keep the UI warm, local, and polished. Do not change database schema, storage lo
 - The existing category badge still works.
 - The change is centralized in the shared product image component.
 - The production build still passes.
+
+## Implementation Notes
+
+- Product images use a centered `object-contain` treatment through `ProductImageFrame`.
+- The frame uses a blurred copy of the product photo as the background fill, so empty space feels intentional and visually connected to the uploaded image.
+- Category badges sit at the top of the image frame to avoid covering the bottom of tall product photos.
