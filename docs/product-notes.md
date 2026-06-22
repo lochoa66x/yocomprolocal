@@ -98,11 +98,9 @@ Implemented for now:
   - the public seller page;
   - each public product page.
 - The seller dashboard has a first-run checklist with:
-  - profile completion;
-  - first product;
-  - public seller page;
-  - WhatsApp/share link;
-  - published product page.
+  - edit profile;
+  - add product;
+  - share store.
 
 Keep improving:
 

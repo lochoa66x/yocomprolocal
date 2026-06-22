@@ -260,16 +260,12 @@ function getDashboardTasks({
   addProductHref,
   editProfileHref,
   products,
-  publicSellerHref,
   seller,
-  slug,
 }: {
   addProductHref: string;
   editProfileHref: string;
   products: DashboardProductRecord[];
-  publicSellerHref: string;
   seller: SellerRecord;
-  slug: string;
 }): DashboardTask[] {
   const profileReady = [
     seller.name,
@@ -281,55 +277,34 @@ function getDashboardTasks({
   const publishedProducts = products.filter(
     (product) => product.status === "published"
   );
-  const firstPublishedProduct = publishedProducts[0];
-  const firstProduct = products[0];
-  const firstPublishedProductHref = firstPublishedProduct
-    ? getPublicProductHref(slug, firstPublishedProduct)
-    : firstProduct
-      ? getProductEditHref(slug, firstProduct)
-      : addProductHref;
+  const hasPublishedProduct = publishedProducts.length > 0;
 
   return [
     {
       step: "Paso 1",
-      title: "Datos del negocio completos",
-      text: "Nombre, zona, descripción, correo y WhatsApp quedan listos para tus clientes.",
+      title: "Edita tu perfil",
+      text: "Confirma nombre, zona, WhatsApp y descripción para que tus clientes sepan quién eres.",
       complete: profileReady,
       href: editProfileHref,
-      actionLabel: "Editar datos",
+      actionLabel: "Editar perfil",
     },
     {
       step: "Paso 2",
-      title: "Agregar primer producto",
-      text: "Sube foto, precio, categoría y descripción para crear tu primera página de venta.",
+      title: "Agrega un producto",
+      text: "Sube una foto clara, pon precio y escribe una descripción sencilla.",
       complete: products.length > 0,
       href: addProductHref,
       actionLabel: "Agregar producto",
     },
     {
       step: "Paso 3",
-      title: "Ver página del negocio",
-      text: "Revisa la página que ven tus clientes antes de mandarla por WhatsApp.",
-      complete: profileReady,
-      href: publicSellerHref,
-      actionLabel: "Ver página",
-    },
-    {
-      step: "Paso 4",
-      title: "Compartir tienda y productos",
-      text: "Ten a la mano tu link público, links de producto y mensajes listos para WhatsApp.",
-      complete: profileReady,
+      title: "Comparte tu tienda",
+      text: "Copia tu link o manda el mensaje listo por WhatsApp para empezar a recibir pedidos.",
+      complete: profileReady && hasPublishedProduct,
       href: "#accesos-rapidos",
-      actionLabel: "Ver accesos",
-    },
-    {
-      step: "Paso 5",
-      title: "Ver producto publicado",
-      text: "Abre la página real del producto y confirma que foto, precio y botón se ven bien.",
-      complete: publishedProducts.length > 0,
-      href: firstPublishedProductHref,
-      actionLabel:
-        publishedProducts.length > 0 ? "Ver producto" : "Publicar producto",
+      actionLabel: hasPublishedProduct
+        ? "Compartir tienda"
+        : "Publicar producto",
     },
   ];
 }
@@ -354,12 +329,15 @@ function FirstRunChecklist({
             Primer recorrido
           </p>
           <h2 className="mt-3 text-2xl font-black leading-tight text-[#1f3429] sm:text-3xl">
-            Tu negocio va {completedTasks} de {tasks.length} pasos.
+            Tu tienda va {completedTasks} de {tasks.length} pasos.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
             {nextTask
               ? `Siguiente acción: ${nextTask.title.toLowerCase()}.`
-              : "Ya tienes lo básico para recibir mensajes y compartir tus productos."}
+              : "Listo: tu perfil, producto y link para compartir ya están en marcha."}
+          </p>
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#6a7a70]">
+            Primero hacemos lo básico: perfil, producto y link para compartir.
           </p>
         </div>
         {nextTask ? (
@@ -386,7 +364,7 @@ function FirstRunChecklist({
         />
       </div>
 
-      <div className="mt-6 grid gap-3 md:grid-cols-2">
+      <div className="mt-6 grid gap-3 lg:grid-cols-3">
         {tasks.map((task) => (
           <article
             key={task.title}
@@ -1266,9 +1244,7 @@ export default async function SellerDashboardPage({
     addProductHref,
     editProfileHref,
     products,
-    publicSellerHref,
     seller,
-    slug,
   });
   const allPublishedShareProducts = products
     .filter((product) => product.status === "published")
@@ -1548,6 +1524,8 @@ export default async function SellerDashboardPage({
           </aside>
 
           <div className="space-y-5">
+            <FirstRunChecklist tasks={dashboardTasks} />
+
             <DashboardShortcuts
               addProductHref={addProductHref}
               products={shareProducts}
@@ -1555,8 +1533,6 @@ export default async function SellerDashboardPage({
               publicSellerUrl={publicSellerUrl}
               sellerName={sellerName}
             />
-
-            <FirstRunChecklist tasks={dashboardTasks} />
 
             <ShareKit
               addProductHref={addProductHref}
