@@ -349,11 +349,11 @@ function FirstRunChecklist({
       className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)] sm:p-6"
     >
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
             Primer recorrido
           </p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+          <h2 className="mt-3 text-2xl font-black leading-tight text-[#1f3429] sm:text-3xl">
             Tu negocio va {completedTasks} de {tasks.length} pasos.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
@@ -365,14 +365,14 @@ function FirstRunChecklist({
         {nextTask ? (
           <a
             href={nextTask.href}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:w-auto"
           >
             {nextTask.actionLabel}
           </a>
         ) : (
           <a
             href="/productos"
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b]"
+            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-[#214e34] px-5 text-sm font-black text-white transition hover:bg-[#2f7c5b] sm:w-auto"
           >
             Ver productos
           </a>
@@ -469,11 +469,11 @@ function DashboardShortcuts({
   return (
     <section id="accesos-rapidos" className="scroll-mt-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
             Accesos rápidos
           </p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+          <h2 className="mt-3 text-2xl font-black leading-tight text-[#1f3429] sm:text-3xl">
             Lo que más vas a compartir.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
@@ -483,7 +483,7 @@ function DashboardShortcuts({
         </div>
         <a
           href="#kit-compartir"
-          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec] sm:w-auto"
         >
           Ver kit completo
         </a>
@@ -494,7 +494,7 @@ function DashboardShortcuts({
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
             Tienda pública
           </p>
-          <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+          <h3 className="mt-2 text-xl font-black text-[#1f3429] sm:text-2xl">
             Link de tu negocio
           </h3>
           <p className="mt-3 text-sm font-semibold leading-6 text-[#53645a]">
@@ -503,7 +503,7 @@ function DashboardShortcuts({
           <p className="mt-4 break-all rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
             {publicSellerUrl}
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+          <div className="mt-4 grid gap-3 min-[430px]:grid-cols-2 xl:grid-cols-1">
             <CopyLinkButton
               copiedLabel="Link copiado"
               label="Copiar link"
@@ -511,7 +511,7 @@ function DashboardShortcuts({
             />
             <a
               href={publicSellerHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#f7fbf4]"
             >
               Abrir tienda
             </a>
@@ -522,7 +522,7 @@ function DashboardShortcuts({
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
             Productos publicados
           </p>
-          <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+          <h3 className="mt-2 text-xl font-black text-[#1f3429] sm:text-2xl">
             Links de producto
           </h3>
           {featuredProducts.length > 0 ? (
@@ -545,7 +545,7 @@ function DashboardShortcuts({
                       Abrir
                     </a>
                   </div>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="mt-3 grid gap-2 min-[430px]:grid-cols-2">
                     <CopyLinkButton
                       copiedLabel="Link copiado"
                       label="Copiar link"
@@ -563,7 +563,7 @@ function DashboardShortcuts({
                       )}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
                     >
                       WhatsApp
                     </a>
@@ -578,7 +578,7 @@ function DashboardShortcuts({
               </p>
               <a
                 href={addProductHref}
-                className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+                className="mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-full bg-[#f6c55f] px-4 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
               >
                 Agregar producto
               </a>
@@ -590,18 +590,18 @@ function DashboardShortcuts({
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
             Mensajes listos
           </p>
-          <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+          <h3 className="mt-2 text-xl font-black text-[#1f3429] sm:text-2xl">
             Para mandar por WhatsApp
           </h3>
           <p className="mt-3 rounded-lg bg-[#fbfbf7] px-3 py-3 text-sm font-semibold leading-6 text-[#53645a]">
             {sellerMessage}
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+          <div className="mt-4 grid gap-3 min-[430px]:grid-cols-2 xl:grid-cols-1">
             <a
               href={sellerWhatsAppHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
             >
               Enviar tienda
             </a>
@@ -620,12 +620,12 @@ function DashboardShortcuts({
               <p className="mt-2 line-clamp-2 text-sm font-black leading-5 text-[#1f3429]">
                 {featuredProduct.title}
               </p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              <div className="mt-3 grid gap-3 min-[430px]:grid-cols-2 xl:grid-cols-1">
                 <a
                   href={featuredProductWhatsAppHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
                 >
                   Enviar producto
                 </a>
@@ -666,11 +666,11 @@ function ShareKit({
   return (
     <section id="kit-compartir" className="scroll-mt-8 pt-3">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#2f7c5b]">
             Kit para compartir
           </p>
-          <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429]">
+          <h2 className="mt-3 text-2xl font-black leading-tight text-[#1f3429] sm:text-3xl">
             Links y mensajes listos.
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-7 text-[#53645a]">
@@ -680,7 +680,7 @@ function ShareKit({
         </div>
         <a
           href={publicSellerHref}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec] sm:w-auto"
         >
           Ver página de mi negocio
         </a>
@@ -689,24 +689,24 @@ function ShareKit({
       <div className="mt-6 grid gap-4">
         <article className="rounded-lg border border-[#dbe5d6] bg-white p-5 shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
                 Página del negocio
               </p>
-              <h3 className="mt-2 text-2xl font-black text-[#1f3429]">
+              <h3 className="mt-2 text-xl font-black text-[#1f3429] sm:text-2xl">
                 Comparte tu página de negocio
               </h3>
               <p className="mt-3 break-all rounded-lg bg-[#eef5ec] px-3 py-3 text-sm font-semibold leading-6 text-[#214e34]">
                 {publicSellerUrl}
               </p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:min-w-72 lg:grid-cols-1">
+            <div className="grid gap-3 min-[430px]:grid-cols-2 lg:min-w-72 lg:grid-cols-1">
               <CopyLinkButton value={publicSellerUrl} />
               <a
                 href={sellerWhatsAppHref}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
               >
                 Enviar por WhatsApp
               </a>
@@ -749,7 +749,7 @@ function ShareKit({
                         Producto publicado
                       </p>
                       <div className="mt-2 flex items-start justify-between gap-4">
-                        <h3 className="text-2xl font-black leading-tight text-[#1f3429]">
+                        <h3 className="min-w-0 break-words text-xl font-black leading-tight text-[#1f3429] sm:text-2xl">
                           {product.title}
                         </h3>
                         <p className="shrink-0 text-lg font-black text-[#c05635]">
@@ -761,10 +761,10 @@ function ShareKit({
                       </p>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid gap-3 min-[430px]:grid-cols-2">
                       <a
                         href={product.productHref}
-                        className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                        className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                       >
                         Ver producto
                       </a>
@@ -773,7 +773,7 @@ function ShareKit({
                         href={whatsappShareHref}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                        className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
                       >
                         Enviar WhatsApp
                       </a>
@@ -809,7 +809,7 @@ function ShareKit({
             </p>
             <a
               href={addProductHref}
-              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+              className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:w-auto"
             >
               Agregar producto
             </a>
@@ -860,8 +860,8 @@ function ProductReadyShareCard({
             Producto listo para compartir
           </p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h3 className="text-3xl font-black leading-tight text-[#1f3429]">
+            <div className="min-w-0">
+              <h3 className="break-words text-2xl font-black leading-tight text-[#1f3429] sm:text-3xl">
                 {product.title}
               </h3>
               <p className="mt-2 text-lg font-black text-[#c05635]">
@@ -870,7 +870,7 @@ function ProductReadyShareCard({
             </div>
             <a
               href={product.productHref}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+              className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec] sm:w-auto"
             >
               Ver producto
             </a>
@@ -880,7 +880,7 @@ function ProductReadyShareCard({
             {caption}
           </p>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-3 min-[430px]:grid-cols-2 xl:grid-cols-4">
             <CopyLinkButton
               copiedLabel="Link copiado"
               label="Copiar link"
@@ -890,7 +890,7 @@ function ProductReadyShareCard({
               href={whatsappShareHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
             >
               Compartir por WhatsApp
             </a>
@@ -902,7 +902,7 @@ function ProductReadyShareCard({
             />
             <a
               href={publicSellerHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
             >
               Ver mi negocio
             </a>
@@ -913,19 +913,19 @@ function ProductReadyShareCard({
               Controles privados
             </p>
             <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
-              Esto solo lo ves tú. Tus clientes ven la página del producto, no estos
-              botones de edición.
+              Esto solo lo ves tú. Tus clientes ven la página del producto, no
+              estos botones de edición.
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <a
                 href={product.editHref}
-                className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-4 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-4 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec] sm:w-auto"
               >
                 Editar producto
               </a>
               <a
                 href={`${product.editHref}#eliminar-producto`}
-                className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#d49b87] bg-white px-4 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
+                className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[#d49b87] bg-white px-4 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec] sm:w-auto"
               >
                 Eliminar producto
               </a>
@@ -1008,7 +1008,7 @@ function DashboardProductCard({
 
   return (
     <article className="overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
-      <div className="grid gap-0 md:grid-cols-[220px_1fr]">
+      <div className="grid min-w-0 gap-0 md:grid-cols-[220px_1fr]">
         <ProductImageFrame
           alt={title}
           badge={category}
@@ -1019,9 +1019,9 @@ function DashboardProductCard({
 
         <div className="p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-2xl font-black leading-tight text-[#1f3429]">
+                <h3 className="min-w-0 break-words text-xl font-black leading-tight text-[#1f3429] sm:text-2xl">
                   {title}
                 </h3>
                 <span
@@ -1036,7 +1036,7 @@ function DashboardProductCard({
                 {getProductCardDescription(description)}
               </p>
             </div>
-            <p className="shrink-0 text-xl font-black text-[#c05635]">
+            <p className="shrink-0 text-xl font-black text-[#c05635] sm:text-right">
               {priceLabel}
             </p>
           </div>
@@ -1052,10 +1052,10 @@ function DashboardProductCard({
               <p className="mt-3 rounded-lg bg-white px-3 py-3 text-sm font-semibold leading-6 text-[#53645a]">
                 {productShareMessage}
               </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid gap-3 min-[430px]:grid-cols-2">
                 <a
                   href={productHref}
-                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
                   Ver como cliente
                 </a>
@@ -1069,7 +1069,7 @@ function DashboardProductCard({
                   href={productWhatsAppShareHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
                 >
                   Compartir por WhatsApp
                 </a>
@@ -1095,7 +1095,7 @@ function DashboardProductCard({
 
           <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
                   Acciones del producto
                 </p>
@@ -1127,25 +1127,25 @@ function DashboardProductCard({
               </form>
             </div>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid gap-3 min-[430px]:grid-cols-2 xl:grid-cols-4">
               {status === "published" ? (
                 <a
                   href={productHref}
-                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
                 >
                   Ver como cliente
                 </a>
               ) : (
                 <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                  Privado por ahora
+                  Solo tú lo ves
                 </p>
               )}
 
               <a
                 href={editProductHref}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
               >
-                Editar
+                Editar producto
               </a>
 
               {status === "published" ? (
@@ -1157,25 +1157,25 @@ function DashboardProductCard({
                 />
               ) : (
                 <p className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#eef5ec] px-5 text-center text-sm font-black text-[#53645a]">
-                  Publica para copiar link
+                  Sin link público
                 </p>
               )}
 
               <a
                 href={deleteProductHref}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
               >
-                Eliminar con cuidado
+                Eliminar
               </a>
             </div>
 
             {status === "published" && (
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="mt-3 grid gap-3 min-[430px]:grid-cols-2">
                 <a
                   href={productWhatsAppShareHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
                 >
                   Compartir por WhatsApp
                 </a>
@@ -1222,7 +1222,7 @@ function EmptyProductsState({ sellerSlug }: { sellerSlug: string }) {
 
       <a
         href={`/producto/nuevo?seller=${sellerSlug}`}
-        className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+        className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:w-auto"
       >
         Agrega tu primer producto
       </a>
@@ -1339,7 +1339,7 @@ export default async function SellerDashboardPage({
   return (
     <main className="min-h-screen bg-[#fbfbf7] text-[#1e261f]">
       <section className="border-b border-[#dce4d6] bg-[#173a2a] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-5 sm:gap-4 sm:px-8 lg:px-10">
           <a
             href="/"
             className="flex min-w-0 items-center gap-3 font-semibold"
@@ -1352,12 +1352,12 @@ export default async function SellerDashboardPage({
               YoComproLocal
             </span>
           </a>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <a
               href={publicSellerHref}
-              className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-4 text-sm font-bold text-white transition hover:bg-white/10"
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 px-3 text-sm font-bold text-white transition hover:bg-white/10 sm:px-4"
             >
-              Ver mi página
+              Mi página
             </a>
             <a
               href="/auth/salir"
@@ -1375,8 +1375,8 @@ export default async function SellerDashboardPage({
             Panel del negocio
           </p>
           <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-normal sm:text-6xl">
+            <div className="min-w-0">
+              <h1 className="max-w-4xl break-words text-3xl font-black leading-tight tracking-normal sm:text-5xl lg:text-6xl">
                 {sellerName}
               </h1>
               <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-white/82">
@@ -1384,19 +1384,19 @@ export default async function SellerDashboardPage({
                 links y revisas lo que tus clientes ven.
               </p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0">
-              <div className="rounded-full border border-white/18 bg-white/10 px-5 py-3 text-sm font-bold text-white/82">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row lg:shrink-0">
+              <div className="max-w-full break-all rounded-2xl border border-white/18 bg-white/10 px-5 py-3 text-center text-sm font-bold leading-5 text-white/82 sm:rounded-full">
                 {userEmail}
               </div>
               <a
                 href={editProfileHref}
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 px-6 text-base font-black text-white transition hover:bg-white/10"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-white/35 px-6 text-base font-black text-white transition hover:bg-white/10 sm:w-auto"
               >
                 Editar datos
               </a>
               <a
                 href={addProductHref}
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#f6c55f] px-6 text-base font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:w-auto"
               >
                 {addProductLabel}
               </a>
@@ -1479,7 +1479,7 @@ export default async function SellerDashboardPage({
                 {getInitials(sellerName)}
               </div>
               <div className="min-w-0">
-                <h2 className="text-2xl font-black text-[#1f3429]">
+                <h2 className="break-words text-xl font-black text-[#1f3429] sm:text-2xl">
                   {sellerName}
                 </h2>
                 <p className="mt-1 text-sm font-semibold text-[#6a7a70]">
@@ -1514,6 +1514,12 @@ export default async function SellerDashboardPage({
                 {publicSellerUrl}
               </p>
               <div className="mt-4 grid gap-3">
+                <a
+                  href={addProductHref}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+                >
+                  {addProductLabel}
+                </a>
                 <CopyLinkButton
                   copiedLabel="Link copiado"
                   label="Copiar link de mi negocio"
@@ -1542,8 +1548,6 @@ export default async function SellerDashboardPage({
           </aside>
 
           <div className="space-y-5">
-            <FirstRunChecklist tasks={dashboardTasks} />
-
             <DashboardShortcuts
               addProductHref={addProductHref}
               products={shareProducts}
@@ -1551,6 +1555,8 @@ export default async function SellerDashboardPage({
               publicSellerUrl={publicSellerUrl}
               sellerName={sellerName}
             />
+
+            <FirstRunChecklist tasks={dashboardTasks} />
 
             <ShareKit
               addProductHref={addProductHref}
@@ -1564,11 +1570,11 @@ export default async function SellerDashboardPage({
               id="productos-panel"
               className="scroll-mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"
             >
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-[#c05635]">
                   Productos
                 </p>
-                <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-5xl">
+                <h2 className="mt-3 text-3xl font-black leading-tight text-[#1f3429] sm:text-4xl">
                   Tus productos
                 </h2>
                 <p className="mt-4 max-w-2xl text-lg leading-8 text-[#53645a]">
@@ -1578,7 +1584,7 @@ export default async function SellerDashboardPage({
               </div>
               <a
                 href={addProductHref}
-                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a]"
+                className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-[#f6c55f] px-5 text-sm font-black text-[#1c261f] shadow-sm transition hover:bg-[#ffd77a] sm:w-auto"
               >
                 {addProductLabel}
               </a>
