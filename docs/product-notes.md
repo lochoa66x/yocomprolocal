@@ -122,19 +122,19 @@ Keep improving:
 
 ## Recommended Next Prompt
 
-Title: `Seller Product Sharing QA`
+Title: `Seller Dashboard Mobile QA`
 
 Goal:
 
-Test the seller dashboard sharing tools from a real seller account and make sure
-store links, product links, and WhatsApp messages are obvious and copy-ready.
+Test the protected seller dashboard on a phone-sized viewport and tighten
+spacing, button stacking, and product-card readability for real sellers.
 
 Scope:
 
-- Open a seller dashboard after magic-link login.
-- Confirm the public store link is easy to find and copy.
-- Confirm each published product has a visible public link and WhatsApp share
-  message.
-- Confirm draft products explain why buyers cannot see them yet.
-- Confirm all labels feel human and Latin American Spanish.
+- Open `/panel/vendedor/[slug]` at mobile width.
+- Confirm the header actions do not crowd the seller name.
+- Confirm first-run checklist cards are easy to scan.
+- Confirm shortcut, share kit, and product cards stack cleanly.
+- Confirm public link and WhatsApp buttons are easy to tap.
+- Confirm long product names, prices, and URLs do not overflow.
 - Do not add payments, shipping, buyer accounts, or admin approval yet.

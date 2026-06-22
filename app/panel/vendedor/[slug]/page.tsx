@@ -11,7 +11,6 @@ import {
 import { ProductImageFrame } from "@/components/product-image-frame";
 import {
   getInitials,
-  getWhatsAppHref,
   type SellerRecord,
 } from "@/lib/storefront";
 import { requireSellerAccess } from "@/lib/seller-auth";
@@ -977,13 +976,11 @@ async function getSellerDashboard(
 function DashboardProductCard({
   product,
   sellerName,
-  sellerWhatsapp,
   sellerSlug,
   siteUrl,
 }: {
   product: DashboardProductRecord;
   sellerName: string;
-  sellerWhatsapp: string | null;
   sellerSlug: string;
   siteUrl: string;
 }) {
@@ -1001,9 +998,13 @@ function DashboardProductCard({
   const nextStatus = status === "published" ? "draft" : "published";
   const statusActionLabel =
     status === "published" ? "Ocultar a clientes" : "Publicar página";
-  const productWhatsAppHref = sellerWhatsapp
-    ? getWhatsAppHref(sellerWhatsapp, sellerName, title)
-    : null;
+  const productShareMessage = getProductShareMessage({
+    priceLabel,
+    productTitle: title,
+    productUrl,
+    sellerName,
+  });
+  const productWhatsAppShareHref = getWhatsAppShareHref(productShareMessage);
 
   return (
     <article className="overflow-hidden rounded-lg border border-[#dbe5d6] bg-white shadow-[0_10px_28px_rgba(31,52,41,0.06)]">
@@ -1048,6 +1049,9 @@ function DashboardProductCard({
               <p className="mt-2 break-all text-sm font-semibold leading-6 text-[#214e34]">
                 {productUrl}
               </p>
+              <p className="mt-3 rounded-lg bg-white px-3 py-3 text-sm font-semibold leading-6 text-[#53645a]">
+                {productShareMessage}
+              </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <a
                   href={productHref}
@@ -1057,8 +1061,22 @@ function DashboardProductCard({
                 </a>
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Copiar link"
+                  label="Copiar link público"
                   value={productUrl}
+                  variant="secondary"
+                />
+                <a
+                  href={productWhatsAppShareHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                >
+                  Compartir por WhatsApp
+                </a>
+                <CopyLinkButton
+                  copiedLabel="Mensaje copiado"
+                  label="Copiar mensaje"
+                  value={productShareMessage}
                   variant="secondary"
                 />
               </div>
@@ -1133,7 +1151,7 @@ function DashboardProductCard({
               {status === "published" ? (
                 <CopyLinkButton
                   copiedLabel="Link copiado"
-                  label="Copiar link"
+                  label="Copiar link público"
                   value={productUrl}
                   variant="secondary"
                 />
@@ -1151,13 +1169,23 @@ function DashboardProductCard({
               </a>
             </div>
 
-            {status === "published" && productWhatsAppHref && (
-              <a
-                href={productWhatsAppHref}
-                className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
-              >
-                Probar mensaje por WhatsApp
-              </a>
+            {status === "published" && (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <a
+                  href={productWhatsAppShareHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#25d366] px-5 text-sm font-black text-[#102318] transition hover:bg-[#39df78]"
+                >
+                  Compartir por WhatsApp
+                </a>
+                <CopyLinkButton
+                  copiedLabel="Mensaje copiado"
+                  label="Copiar mensaje"
+                  value={productShareMessage}
+                  variant="secondary"
+                />
+              </div>
             )}
           </div>
         </div>
@@ -1563,7 +1591,6 @@ export default async function SellerDashboardPage({
                     key={product.id}
                     product={product}
                     sellerName={sellerName}
-                    sellerWhatsapp={seller.whatsapp}
                     sellerSlug={slug}
                     siteUrl={siteUrl}
                   />
