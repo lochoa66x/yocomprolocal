@@ -36,6 +36,7 @@ type DashboardTask = {
 };
 
 type ShareProduct = DashboardProductRecord & {
+  editHref: string;
   productHref: string;
   productUrl: string;
   title: string;
@@ -661,6 +662,26 @@ function ProductReadyShareCard({
               Ver mi tienda
             </a>
           </div>
+
+          <div className="mt-5 rounded-lg border border-[#dbe5d6] bg-[#fbfbf7] p-4">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+              Administrar producto
+            </p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+              <a
+                href={product.editHref}
+                className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-4 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
+              >
+                Editar producto
+              </a>
+              <a
+                href={`${product.editHref}#eliminar-producto`}
+                className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#d49b87] bg-white px-4 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
+              >
+                Eliminar producto
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -724,6 +745,7 @@ function DashboardProductCard({
   const productHref = `/vendedor/${sellerSlug}/producto/${productSlug}`;
   const productUrl = `${siteUrl}${productHref}`;
   const editProductHref = `/panel/vendedor/${sellerSlug}/producto/${productSlug}/editar`;
+  const deleteProductHref = `${editProductHref}#eliminar-producto`;
   const status = product.status?.trim() || "draft";
   const nextStatus = status === "published" ? "draft" : "published";
   const statusActionLabel =
@@ -802,12 +824,19 @@ function DashboardProductCard({
             </div>
           )}
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             <a
               href={editProductHref}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#214e34]/20 bg-white px-5 text-sm font-black text-[#214e34] transition hover:border-[#214e34]/35 hover:bg-[#eef5ec]"
             >
-              Editar datos
+              Editar producto
+            </a>
+
+            <a
+              href={deleteProductHref}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#d49b87] bg-white px-5 text-sm font-black text-[#a74429] transition hover:bg-[#fff1ec]"
+            >
+              Eliminar
             </a>
 
             {status === "published" ? (
@@ -942,6 +971,7 @@ export default async function SellerDashboardPage({
 
       return {
         ...product,
+        editHref: getProductEditHref(slug, product),
         productHref,
         productUrl: `${siteUrl}${productHref}`,
         title,

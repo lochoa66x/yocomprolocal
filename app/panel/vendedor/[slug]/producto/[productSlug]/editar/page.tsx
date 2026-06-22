@@ -371,6 +371,15 @@ export default async function EditProductPage({ params, searchParams }: Props) {
               Cambia precio, descripción, foto o estado. Al guardar, volverás a
               tu panel para seguir compartiendo tu vitrina.
             </p>
+            <div className="mt-6 rounded-lg border border-[#dbe5d6] bg-white p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#567164]">
+                Control del producto
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[#53645a]">
+                Desde aquí puedes actualizar datos, cambiar la foto, ocultarlo
+                como borrador o eliminarlo si ya no lo vendes.
+              </p>
+            </div>
 
             <ProductImageFrame
               alt={title}
@@ -547,7 +556,10 @@ export default async function EditProductPage({ params, searchParams }: Props) {
               </div>
             </form>
 
-            <div className="mt-8 rounded-lg border border-[#f2c4b2] bg-[#fff8f5] p-5">
+            <div
+              id="eliminar-producto"
+              className="mt-8 scroll-mt-8 rounded-lg border border-[#f2c4b2] bg-[#fff8f5] p-5"
+            >
               <p className="text-sm font-black uppercase tracking-[0.16em] text-[#a74429]">
                 Zona de cuidado
               </p>
